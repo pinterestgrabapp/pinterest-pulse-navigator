@@ -66,7 +66,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('keywordResearchFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {t('keywordResearchDescription')}
+                  {t('keywordResearchFeatureDesc')}
                 </p>
               </div>
               
@@ -77,7 +77,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('rankTrackingFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {t('rankTrackingDescription')}
+                  {t('rankTrackingFeatureDesc')}
                 </p>
               </div>
               
@@ -88,7 +88,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('pinAnalysisFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {t('pinAnalysisDescription')}
+                  {t('pinAnalysisFeatureDesc')}
                 </p>
               </div>
               
@@ -99,7 +99,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('keywordExtractionFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {t('keywordExtractionDescription')}
+                  {t('keywordExtractionFeatureDesc')}
                 </p>
               </div>
               
@@ -121,7 +121,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('pinCreationFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {t('pinCreationDescription')}
+                  {t('pinCreationFeatureDesc')}
                 </p>
               </div>
             </div>
