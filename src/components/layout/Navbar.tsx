@@ -43,7 +43,7 @@ export const Navbar = ({ isMinimal = false }: NavbarProps) => {
           <img 
             src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" 
             alt="Pinterest Grab" 
-            className="h-12"
+            className="h-16"
           />
         </Link>
 
