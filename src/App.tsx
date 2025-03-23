@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import KeywordResearch from "./pages/KeywordResearch";
 import PinAnalysis from "./pages/PinAnalysis";
+import CreatePin from "./pages/CreatePin";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/keyword-research" element={<KeywordResearch />} />
           <Route path="/pin-analysis" element={<PinAnalysis />} />
+          <Route path="/create-pin" element={<CreatePin />} />
           <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
