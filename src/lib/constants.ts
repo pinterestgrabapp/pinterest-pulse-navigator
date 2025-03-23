@@ -1,4 +1,5 @@
 export const APP_NAME = "Pinterest Grab";
+export const APP_DESCRIPTION = "Powerful keyword research, pin analysis, and strategy tools for Pinterest marketers.";
 
 export const DEFAULT_LANGUAGE = "en";
 
@@ -39,6 +40,35 @@ export const LANGUAGES = [
   { code: "pt", name: "Português", flag: "🇵🇹" },
 ];
 
+// Mock data for keyword research tool
+export const MOCK_POPULAR_KEYWORDS = [
+  "home decor",
+  "fashion outfits",
+  "meal prep",
+  "travel destinations",
+  "workout routines",
+  "diy crafts",
+  "wedding ideas",
+  "skincare routine",
+  "garden ideas",
+  "bullet journal",
+  "healthy recipes",
+  "interior design",
+  "photography tips",
+  "hairstyle ideas",
+  "quotes inspiration",
+];
+
+// Mock pin statistics for pin analyzer
+export const MOCK_PIN_STATS = {
+  pinScore: 87,
+  saves: 1243,
+  clicks: 872,
+  impressions: 15420,
+  engagement: 8.2,
+  createdAt: "June 12, 2023",
+};
+
 // Translations
 export const TRANSLATIONS = {
   en: {
@@ -62,6 +92,49 @@ export const TRANSLATIONS = {
     settingsDescription: "Manage your account settings and preferences",
     createPinDescription: "Create and publish Pinterest pins directly from our platform",
     createPinButton: "Create Pin",
+    
+    // Keyword Tool
+    searchKeywords: "Search for keywords...",
+    loading: "Loading...",
+    search: "Search",
+    popularKeywords: "Popular Keywords",
+    relatedKeywords: "Related Keywords",
+    trending: "Trending",
+    noResults: "No results found. Try a different search term.",
+    
+    // Pin Analyzer
+    enterPinUrl: "Enter Pinterest pin URL...",
+    analyze: "Analyze",
+    keywordsExtracted: "Extracted Keywords",
+    generateKeywords: "Generate More",
+    copyToClipboard: "Copy All",
+    copied: "Copied!",
+    pinScore: "Pin Score",
+    saves: "Saves",
+    clicks: "Clicks",
+    impressions: "Impressions",
+    engagement: "Engagement",
+    createdAt: "Created",
+    
+    // Features
+    keywordResearchFeature: "Keyword Research",
+    keywordResearchDescription: "Discover trending interests and keywords that drive traffic.",
+    rankTrackingFeature: "Rank Tracking",
+    rankTrackingDescription: "Monitor how your pins rank for important keywords.",
+    pinAnalysisFeature: "Pin Analysis",
+    pinAnalysisDescription: "Extract keywords and metrics from any Pinterest pin.",
+    keywordExtractionFeature: "Keyword Extraction",
+    keywordExtractionDescription: "Extract relevant keywords from any Pinterest pin.",
+    pinCreationFeature: "Pin Creation",
+    pinCreationDescription: "Design and publish Pinterest pins directly from our platform.",
+    languagePreference: "Language Support",
+    
+    // Support & Help
+    supportAndHelp: "Support & Help",
+    accountSettings: "Account Settings",
+    feedback: "Feedback",
+    termsOfService: "Terms of Service",
+    privacyPolicy: "Privacy Policy",
     
     // Settings
     account: "Account",
@@ -169,7 +242,9 @@ export const TRANSLATIONS = {
     // Auth
     login: "Iniciar Sesión",
     signup: "Registrarse",
-    // Add more Spanish translations here
+    
+    // Keep minimal Spanish translations for now
+    // These will be expanded in the future
   },
   // Other languages would follow the same pattern
 };
