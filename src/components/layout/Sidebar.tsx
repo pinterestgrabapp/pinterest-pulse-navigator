@@ -59,11 +59,12 @@ export const DashboardSidebar = () => {
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="pb-0">
-        <Link to="/" className="flex items-center gap-2 px-3 py-2">
-          <div className="relative w-8 h-8 overflow-hidden rounded-lg bg-pinterest-red flex items-center justify-center text-white font-bold">
-            PG
-          </div>
-          <span className="font-semibold text-lg">Pinterest Grab</span>
+        <Link to="/" className="flex items-center justify-center px-3 py-2">
+          <img 
+            src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" 
+            alt="Pinterest Grab" 
+            className="h-10"
+          />
         </Link>
       </SidebarHeader>
       <SidebarContent>

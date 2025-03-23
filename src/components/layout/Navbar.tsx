@@ -38,12 +38,13 @@ export const Navbar = ({ isMinimal = false }: NavbarProps) => {
         {/* Logo */}
         <Link 
           to="/" 
-          className="flex items-center space-x-2"
+          className="flex items-center"
         >
-          <div className="relative w-9 h-9 overflow-hidden rounded-xl bg-pinterest-red flex items-center justify-center text-white font-bold">
-            PG
-          </div>
-          <span className="text-xl font-semibold">{APP_NAME}</span>
+          <img 
+            src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" 
+            alt="Pinterest Grab" 
+            className="h-12"
+          />
         </Link>
 
         {/* Right Side Actions */}
