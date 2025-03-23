@@ -25,7 +25,7 @@ export const Navbar = ({
       <div className="container px-4 mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img alt="Pinterest Grab" src="/lovable-uploads/c1448383-51a1-45d5-ab01-73127af6b8fd.png" className="h-18 object-contain" />
+          
         </Link>
 
         {/* Right Side Actions */}
