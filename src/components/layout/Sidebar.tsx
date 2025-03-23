@@ -68,7 +68,7 @@ export const DashboardSidebar = () => {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation' as any)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -76,11 +76,11 @@ export const DashboardSidebar = () => {
                   <SidebarMenuButton 
                     asChild 
                     isActive={location.pathname === item.href}
-                    tooltip={t(item.label)}
+                    tooltip={t(item.label as any)}
                   >
                     <Link to={item.href}>
                       <item.icon className="h-4 w-4" />
-                      <span>{t(item.label)}</span>
+                      <span>{t(item.label as any)}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -90,14 +90,14 @@ export const DashboardSidebar = () => {
         </SidebarGroup>
         
         <SidebarGroup>
-          <SidebarGroupLabel>{t('tools')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('tools' as any)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={t('keywordExplorer')}>
+                <SidebarMenuButton asChild tooltip={t('keywordExplorer' as any)}>
                   <Link to="/keyword-research">
                     <Hash className="h-4 w-4" />
-                    <span>{t('keywordExplorer')}</span>
+                    <span>{t('keywordExplorer' as any)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

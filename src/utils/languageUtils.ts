@@ -4,7 +4,7 @@ import { TRANSLATIONS, DEFAULT_LANGUAGE } from '@/lib/constants';
 
 // Define types
 export type Language = keyof typeof TRANSLATIONS;
-type TranslationKey = keyof typeof TRANSLATIONS[typeof DEFAULT_LANGUAGE];
+export type TranslationKey = keyof typeof TRANSLATIONS[typeof DEFAULT_LANGUAGE];
 
 // Create context for language
 export const useLanguage = () => {
