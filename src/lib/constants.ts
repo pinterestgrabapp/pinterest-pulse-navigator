@@ -118,15 +118,15 @@ export const TRANSLATIONS = {
     
     // Features
     keywordResearchFeature: "Keyword Research",
-    keywordResearchDescription: "Discover trending interests and keywords that drive traffic.",
+    keywordResearchFeatureDesc: "Discover trending interests and keywords that drive traffic.",
     rankTrackingFeature: "Rank Tracking",
-    rankTrackingDescription: "Monitor how your pins rank for important keywords.",
+    rankTrackingFeatureDesc: "Monitor how your pins rank for important keywords.",
     pinAnalysisFeature: "Pin Analysis",
-    pinAnalysisDescription: "Extract keywords and metrics from any Pinterest pin.",
+    pinAnalysisFeatureDesc: "Extract keywords and metrics from any Pinterest pin.",
     keywordExtractionFeature: "Keyword Extraction",
-    keywordExtractionDescription: "Extract relevant keywords from any Pinterest pin.",
+    keywordExtractionFeatureDesc: "Extract relevant keywords from any Pinterest pin.",
     pinCreationFeature: "Pin Creation",
-    pinCreationDescription: "Design and publish Pinterest pins directly from our platform.",
+    pinCreationFeatureDesc: "Design and publish Pinterest pins directly from our platform.",
     languagePreference: "Language Support",
     
     // Support & Help
@@ -192,16 +192,8 @@ export const TRANSLATIONS = {
     getStarted: "Get Started",
     learnMore: "Learn More",
     
-    // Features
+    // Features section
     features: "Features",
-    featureKeyword: "Keyword Research",
-    featureKeywordDesc: "Discover trending interests and keywords that drive traffic.",
-    featurePin: "Pin Analysis",
-    featurePinDesc: "Extract keywords and metrics from any Pinterest pin.",
-    featureTrack: "Rank Tracking",
-    featureTrackDesc: "Monitor how your pins rank for important keywords.",
-    featureCreate: "Pin Creation",
-    featureCreateDesc: "Design and publish Pinterest pins directly from our platform.",
     
     // Testimonials
     testimonials: "What Our Users Say",
@@ -220,7 +212,6 @@ export const TRANSLATIONS = {
     // Footer
     about: "About",
     contact: "Contact",
-    privacy: "Privacy",
     terms: "Terms",
     faq: "FAQ",
     blog: "Blog",
