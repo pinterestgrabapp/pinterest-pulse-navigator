@@ -63,7 +63,7 @@ export const DashboardSidebar = () => {
           <img 
             src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" 
             alt="Pinterest Grab" 
-            className="h-10"
+            className="h-14"
           />
         </Link>
       </SidebarHeader>
