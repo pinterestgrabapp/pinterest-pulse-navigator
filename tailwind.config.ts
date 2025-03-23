@@ -65,7 +65,24 @@ export default {
 				},
         pinterest: {
           red: '#E60023',
-          light: '#FFEBEE'
+          light: '#FFEBEE',
+          dark: '#C2000D'
+        },
+        modern: {
+          background: '#F9FAFB',
+          dark: '#121212',
+          card: '#FFFFFF',
+          'card-dark': '#1F1F1F',
+          primary: '#1D4ED8',
+          accent: '#3B82F6',
+          success: '#10B981',
+          warning: '#F59E0B',
+          error: '#EF4444',
+          'text-primary': '#111827',
+          'text-secondary': '#4B5563',
+          'text-muted': '#9CA3AF',
+          'border-light': '#E5E7EB',
+          'border-dark': '#374151',
         }
 			},
 			borderRadius: {

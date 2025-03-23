@@ -12,11 +12,11 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="flex flex-col min-h-screen w-full">
+      <div className="flex flex-col min-h-screen w-full bg-gray-50 dark:bg-gray-900">
         <Navbar isMinimal={true} />
         <div className="flex flex-1 pt-16">
           <DashboardSidebar />
-          <SidebarInset className="p-4 md:p-6">
+          <SidebarInset className="p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
             {children}
           </SidebarInset>
         </div>

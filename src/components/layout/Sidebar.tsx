@@ -6,7 +6,11 @@ import {
   TrendingUp,
   ImagePlus,
   Settings,
-  Hash
+  Hash,
+  BarChart4,
+  BookText,
+  Bookmark,
+  User
 } from 'lucide-react';
 import { useLanguage } from '@/utils/languageUtils';
 import {
@@ -50,14 +54,19 @@ export const DashboardSidebar = () => {
       href: '/create-pin'
     },
     {
-      icon: Settings,
-      label: 'settings',
-      href: '/settings'
+      icon: BarChart4,
+      label: 'pinStats',
+      href: '/pin-stats'
+    },
+    {
+      icon: Bookmark,
+      label: 'savedPins',
+      href: '/saved-pins'
     }
   ];
 
   return (
-    <Sidebar variant="inset">
+    <Sidebar variant="inset" className="bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
       <SidebarHeader className="pb-0">
         <Link to="/" className="flex items-center justify-center px-3 py-2">
           <img 
@@ -69,7 +78,7 @@ export const DashboardSidebar = () => {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{t('navigation' as any)}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400">{t('navigation' as any)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -78,8 +87,9 @@ export const DashboardSidebar = () => {
                     asChild 
                     isActive={location.pathname === item.href}
                     tooltip={t(item.label as any)}
+                    className="hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
-                    <Link to={item.href}>
+                    <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
                       <item.icon className="h-4 w-4" />
                       <span>{t(item.label as any)}</span>
                     </Link>
@@ -91,14 +101,50 @@ export const DashboardSidebar = () => {
         </SidebarGroup>
         
         <SidebarGroup>
-          <SidebarGroupLabel>{t('tools' as any)}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400">{t('tools' as any)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={t('keywordExplorer' as any)}>
-                  <Link to="/keyword-research">
+                <SidebarMenuButton 
+                  asChild 
+                  tooltip={t('keywordExplorer' as any)}
+                  className="hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <Link to="/keyword-research" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
                     <Hash className="h-4 w-4" />
                     <span>{t('keywordExplorer' as any)}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400">{t('account' as any)}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild 
+                  tooltip={t('settings' as any)}
+                  className="hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
+                    <Settings className="h-4 w-4" />
+                    <span>{t('settings' as any)}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild 
+                  tooltip={t('profile' as any)}
+                  className="hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <Link to="/profile" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
+                    <User className="h-4 w-4" />
+                    <span>{t('profile' as any)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

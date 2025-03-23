@@ -1,38 +1,26 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_NAME } from '@/lib/constants';
 import { useLanguage } from '@/utils/languageUtils';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
+import { useTheme } from '@/hooks/use-theme';
 
 interface NavbarProps {
   isMinimal?: boolean;
 }
 
 export const Navbar = ({ isMinimal = false }: NavbarProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { t } = useLanguage();
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const { theme, setTheme } = useTheme();
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md py-3 shadow-md' 
-          : 'bg-transparent py-5'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm py-3"
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
         {/* Logo */}
@@ -49,6 +37,19 @@ export const Navbar = ({ isMinimal = false }: NavbarProps) => {
 
         {/* Right Side Actions */}
         <div className="flex items-center space-x-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            {theme === 'dark' ? (
+              <Sun size={20} className="text-yellow-400" />
+            ) : (
+              <Moon size={20} className="text-gray-600" />
+            )}
+          </Button>
+          
           <LanguageSwitcher />
           
           <div className="hidden md:flex space-x-2">
