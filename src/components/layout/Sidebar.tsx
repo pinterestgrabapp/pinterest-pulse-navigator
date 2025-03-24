@@ -1,6 +1,6 @@
 
 import { useLocation, Link } from 'react-router-dom';
-import { LayoutDashboard, Search, TrendingUp, ImagePlus, Settings, Hash, BarChart4, BookText, Bookmark, User, Export, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, Search, TrendingUp, ImagePlus, Settings, Hash, BarChart4, BookText, Bookmark, User, FileDown, HelpCircle } from 'lucide-react';
 import { useLanguage } from '@/utils/languageUtils';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarRail } from "@/components/ui/sidebar";
 
@@ -21,7 +21,7 @@ export const DashboardSidebar = () => {
     label: 'pinAnalysis',
     href: '/pin-analysis'
   }, {
-    icon: Export,
+    icon: FileDown,
     label: 'Export',
     href: '/export'
   }, {
