@@ -1,7 +1,6 @@
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PinAnalyzer from "@/components/PinAnalyzer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/utils/languageUtils";
 
 const PinAnalysis = () => {
@@ -16,17 +15,17 @@ const PinAnalysis = () => {
         </p>
       </div>
       
-      <Card className="glass-card">
-        <CardHeader>
-          <CardTitle>{t('pinAnalyzer')}</CardTitle>
-          <CardDescription>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold">{t('pinAnalyzer')}</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {t('pinAnalyzerDescription')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
+        </div>
+        <div className="p-6">
           <PinAnalyzer />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </DashboardLayout>
   );
 };

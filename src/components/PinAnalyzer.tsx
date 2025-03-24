@@ -1,20 +1,33 @@
 
 import { useState } from 'react';
-import { Search, Copy, Check, Loader2 } from 'lucide-react';
+import { Search, Download, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/utils/languageUtils';
 import { MOCK_PIN_STATS } from '@/lib/constants';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+interface PinData {
+  id: string;
+  url: string;
+  title: string;
+  description: string;
+  keywords: string[];
+  stats: typeof MOCK_PIN_STATS;
+}
 
 export const PinAnalyzer = () => {
   const [pinUrl, setPinUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [pinStats, setPinStats] = useState<typeof MOCK_PIN_STATS | null>(null);
-  const [hasCopied, setHasCopied] = useState(false);
+  const [pinResults, setPinResults] = useState<PinData[]>([]);
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -24,27 +37,35 @@ export const PinAnalyzer = () => {
     if (!pinUrl) return;
     
     setIsLoading(true);
-    setKeywords([]);
-    setPinStats(null);
     
     try {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Mock keywords extraction
-      const mockKeywords = [
-        'home decor ideas', 
-        'living room inspiration', 
-        'minimalist design', 
-        'interior styling', 
-        'scandinavian interior',
-        'modern home',
-        'cozy space',
-        'neutral colors'
-      ];
+      // Generate a unique ID for this result
+      const id = Date.now().toString();
       
-      setKeywords(mockKeywords);
-      setPinStats(MOCK_PIN_STATS);
+      // Mock data for the new pin
+      const newPinData: PinData = {
+        id,
+        url: pinUrl,
+        title: "Modern Interior Design Ideas for 2023",
+        description: "Explore the latest trends in home decor with minimalist Scandinavian influences and sustainable materials.",
+        keywords: [
+          'home decor ideas', 
+          'living room inspiration', 
+          'minimalist design', 
+          'interior styling', 
+          'scandinavian interior',
+          'modern home',
+          'cozy space',
+          'neutral colors'
+        ],
+        stats: MOCK_PIN_STATS
+      };
+      
+      setPinResults(prev => [newPinData, ...prev]);
+      setPinUrl('');
       
       toast({
         title: 'Pin Analysis Complete',
@@ -61,48 +82,43 @@ export const PinAnalyzer = () => {
     }
   };
 
-  const generateMoreKeywords = () => {
-    setIsLoading(true);
+  const handleDownload = (pinData: PinData) => {
+    // Create CSV content
+    const csvContent = [
+      ['URL', 'Title', 'Description', 'Keywords', 'Pin Score', 'Saves', 'Clicks', 'Impressions', 'Engagement'],
+      [
+        pinData.url,
+        pinData.title,
+        pinData.description,
+        pinData.keywords.join(', '),
+        pinData.stats.pinScore,
+        pinData.stats.saves,
+        pinData.stats.clicks,
+        pinData.stats.impressions,
+        `${pinData.stats.engagement}%`
+      ]
+    ]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
     
-    // Simulate API call delay
-    setTimeout(() => {
-      // Add more mock keywords
-      const additionalKeywords = [
-        'budget friendly decor', 
-        'DIY home projects', 
-        'small space solutions', 
-        'apartment decor', 
-        'home organization'
-      ];
-      
-      setKeywords(prev => [...prev, ...additionalKeywords]);
-      setIsLoading(false);
-      
-      toast({
-        title: 'Keywords Generated',
-        description: 'Successfully generated additional keywords.',
-      });
-    }, 1000);
-  };
-
-  const copyToClipboard = () => {
-    if (keywords.length === 0) return;
-    
-    navigator.clipboard.writeText(keywords.join(', '));
-    setHasCopied(true);
+    // Create blob and download link
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', `pin-analysis-${pinData.id}.csv`);
+    a.click();
     
     toast({
-      title: t('copied'),
-      description: 'Keywords copied to clipboard.',
+      title: t('downloaded'),
+      description: 'Pin data has been downloaded as CSV.',
     });
-    
-    setTimeout(() => setHasCopied(false), 2000);
   };
 
   return (
-    <div className="space-y-6 w-full max-w-3xl mx-auto">
-      <form onSubmit={handleAnalyzePin} className="w-full">
-        <div className="flex gap-2">
+    <div className="w-full space-y-6">
+      <form onSubmit={handleAnalyzePin} className="w-full mb-8">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Input
               type="url"
@@ -133,100 +149,52 @@ export const PinAnalyzer = () => {
         </div>
       </form>
 
-      {/* Results Section */}
-      {keywords.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
-          {/* Keywords Card */}
-          <Card className="glass-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-medium">
-                {t('keywordsExtracted')}
-              </CardTitle>
-              <CardDescription>
-                Keywords and hashtags found in this pin
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {keywords.map((keyword, index) => (
-                  <Badge key={index} variant="secondary" className="py-1 px-3">
-                    {keyword}
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={generateMoreKeywords}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                  {t('generateKeywords')}
-                </Button>
-                <Button 
-                  variant="secondary" 
-                  size="sm"
-                  className="gap-2"
-                  onClick={copyToClipboard}
-                >
-                  {hasCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                  {hasCopied ? t('copied') : t('copyToClipboard')}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pin Stats Card */}
-          {pinStats && (
-            <Card className="glass-card">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-medium">
-                  {t('pinScore')}
-                </CardTitle>
-                <CardDescription>
-                  Performance analytics for this pin
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-center mb-4">
-                  <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-r from-pinterest-red to-red-400 text-white">
-                    <span className="text-2xl font-bold">{pinStats.pinScore}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="flex flex-col">
-                    <span className="text-gray-500 dark:text-gray-400">{t('saves')}</span>
-                    <span className="font-medium">{pinStats.saves.toLocaleString()}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-gray-500 dark:text-gray-400">{t('clicks')}</span>
-                    <span className="font-medium">{pinStats.clicks.toLocaleString()}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-gray-500 dark:text-gray-400">{t('impressions')}</span>
-                    <span className="font-medium">{pinStats.impressions.toLocaleString()}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-gray-500 dark:text-gray-400">{t('engagement')}</span>
-                    <span className="font-medium">{pinStats.engagement}%</span>
-                  </div>
-                  <div className="flex flex-col col-span-2">
-                    <span className="text-gray-500 dark:text-gray-400">{t('createdAt')}</span>
-                    <span className="font-medium">{pinStats.createdAt}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+      {/* Results Table */}
+      {pinResults.length > 0 ? (
+        <div className="rounded-md border bg-white dark:bg-gray-800">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>URL</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Keywords</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pinResults.map((pin) => (
+                <TableRow key={pin.id}>
+                  <TableCell className="max-w-[200px] truncate">{pin.url}</TableCell>
+                  <TableCell className="font-medium">{pin.title}</TableCell>
+                  <TableCell className="max-w-[250px] truncate">{pin.description}</TableCell>
+                  <TableCell className="max-w-[300px]">
+                    <div className="flex flex-wrap gap-1">
+                      {pin.keywords.map((keyword, i) => (
+                        <span key={i} className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-800 dark:text-gray-200">
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDownload(pin)}
+                      title="Download data"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span className="sr-only">Download</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
-      )}
-      
-      {/* Empty State */}
-      {!keywords.length && !isLoading && (
-        <div className="text-center py-10">
+      ) : (
+        <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
           <p className="text-gray-500 dark:text-gray-400">
             Enter a Pinterest pin URL to analyze keywords and stats
           </p>
