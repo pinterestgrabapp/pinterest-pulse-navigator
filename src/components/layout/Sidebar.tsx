@@ -94,7 +94,7 @@ export const DashboardSidebar = () => {
         </div>
       </div>
       
-      <div className="p-4 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800">
+      <div className="p-4 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 bg-black">
         © 2023 Pinterest Grab
       </div>
     </div>;
