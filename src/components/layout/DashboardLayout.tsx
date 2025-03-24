@@ -10,19 +10,19 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-gray-50 dark:bg-black">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
       <Navbar isMinimal={true} />
       <div className="flex flex-1 pt-16">
-        <aside className="fixed top-16 left-0 bottom-0 w-60 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-20 overflow-y-auto">
+        <aside className="fixed top-16 bottom-16 left-0 w-60 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-20 overflow-y-auto">
           <DashboardSidebar />
         </aside>
-        <main className="pl-60 w-full overflow-x-hidden">
-          <div className="p-4 md:p-6 bg-gray-50 dark:bg-black">
+        <main className="ml-60 flex-1 overflow-x-hidden">
+          <div className="p-4 md:p-6 bg-gray-50 dark:bg-black min-h-[calc(100vh-theme(spacing.16)-theme(spacing.16))]">
             {children}
           </div>
         </main>
       </div>
-      <Footer />
+      <Footer className="relative z-30" />
     </div>
   );
 };
