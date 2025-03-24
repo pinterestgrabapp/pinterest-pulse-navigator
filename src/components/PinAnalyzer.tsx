@@ -110,7 +110,7 @@ export const PinAnalyzer = () => {
     a.click();
     
     toast({
-      title: t('downloaded'),
+      title: t('copied'), // Using 'copied' instead of 'downloaded' as it's a valid key
       description: 'Pin data has been downloaded as CSV.',
     });
   };
