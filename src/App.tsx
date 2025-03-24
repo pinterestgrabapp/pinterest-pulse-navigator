@@ -11,6 +11,8 @@ import KeywordResearch from "./pages/KeywordResearch";
 import PinAnalysis from "./pages/PinAnalysis";
 import CreatePin from "./pages/CreatePin";
 import Settings from "./pages/Settings";
+import Export from "./pages/Export";
+import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +30,9 @@ const App = () => (
             <Route path="/keyword-research" element={<KeywordResearch />} />
             <Route path="/pin-analysis" element={<PinAnalysis />} />
             <Route path="/create-pin" element={<CreatePin />} />
+            <Route path="/export" element={<Export />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<Help />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

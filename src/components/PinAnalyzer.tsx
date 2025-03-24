@@ -22,6 +22,7 @@ interface PinData {
   description: string;
   keywords: string[];
   stats: typeof MOCK_PIN_STATS;
+  status: 'completed' | 'pending';
 }
 
 export const PinAnalyzer = () => {
@@ -61,7 +62,8 @@ export const PinAnalyzer = () => {
           'cozy space',
           'neutral colors'
         ],
-        stats: MOCK_PIN_STATS
+        stats: MOCK_PIN_STATS,
+        status: 'completed'
       };
       
       setPinResults(prev => [newPinData, ...prev]);
@@ -85,7 +87,7 @@ export const PinAnalyzer = () => {
   const handleDownload = (pinData: PinData) => {
     // Create CSV content
     const csvContent = [
-      ['URL', 'Title', 'Description', 'Keywords', 'Pin Score', 'Saves', 'Clicks', 'Impressions', 'Engagement'],
+      ['URL', 'Title', 'Description', 'Keywords', 'Pin Score', 'Saves', 'Clicks', 'Impressions', 'Engagement', 'Status'],
       [
         pinData.url,
         pinData.title,
@@ -95,7 +97,8 @@ export const PinAnalyzer = () => {
         pinData.stats.saves,
         pinData.stats.clicks,
         pinData.stats.impressions,
-        `${pinData.stats.engagement}%`
+        `${pinData.stats.engagement}%`,
+        pinData.status
       ]
     ]
       .map(row => row.map(cell => `"${cell}"`).join(','))
@@ -110,7 +113,7 @@ export const PinAnalyzer = () => {
     a.click();
     
     toast({
-      title: t('copied'), // Using 'copied' instead of 'downloaded' as it's a valid key
+      title: t('copied'),
       description: 'Pin data has been downloaded as CSV.',
     });
   };
@@ -151,7 +154,7 @@ export const PinAnalyzer = () => {
 
       {/* Results Table */}
       {pinResults.length > 0 ? (
-        <div className="rounded-md border bg-white dark:bg-gray-800">
+        <div className="rounded-md border bg-white dark:bg-gray-900">
           <Table>
             <TableHeader>
               <TableRow>
@@ -159,6 +162,7 @@ export const PinAnalyzer = () => {
                 <TableHead>Title</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Keywords</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -171,11 +175,20 @@ export const PinAnalyzer = () => {
                   <TableCell className="max-w-[300px]">
                     <div className="flex flex-wrap gap-1">
                       {pin.keywords.map((keyword, i) => (
-                        <span key={i} className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-800 dark:text-gray-200">
+                        <span key={i} className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-800 px-2 py-0.5 text-xs text-gray-800 dark:text-gray-200">
                           {keyword}
                         </span>
                       ))}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
+                      pin.status === 'completed' 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                    }`}>
+                      {pin.status}
+                    </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
@@ -194,7 +207,7 @@ export const PinAnalyzer = () => {
           </Table>
         </div>
       ) : (
-        <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="text-center py-10 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
           <p className="text-gray-500 dark:text-gray-400">
             Enter a Pinterest pin URL to analyze keywords and stats
           </p>
