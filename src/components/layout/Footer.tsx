@@ -1,14 +1,12 @@
-
 import { Link } from 'react-router-dom';
 import { APP_NAME } from '@/lib/constants';
 import { useLanguage } from '@/utils/languageUtils';
-
 export const Footer = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="container mx-auto px-4 py-12">
+  const {
+    t
+  } = useLanguage();
+  return <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+      <div className="container mx-auto px-4 py-12 bg-black">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
@@ -130,8 +128,6 @@ export const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
