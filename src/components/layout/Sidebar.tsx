@@ -2,7 +2,6 @@
 import { useLocation, Link } from 'react-router-dom';
 import { LayoutDashboard, Search, TrendingUp, ImagePlus, Settings, Hash, BarChart4, BookText, Bookmark, User, FileDown, HelpCircle } from 'lucide-react';
 import { useLanguage } from '@/utils/languageUtils';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarRail } from "@/components/ui/sidebar";
 
 export const DashboardSidebar = () => {
   const location = useLocation();
@@ -39,94 +38,110 @@ export const DashboardSidebar = () => {
   }];
   
   return (
-    <Sidebar 
-      variant="inset" 
-      className="bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800"
-    >
-      <SidebarHeader className="pb-0">
-        <Link to="/" className="flex items-center justify-center px-3 py-2">
-          
+    <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+      <div className="p-4">
+        <Link to="/" className="flex items-center justify-center">
+          <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
         </Link>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400">{t('navigation' as any)}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigationItems.map(item => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={location.pathname === item.href} 
-                    tooltip={item.label === 'Export' ? 'Export' : t(item.label as any)} 
-                    className="hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
-                    <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label === 'Export' ? 'Export' : t(item.label as any)}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400">{t('tools' as any)}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={t('keywordExplorer' as any)} className="hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <Link to="/keyword-research" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
-                    <Hash className="h-4 w-4" />
-                    <span>{t('keywordExplorer' as any)}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400">{t('account' as any)}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={t('settings' as any)} className="hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
-                    <Settings className="h-4 w-4" />
-                    <span>{t('settings' as any)}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={t('profile' as any)} className="hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <Link to="/profile" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
-                    <User className="h-4 w-4" />
-                    <span>{t('profile' as any)}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Help" className="hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <Link to="/help" className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors">
-                    <HelpCircle className="h-4 w-4" />
-                    <span>Help</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <div className="text-xs text-muted-foreground px-3 py-2">
-          © 2023 Pinterest Grab
+      </div>
+      
+      <div className="flex-1 overflow-auto p-3">
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
+            {t('navigation' as any)}
+          </h3>
+          <ul className="space-y-1">
+            {navigationItems.map(item => (
+              <li key={item.href}>
+                <Link 
+                  to={item.href}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                    location.pathname === item.href 
+                      ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label === 'Export' ? 'Export' : t(item.label as any)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+        
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
+            {t('tools' as any)}
+          </h3>
+          <ul className="space-y-1">
+            <li>
+              <Link 
+                to="/keyword-research"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                  location.pathname === '/keyword-research' 
+                    ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <Hash className="h-4 w-4" />
+                <span>{t('keywordExplorer' as any)}</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
+            {t('account' as any)}
+          </h3>
+          <ul className="space-y-1">
+            <li>
+              <Link 
+                to="/settings"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                  location.pathname === '/settings' 
+                    ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <Settings className="h-4 w-4" />
+                <span>{t('settings' as any)}</span>
+              </Link>
+            </li>
+            <li>
+              <Link 
+                to="/profile"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                  location.pathname === '/profile' 
+                    ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <User className="h-4 w-4" />
+                <span>{t('profile' as any)}</span>
+              </Link>
+            </li>
+            <li>
+              <Link 
+                to="/help"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                  location.pathname === '/help' 
+                    ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <HelpCircle className="h-4 w-4" />
+                <span>Help</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div className="p-4 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800">
+        © 2023 Pinterest Grab
+      </div>
+    </div>
   );
 };
 
