@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,12 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus } from "lucide-react";
 import { useLanguage } from "@/utils/languageUtils";
-
 const CreatePin = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <DashboardLayout>
+  const {
+    t
+  } = useLanguage();
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('createPin')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -36,11 +34,7 @@ const CreatePin = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="description">{t('pinDescription')}</Label>
-                  <Textarea 
-                    id="description" 
-                    placeholder={t('pinDescriptionPlaceholder')}
-                    className="min-h-[120px]"
-                  />
+                  <Textarea id="description" placeholder={t('pinDescriptionPlaceholder')} className="min-h-[120px]" />
                 </div>
                 
                 <div className="space-y-2">
@@ -54,7 +48,7 @@ const CreatePin = () => {
                   <Input id="link" placeholder="https://example.com/my-page" type="url" />
                 </div>
                 
-                <Button type="submit">{t('createPinButton')}</Button>
+                <Button type="submit" className="bg-pinterest-red text-white">{t('createPinButton')}</Button>
               </form>
             </CardContent>
           </Card>
@@ -93,8 +87,6 @@ const CreatePin = () => {
           </Card>
         </div>
       </div>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default CreatePin;
