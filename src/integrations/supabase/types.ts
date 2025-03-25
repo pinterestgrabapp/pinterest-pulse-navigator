@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      pin_limits: {
+        Row: {
+          created_at: string
+          guest_id: string | null
+          id: string
+          pin_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          guest_id?: string | null
+          id?: string
+          pin_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          guest_id?: string | null
+          id?: string
+          pin_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
       user_scrapes: {
         Row: {
           date_scraped: string
