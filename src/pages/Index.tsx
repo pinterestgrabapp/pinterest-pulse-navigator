@@ -18,18 +18,12 @@ const Index = () => {
       
       <main className="flex-1">
         {/* Hero Section - Centered with no image */}
-        <section className="relative py-20 md:py-32 overflow-hidden pt-24">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white dark:from-black dark:via-gray-900 dark:to-black z-0"></div>
-          
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 z-0 opacity-30">
-            <div className="absolute -top-20 -left-20 w-60 h-60 bg-pinterest-red rounded-full filter blur-3xl animate-float" style={{ animationDelay: '0s' }}></div>
-            <div className="absolute top-40 right-20 w-80 h-80 bg-purple-700 rounded-full filter blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute bottom-20 left-40 w-60 h-60 bg-blue-700 rounded-full filter blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-          </div>
-          
+        <section className="relative py-20 md:py-32 overflow-hidden pt-24 bg-white dark:bg-black">
           <div className="container px-4 mx-auto relative z-10">
             <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-pinterest-red/10 to-purple-500/10 rounded-2xl blur-xl"></div>
+              </div>
               <div className="inline-block mb-4 px-3 py-1 rounded-full bg-pinterest-red/20 border border-pinterest-red/30 text-pinterest-red text-sm font-medium animate-fade-in">
                 {APP_NAME}
               </div>
