@@ -34,7 +34,7 @@ export const Navbar = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm border-b border-white/10 dark:border-white/5">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         {/* Logo */}
         <Link to="/" className="flex items-center">
@@ -45,6 +45,16 @@ export const Navbar = ({
           />
         </Link>
 
+        {/* Desktop Navigation Links */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link to="/#how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors">
+            How It Works
+          </Link>
+          <Link to="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors">
+            Pricing
+          </Link>
+        </div>
+
         {/* Mobile menu button */}
         <button 
           className="md:hidden text-gray-600 dark:text-gray-300 p-2" 
@@ -53,14 +63,14 @@ export const Navbar = ({
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Controls */}
         <div className="hidden md:flex items-center gap-3">
           {/* Theme Toggle */}
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
-            className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800" 
+            className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 border border-white/10 dark:border-white/5" 
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {theme === 'dark' ? 
@@ -76,7 +86,7 @@ export const Navbar = ({
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-2 border border-white/10 dark:border-white/5">
                   <User className="h-4 w-4" />
                   <span className="hidden md:inline">
                     {user.email?.split('@')[0]}
@@ -101,7 +111,7 @@ export const Navbar = ({
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="gap-2"
+                className="gap-2 border border-white/10 dark:border-white/5"
                 onClick={() => navigate('/auth')}
               >
                 <LogIn className="h-4 w-4" />
@@ -110,7 +120,7 @@ export const Navbar = ({
               <Button 
                 variant="default" 
                 size="sm" 
-                className="gap-2 bg-pinterest-red"
+                className="gap-2 bg-pinterest-red border border-white/10"
                 onClick={() => {
                   navigate('/auth');
                   setTimeout(() => document.getElementById('register-tab')?.click(), 100);
@@ -125,13 +135,28 @@ export const Navbar = ({
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-black shadow-md p-4 flex flex-col gap-4">
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-black shadow-md p-4 flex flex-col gap-4 border-t border-white/10 dark:border-white/5">
+            <Link 
+              to="/#how-it-works" 
+              className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              How It Works
+            </Link>
+            <Link 
+              to="/pricing" 
+              className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Pricing
+            </Link>
+            <div className="border-t border-gray-200 dark:border-gray-800 my-2"></div>
             <div className="flex items-center justify-between">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
-                className="text-gray-600 dark:text-gray-300"
+                className="text-gray-600 dark:text-gray-300 border border-white/10 dark:border-white/5"
               >
                 {theme === 'dark' ? 
                   <Sun size={20} className="text-yellow-400" /> : 
@@ -147,7 +172,7 @@ export const Navbar = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="justify-start"
+                  className="justify-start border border-white/10 dark:border-white/5"
                   onClick={() => {
                     navigate('/dashboard');
                     setMobileMenuOpen(false);
@@ -158,7 +183,7 @@ export const Navbar = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="justify-start"
+                  className="justify-start border border-white/10 dark:border-white/5"
                   onClick={() => {
                     navigate('/settings');
                     setMobileMenuOpen(false);
@@ -169,7 +194,7 @@ export const Navbar = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="justify-start"
+                  className="justify-start border border-white/10 dark:border-white/5"
                   onClick={() => {
                     handleSignOut();
                     setMobileMenuOpen(false);
@@ -184,7 +209,7 @@ export const Navbar = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="justify-start gap-2"
+                  className="justify-start gap-2 border border-white/10 dark:border-white/5"
                   onClick={() => {
                     navigate('/auth');
                     setMobileMenuOpen(false);
@@ -196,7 +221,7 @@ export const Navbar = ({
                 <Button 
                   variant="default" 
                   size="sm" 
-                  className="justify-start gap-2 bg-pinterest-red"
+                  className="justify-start gap-2 bg-pinterest-red border border-white/10"
                   onClick={() => {
                     navigate('/auth');
                     setMobileMenuOpen(false);
