@@ -41,12 +41,13 @@ export const Navbar = ({
           <img 
             src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" 
             alt="Pinterest Grab" 
-            className="h-10" 
+            className="h-8" 
           />
+          <span className="ml-2 font-semibold text-lg">Pinterest Grab</span>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden md:flex items-center space-x-8">
           <Link to="/#how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors">
             How It Works
           </Link>

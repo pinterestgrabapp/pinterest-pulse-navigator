@@ -1,4 +1,3 @@
-
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -18,7 +17,7 @@ const Index = () => {
       <Navbar />
       
       <main className="flex-1">
-        {/* Hero Section */}
+        {/* Hero Section - Centered with no image */}
         <section className="relative py-20 md:py-32 overflow-hidden pt-24">
           <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white dark:from-black dark:via-gray-900 dark:to-black z-0"></div>
           
@@ -30,41 +29,29 @@ const Index = () => {
           </div>
           
           <div className="container px-4 mx-auto relative z-10">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-1/2 lg:pr-12">
-                <div className="inline-block mb-4 px-3 py-1 rounded-full bg-pinterest-red/20 border border-pinterest-red/30 text-pinterest-red text-sm font-medium animate-fade-in">
-                  {APP_NAME}
-                </div>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-700 dark:from-white dark:to-gray-400">
-                    {t('hero')}
-                  </span>
-                </h1>
-                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                  {t('heroSubtitle')}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                  <Button asChild size="lg" className="rounded-full px-8 bg-pinterest-red hover:bg-pinterest-dark border border-white/10">
-                    <Link to={user ? "/dashboard" : "/auth"}>
-                      {t('getStarted')} <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-gray-300 dark:border-white/10 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
-                    <a href="#how-it-works">
-                      {t('learnMore')}
-                    </a>
-                  </Button>
-                </div>
+            <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+              <div className="inline-block mb-4 px-3 py-1 rounded-full bg-pinterest-red/20 border border-pinterest-red/30 text-pinterest-red text-sm font-medium animate-fade-in">
+                {APP_NAME}
               </div>
-              <div className="md:w-1/2 mt-12 md:mt-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-pinterest-red/20 to-purple-500/20 rounded-2xl blur-xl"></div>
-                  <img 
-                    src="/lovable-uploads/c1448383-51a1-45d5-ab01-73127af6b8fd.png" 
-                    alt="Pinterest Analysis Dashboard" 
-                    className="relative z-10 w-full h-auto rounded-2xl shadow-xl border border-white/20 dark:border-white/10"
-                  />
-                </div>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-700 dark:from-white dark:to-gray-400">
+                  {t('hero')}
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                {t('heroSubtitle')}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                <Button asChild size="lg" className="rounded-full px-8 bg-pinterest-red hover:bg-pinterest-dark border border-white/10">
+                  <Link to={user ? "/dashboard" : "/auth"}>
+                    {t('getStarted')} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-gray-300 dark:border-white/10 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
+                  <a href="#how-it-works">
+                    {t('learnMore')}
+                  </a>
+                </Button>
               </div>
             </div>
           </div>
