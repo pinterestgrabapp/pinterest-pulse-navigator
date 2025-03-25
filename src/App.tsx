@@ -13,6 +13,7 @@ import KeywordResearch from "./pages/KeywordResearch";
 import PinAnalysis from "./pages/PinAnalysis";
 import CreatePin from "./pages/CreatePin";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
 import Export from "./pages/Export";
 import Help from "./pages/Help";
 import Auth from "./pages/Auth";
@@ -46,6 +47,7 @@ const App = () => (
                 <Route path="/create-pin" element={<ProtectedRoute><CreatePin /></ProtectedRoute>} />
                 <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/pin-status" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 
                 {/* 404 Route */}

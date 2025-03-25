@@ -1,6 +1,6 @@
 
 import React, { ReactNode } from 'react';
-import Navbar from './Navbar';
+import Navbar from './DashboardNavbar';
 import Footer from './Footer';
 import DashboardSidebar from './Sidebar';
 
@@ -11,7 +11,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
-      <Navbar isMinimal={true} />
+      <Navbar />
       
       <div className="flex flex-1 pt-16">
         {/* Fixed Sidebar */}

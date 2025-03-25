@@ -20,7 +20,7 @@ export const DashboardSidebar = () => {
   ];
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900 py-4">
+    <div className="h-full flex flex-col bg-white dark:bg-black py-4">
       <div className="flex-1 overflow-auto px-3">
         <div className="mb-6">
           <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
@@ -34,7 +34,7 @@ export const DashboardSidebar = () => {
                   className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                     location.pathname === item.href 
                       ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
@@ -56,7 +56,7 @@ export const DashboardSidebar = () => {
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                   location.pathname === '/keyword-research' 
                     ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] text-gray-700 dark:text-gray-300'
                 }`}
               >
                 <Hash className="h-4 w-4" />
@@ -77,7 +77,7 @@ export const DashboardSidebar = () => {
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                   location.pathname === '/settings' 
                     ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] text-gray-700 dark:text-gray-300'
                 }`}
               >
                 <Settings className="h-4 w-4" />
@@ -90,7 +90,7 @@ export const DashboardSidebar = () => {
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                   location.pathname === '/profile' 
                     ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] text-gray-700 dark:text-gray-300'
                 }`}
               >
                 <User className="h-4 w-4" />
@@ -103,7 +103,7 @@ export const DashboardSidebar = () => {
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                   location.pathname === '/help' 
                     ? 'bg-gray-100 dark:bg-gray-800 font-medium text-primary' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] text-gray-700 dark:text-gray-300'
                 }`}
               >
                 <HelpCircle className="h-4 w-4" />
