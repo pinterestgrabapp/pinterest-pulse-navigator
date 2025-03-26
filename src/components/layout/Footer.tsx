@@ -1,46 +1,28 @@
-
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-
 interface FooterProps {
   className?: string;
 }
-
-const Footer = ({ className }: FooterProps) => {
-  return (
-    <footer className={cn("bg-white dark:bg-black py-6 border-t border-gray-200 dark:border-white/5", className)}>
+const Footer = ({
+  className
+}: FooterProps) => {
+  return <footer className={cn("bg-white dark:bg-black py-6 border-t border-gray-200 dark:border-white/5", className)}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
-              <img 
-                src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" 
-                alt="Pinterest Grab"
-                className="h-6"
-              />
+              <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-6" />
               <span className="font-medium">Pinterest Grab</span>
             </Link>
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <Link to="/" className="text-gray-600 dark:text-gray-400 hover:text-primary">
-              Home
-            </Link>
-            <Link to="/#how-it-works" className="text-gray-600 dark:text-gray-400 hover:text-primary">
-              How It Works
-            </Link>
-            <Link to="/pricing" className="text-gray-600 dark:text-gray-400 hover:text-primary">
-              Pricing
-            </Link>
-            <Link to="/keyword-research" className="text-gray-600 dark:text-gray-400 hover:text-primary">
-              Keyword Research
-            </Link>
-            <Link to="/pin-analysis" className="text-gray-600 dark:text-gray-400 hover:text-primary">
-              Pin Analysis
-            </Link>
-            <Link to="/help" className="text-gray-600 dark:text-gray-400 hover:text-primary">
-              Help
-            </Link>
+            
+            
+            
+            
+            
+            
           </div>
           
           <div className="text-gray-600 dark:text-gray-400 text-sm">
@@ -48,8 +30,6 @@ const Footer = ({ className }: FooterProps) => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
