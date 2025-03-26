@@ -1,6 +1,6 @@
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import KeywordResearchTool from "@/components/KeywordResearchTool";
+import KeywordExplorer from "@/components/KeywordExplorer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/utils/languageUtils";
 
@@ -12,19 +12,19 @@ const KeywordResearch = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('keywordResearch')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
-          {t('keywordResearchDescription')}
+          Discover high-performing Pinterest keywords and track your rankings
         </p>
       </div>
       
-      <Card className="glass-card">
+      <Card className="glass-card bg-white dark:bg-black">
         <CardHeader>
-          <CardTitle>{t('keywordExplorer')}</CardTitle>
+          <CardTitle>Pinterest Keyword Explorer</CardTitle>
           <CardDescription>
-            {t('keywordExplorerDescription')}
+            Search over 12 million Pinterest interests and keywords to find the best ones for your content
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <KeywordResearchTool />
+          <KeywordExplorer />
         </CardContent>
       </Card>
     </DashboardLayout>

@@ -13,6 +13,8 @@ export const DashboardSidebar = () => {
     { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard' },
     { icon: Search, label: 'keywordResearch', href: '/keyword-research' },
     { icon: TrendingUp, label: 'pinAnalysis', href: '/pin-analysis' },
+    { icon: BarChart4, label: 'pinStats', href: '/pin-stats' },
+    { icon: Bookmark, label: 'savedPins', href: '/saved-pins' },
     { icon: FileDown, label: 'export', href: '/export' },
     { icon: ImagePlus, label: 'createPin', href: '/create-pin' },
   ];
