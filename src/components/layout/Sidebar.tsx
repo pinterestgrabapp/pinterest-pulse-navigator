@@ -13,14 +13,14 @@ export const DashboardSidebar = () => {
     { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard' },
     { icon: Search, label: 'keywordResearch', href: '/keyword-research' },
     { icon: TrendingUp, label: 'pinAnalysis', href: '/pin-analysis' },
-    { icon: FileDown, label: 'Export', href: '/export' },
+    { icon: FileDown, label: 'export', href: '/export' },
     { icon: ImagePlus, label: 'createPin', href: '/create-pin' },
   ];
 
   const accountItems = [
     { icon: Settings, label: 'settings', href: '/settings' },
     { icon: User, label: 'profile', href: '/profile' },
-    { icon: HelpCircle, label: 'Help', href: '/help' }
+    { icon: HelpCircle, label: 'help', href: '/help' }
   ];
 
   return (
@@ -42,7 +42,7 @@ export const DashboardSidebar = () => {
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
-                  <span>{item.label === 'Export' ? 'Export' : t(item.label)}</span>
+                  <span>{item.label === 'export' ? 'Export' : t(item.label)}</span>
                 </Link>
               </li>
             ))}
@@ -65,7 +65,7 @@ export const DashboardSidebar = () => {
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
-                  <span>{item.label === 'Help' ? 'Help' : t(item.label)}</span>
+                  <span>{item.label === 'help' ? 'Help' : t(item.label)}</span>
                 </Link>
               </li>
             ))}

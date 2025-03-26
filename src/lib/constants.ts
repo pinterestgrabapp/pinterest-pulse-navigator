@@ -82,6 +82,8 @@ export const TRANSLATIONS = {
     navigation: "Navigation",
     tools: "Tools",
     keywordExplorer: "Keyword Explorer",
+    export: "Export",
+    help: "Help",
     
     // Pages
     pinAnalyzer: "Pin Analyzer",
@@ -234,7 +236,6 @@ export const TRANSLATIONS = {
     blog: "Blog",
     copyright: "© 2023 Pinterest Grab. All rights reserved.",
   },
-  // Other languages would go here with the same keys
   es: {
     // Navigation
     home: "Inicio",
@@ -246,12 +247,14 @@ export const TRANSLATIONS = {
     navigation: "Navegación",
     tools: "Herramientas",
     keywordExplorer: "Explorador de Palabras Clave",
+    export: "Exportar",
+    help: "Ayuda",
     
     // Auth
     login: "Iniciar Sesión",
     signup: "Registrarse",
 
-    // Profile Page (added for Spanish)
+    // Profile Page
     profile: "Perfil",
     manageYourProfileInformation: "Administre su información de perfil y configuración de cuenta",
     profileInformation: "Información del Perfil",
@@ -270,6 +273,7 @@ export const TRANSLATIONS = {
     managePasswordAndSecurity: "Administre su contraseña y seguridad de la cuenta",
     changePassword: "Cambiar Contraseña",
     updateYourPassword: "Actualice su contraseña",
+    account: "Cuenta",
     
     // Keep minimal Spanish translations for now
     // These will be expanded in the future
