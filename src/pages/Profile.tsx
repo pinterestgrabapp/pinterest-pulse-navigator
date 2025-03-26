@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,33 +7,36 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/utils/languageUtils";
-
 const Profile = () => {
-  const { user } = useAuth();
-  const { t } = useLanguage();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
-  
   const initialUserData = {
     name: user?.user_metadata?.name || user?.email?.split('@')[0] || '',
     bio: user?.user_metadata?.bio || '',
-    website: user?.user_metadata?.website || '',
+    website: user?.user_metadata?.website || ''
   };
-  
   const [userData, setUserData] = useState(initialUserData);
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserData(prev => ({ ...prev, [name]: value }));
+    const {
+      name,
+      value
+    } = e.target;
+    setUserData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, we would update the user profile here
     setIsEditing(false);
   };
-
-  return (
-    <DashboardLayout>
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('profile')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -49,23 +51,19 @@ const Profile = () => {
               <CardTitle>{t('profileInformation')}</CardTitle>
               <CardDescription>{t('manageYourPublicProfile')}</CardDescription>
             </div>
-            {!isEditing ? (
-              <Button onClick={() => setIsEditing(true)}>
+            {!isEditing ? <Button onClick={() => setIsEditing(true)} className="bg-pinterest-red">
                 {t('edit')}
-              </Button>
-            ) : (
-              <div className="flex gap-2">
+              </Button> : <div className="flex gap-2">
                 <Button variant="outline" onClick={() => {
-                  setIsEditing(false);
-                  setUserData(initialUserData);
-                }}>
+              setIsEditing(false);
+              setUserData(initialUserData);
+            }}>
                   {t('cancel')}
                 </Button>
                 <Button onClick={handleSubmit}>
                   {t('save')}
                 </Button>
-              </div>
-            )}
+              </div>}
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row gap-8">
@@ -76,34 +74,21 @@ const Profile = () => {
                     {initialUserData.name.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                {isEditing && (
-                  <Button variant="outline" size="sm">
+                {isEditing && <Button variant="outline" size="sm">
                     {t('changePhoto')}
-                  </Button>
-                )}
+                  </Button>}
               </div>
               
               <div className="flex-1">
-                {isEditing ? (
-                  <form className="space-y-4">
+                {isEditing ? <form className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">{t('name')}</Label>
-                      <Input 
-                        id="name"
-                        name="name"
-                        value={userData.name}
-                        onChange={handleChange}
-                      />
+                      <Input id="name" name="name" value={userData.name} onChange={handleChange} />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="email">{t('email')}</Label>
-                      <Input 
-                        id="email"
-                        type="email"
-                        value={user?.email || ''}
-                        disabled
-                      />
+                      <Input id="email" type="email" value={user?.email || ''} disabled />
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {t('emailCannotBeChanged')}
                       </p>
@@ -111,28 +96,14 @@ const Profile = () => {
                     
                     <div className="space-y-2">
                       <Label htmlFor="bio">{t('bio')}</Label>
-                      <Input 
-                        id="bio"
-                        name="bio"
-                        value={userData.bio}
-                        onChange={handleChange}
-                        placeholder={t('tellUsAboutYourself') as string}
-                      />
+                      <Input id="bio" name="bio" value={userData.bio} onChange={handleChange} placeholder={t('tellUsAboutYourself') as string} />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="website">{t('website')}</Label>
-                      <Input 
-                        id="website"
-                        name="website"
-                        value={userData.website}
-                        onChange={handleChange}
-                        placeholder="https://example.com"
-                      />
+                      <Input id="website" name="website" value={userData.website} onChange={handleChange} placeholder="https://example.com" />
                     </div>
-                  </form>
-                ) : (
-                  <div className="space-y-4">
+                  </form> : <div className="space-y-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {t('name')}
@@ -147,17 +118,14 @@ const Profile = () => {
                       <p className="mt-1">{user?.email}</p>
                     </div>
                     
-                    {initialUserData.bio && (
-                      <div>
+                    {initialUserData.bio && <div>
                         <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                           {t('bio')}
                         </h3>
                         <p className="mt-1">{initialUserData.bio}</p>
-                      </div>
-                    )}
+                      </div>}
                     
-                    {initialUserData.website && (
-                      <div>
+                    {initialUserData.website && <div>
                         <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                           {t('website')}
                         </h3>
@@ -166,10 +134,8 @@ const Profile = () => {
                             {initialUserData.website}
                           </a>
                         </p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      </div>}
+                  </div>}
               </div>
             </div>
           </CardContent>
@@ -195,8 +161,6 @@ const Profile = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default Profile;
