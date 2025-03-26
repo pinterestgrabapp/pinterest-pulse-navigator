@@ -22,14 +22,14 @@ export const useLanguage = () => {
   }, [language]);
 
   // Function to get translations based on the current language
-  const t = useCallback((key: TranslationKey): string => {
+  const t = useCallback((key: string): string => {
     if (!TRANSLATIONS[language]) {
       console.warn(`Language "${language}" is not available, using default language "${DEFAULT_LANGUAGE}"`);
-      return TRANSLATIONS[DEFAULT_LANGUAGE][key] || key;
+      return TRANSLATIONS[DEFAULT_LANGUAGE][key as TranslationKey] || key;
     }
     
     return (TRANSLATIONS[language] as Record<string, string>)[key] || 
-           TRANSLATIONS[DEFAULT_LANGUAGE][key] || 
+           TRANSLATIONS[DEFAULT_LANGUAGE][key as TranslationKey] || 
            key;
   }, [language]);
 
