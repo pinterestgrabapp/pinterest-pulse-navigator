@@ -42,7 +42,7 @@ export const DashboardSidebar = () => {
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
-                  <span>{item.label === 'export' ? 'Export' : t(item.label)}</span>
+                  <span>{t(item.label)}</span>
                 </Link>
               </li>
             ))}
@@ -65,7 +65,7 @@ export const DashboardSidebar = () => {
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
-                  <span>{item.label === 'help' ? 'Help' : t(item.label)}</span>
+                  <span>{t(item.label)}</span>
                 </Link>
               </li>
             ))}
