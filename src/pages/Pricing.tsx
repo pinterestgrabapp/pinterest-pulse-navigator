@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from "react-router-dom";
 import { Check, ArrowRight } from "lucide-react";
@@ -6,12 +5,11 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/contexts/AuthContext";
-
 const Pricing = () => {
-  const { user } = useAuth();
-
-  return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
+  const {
+    user
+  } = useAuth();
+  return <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
       <Navbar />
       
       <main className="flex-1 pt-20">
@@ -69,11 +67,11 @@ const Pricing = () => {
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Track 25 keyword rankings</span>
+                    <span>Track 35 keyword rankings</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Track 50 Pinterest search suggestion changes</span>
+                    <span>Track 60 Pinterest search suggestion changes</span>
                   </li>
                 </ul>
                 
@@ -195,8 +193,6 @@ const Pricing = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Pricing;
