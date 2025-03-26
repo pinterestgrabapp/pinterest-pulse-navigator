@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Sun, Moon, LogIn, UserPlus, Menu, X, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/utils/languageUtils';
@@ -11,9 +11,23 @@ import { useAuth } from '@/contexts/AuthContext';
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
+  
+  // Function to handle smooth scrolling to section when on the home page
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname === '/') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileMenuOpen(false);
+    } else {
+      navigate(`/#${sectionId}`);
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm border-b border-white/10 dark:border-white/5">
@@ -27,18 +41,32 @@ export const Navbar = () => {
 
           {/* Main Navigation - Center Aligned */}
           <nav className="hidden md:flex items-center justify-center flex-1 space-x-6">
-            <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <Link 
+              to="/" 
+              className="flex items-center gap-2 px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-black dark:hover:bg-black hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] hover:border hover:border-white/20 dark:hover:border-white/20 transition-all duration-300"
+            >
               <Home className="w-4 h-4" />
               <span>{t('home')}</span>
             </Link>
-            <Link to="/#features" className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              {t('features')}
-            </Link>
-            <Link to="/#how-it-works" className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              Try It
-            </Link>
             
-            <Link to="/pricing" className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <button 
+              onClick={() => scrollToSection('features')} 
+              className="px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-black dark:hover:bg-black hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] hover:border hover:border-white/20 dark:hover:border-white/20 transition-all duration-300"
+            >
+              {t('features')}
+            </button>
+            
+            <button 
+              onClick={() => scrollToSection('how-it-works')} 
+              className="px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-black dark:hover:bg-black hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] hover:border hover:border-white/20 dark:hover:border-white/20 transition-all duration-300"
+            >
+              Try It
+            </button>
+            
+            <Link 
+              to="/pricing" 
+              className="px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-black dark:hover:bg-black hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_8px_rgba(234,56,76,0.5)] hover:border hover:border-white/20 dark:hover:border-white/20 transition-all duration-300"
+            >
               {t('pricing')}
             </Link>
           </nav>
@@ -88,12 +116,21 @@ export const Navbar = () => {
               <Home className="w-4 h-4" />
               <span>{t('home')}</span>
             </Link>
-            <Link to="/#features" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+            
+            <button 
+              onClick={() => scrollToSection('features')} 
+              className="text-left text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2"
+            >
               {t('features')}
-            </Link>
-            <Link to="/#how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+            </button>
+            
+            <button 
+              onClick={() => scrollToSection('how-it-works')} 
+              className="text-left text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2"
+            >
               Try It
-            </Link>
+            </button>
+            
             <Link to="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
               {t('pricing')}
             </Link>
