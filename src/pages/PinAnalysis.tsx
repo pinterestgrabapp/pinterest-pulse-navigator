@@ -30,10 +30,10 @@ const PinAnalysis = () => {
         </TabsList>
         
         <TabsContent value="pins">
-          <div className="bg-black dark:bg-black rounded-xl border border-gray-700 dark:border-gray-700 overflow-hidden shadow-sm">
-            <div className="p-6 border-b border-gray-700 dark:border-gray-700">
+          <div className="bg-black rounded-xl border border-gray-700 overflow-hidden shadow-sm">
+            <div className="p-6 border-b border-gray-700">
               <h2 className="text-xl font-semibold text-white">{t('pinAnalyzer')}</h2>
-              <p className="text-sm text-gray-400 dark:text-gray-400">
+              <p className="text-sm text-gray-400">
                 {t('pinAnalyzerDescription')}
               </p>
             </div>
@@ -44,10 +44,10 @@ const PinAnalysis = () => {
         </TabsContent>
         
         <TabsContent value="accounts">
-          <div className="bg-black dark:bg-black rounded-xl border border-gray-700 dark:border-gray-700 overflow-hidden shadow-sm">
-            <div className="p-6 border-b border-gray-700 dark:border-gray-700">
+          <div className="bg-black rounded-xl border border-gray-700 overflow-hidden shadow-sm">
+            <div className="p-6 border-b border-gray-700">
               <h2 className="text-xl font-semibold text-white">Account Analyzer</h2>
-              <p className="text-sm text-gray-400 dark:text-gray-400">
+              <p className="text-sm text-gray-400">
                 Analyze any Pinterest account to see their top pins, interests, and statistics
               </p>
             </div>

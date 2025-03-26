@@ -20,15 +20,15 @@ const HelpPage = () => {
     },
     {
       question: "Can I export my analyzed data?",
-      answer: "Yes, you can download the data for each analyzed pin by clicking the download icon in the Actions column. You can also visit the Export page to view and download all your analyzed pins."
+      answer: "Yes, Pro users can download basic data, while Plus users have access to advanced exporting features for both the Keyword Explorer and Account Explorer tools."
     },
     {
       question: "Is there a limit to how many pins I can analyze?",
-      answer: "Free accounts can analyze up to 10 pins per month. Premium accounts have higher or unlimited limits depending on the subscription tier."
+      answer: "Pro users can track up to 25 keyword rankings and 50 Pinterest search suggestion changes. Plus users have unlimited tracking capabilities."
     },
     {
       question: "How do I save my favorite pins?",
-      answer: "After analyzing a pin, you can save it to your collection by clicking the bookmark icon. Visit the Saved Pins page to view all your saved pins."
+      answer: "After analyzing a pin, you can save it to your collection by clicking the bookmark icon. Visit the Saved Pins page to view all your saved pins. Plus users can organize saved pins into custom lists."
     },
     {
       question: "How is the Pin Score calculated?",
@@ -36,7 +36,7 @@ const HelpPage = () => {
     },
     {
       question: "How do I track keyword rankings?",
-      answer: "Use our keyword tracking feature to monitor how your pins rank for specific keywords. You can add keywords to track and get weekly reports on ranking changes."
+      answer: "Use our keyword tracking feature to monitor how your pins rank for specific keywords. Pro users can track up to 25 keywords, while Plus users have unlimited tracking capabilities."
     }
   ];
   

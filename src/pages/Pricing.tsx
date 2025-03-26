@@ -36,12 +36,12 @@ const Pricing = () => {
         <section className="py-16 bg-gray-50 dark:bg-black">
           <div className="container px-4 mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {/* Free Plan */}
+              {/* Pro Plan */}
               <div className="glass-card rounded-xl p-8 bg-white/50 dark:bg-black border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-gray-300 dark:hover:border-white/20">
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-2">Free</h3>
-                  <p className="text-3xl font-bold">$0<span className="text-lg text-gray-400">/month</span></p>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">Perfect for casual Pinterest users</p>
+                  <h3 className="text-xl font-semibold mb-2">Pro</h3>
+                  <p className="text-3xl font-bold">$19<span className="text-lg text-gray-400">/month</span></p>
+                  <p className="text-gray-600 dark:text-gray-400 mt-2">Perfect for Pinterest creators and marketers</p>
                 </div>
                 
                 <hr className="border-gray-200 dark:border-gray-800 my-6" />
@@ -49,43 +49,51 @@ const Pricing = () => {
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>2 pin analyses per account</span>
+                    <span>Keyword Explorer tool</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Basic keyword data</span>
+                    <span>Account Explorer tool</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>CSV export</span>
+                    <span>Top Pins tool</span>
                   </li>
-                  <li className="flex items-start opacity-50">
-                    <Check className="h-5 w-5 mr-2 mt-0.5" />
-                    <span>Historical data tracking</span>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Pin Stats tool</span>
                   </li>
-                  <li className="flex items-start opacity-50">
-                    <Check className="h-5 w-5 mr-2 mt-0.5" />
-                    <span>Pin performance analytics</span>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Save Pins</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Track 25 keyword rankings</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Track 50 Pinterest search suggestion changes</span>
                   </li>
                 </ul>
                 
                 <Button asChild size="lg" variant="outline" className="w-full rounded-full border border-white/30 dark:border-white/10">
                   <Link to={user ? "/dashboard" : "/auth"}>
-                    Get Started Free
+                    Get Started with Pro
                   </Link>
                 </Button>
               </div>
               
-              {/* Pro Plan */}
+              {/* Plus Plan */}
               <div className="glass-card rounded-xl p-8 bg-gradient-to-br from-pinterest-red/20 to-transparent border border-pinterest-red/30 dark:border-pinterest-red/30 transition-all duration-300 hover:border-pinterest-red/50 relative overflow-hidden">
                 <div className="absolute top-0 right-0 bg-pinterest-red text-white px-4 py-1 text-sm font-bold">
                   POPULAR
                 </div>
                 
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-2">Pro</h3>
-                  <p className="text-3xl font-bold">$19<span className="text-lg text-gray-400">/month</span></p>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">For serious Pinterest marketers</p>
+                  <h3 className="text-xl font-semibold mb-2">Plus</h3>
+                  <p className="text-3xl font-bold">$39<span className="text-lg text-gray-400">/month</span></p>
+                  <p className="text-gray-600 dark:text-gray-400 mt-2">For professional Pinterest marketers</p>
                 </div>
                 
                 <hr className="border-gray-200 dark:border-gray-800 my-6" />
@@ -93,29 +101,41 @@ const Pricing = () => {
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Unlimited pin analyses</span>
+                    <span>Everything in Pro, plus</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Advanced keyword metrics</span>
+                    <span>Track Unlimited keyword rankings</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Multiple export formats</span>
+                    <span>Track Unlimited Pinterest search suggestion changes</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Historical data tracking</span>
+                    <span>Custom lists for saved pins</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
-                    <span>Pin performance analytics</span>
+                    <span>Custom lists for keywords</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Keyword Explorer exporting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Account Explorer exporting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-pinterest-red mr-2 mt-0.5" />
+                    <span>Follow Pinterest Accounts in Account Explorer</span>
                   </li>
                 </ul>
                 
                 <Button asChild size="lg" className="w-full rounded-full bg-pinterest-red hover:bg-pinterest-dark border border-white/10">
                   <Link to={user ? "/dashboard" : "/auth"}>
-                    Start Pro Trial
+                    Start Plus Trial
                   </Link>
                 </Button>
               </div>
@@ -131,23 +151,23 @@ const Pricing = () => {
               
               <div className="space-y-6">
                 <div className="p-6 rounded-xl border border-white/30 dark:border-white/10 bg-white dark:bg-black/50">
-                  <h3 className="text-xl font-semibold mb-2">What's included in the free plan?</h3>
-                  <p className="text-gray-600 dark:text-gray-400">The free plan includes basic keyword research for up to 2 pins. It's perfect for casual Pinterest users who want to understand what makes a pin successful.</p>
+                  <h3 className="text-xl font-semibold mb-2">What's included in the Pro plan?</h3>
+                  <p className="text-gray-600 dark:text-gray-400">The Pro plan includes our Keyword Explorer, Account Explorer, Top Pins tool, Pin Stats tool, the ability to save pins, tracking for up to 25 keyword rankings, and tracking for 50 Pinterest search suggestion changes.</p>
+                </div>
+                
+                <div className="p-6 rounded-xl border border-white/30 dark:border-white/10 bg-white dark:bg-black/50">
+                  <h3 className="text-xl font-semibold mb-2">What additional features come with the Plus plan?</h3>
+                  <p className="text-gray-600 dark:text-gray-400">The Plus plan includes everything in Pro, plus unlimited keyword ranking tracking, unlimited Pinterest search suggestion tracking, custom lists for saved pins and keywords, exporting capabilities for Keyword Explorer and Account Explorer, and the ability to follow Pinterest accounts in Account Explorer.</p>
                 </div>
                 
                 <div className="p-6 rounded-xl border border-white/30 dark:border-white/10 bg-white dark:bg-black/50">
                   <h3 className="text-xl font-semibold mb-2">Can I upgrade or downgrade my plan later?</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Yes, you can upgrade to the Pro plan at any time. If you need to downgrade, you can switch back to the free plan at the end of your billing cycle.</p>
+                  <p className="text-gray-600 dark:text-gray-400">Yes, you can upgrade or downgrade your plan at any time. Changes will take effect at the end of your current billing cycle.</p>
                 </div>
                 
                 <div className="p-6 rounded-xl border border-white/30 dark:border-white/10 bg-white dark:bg-black/50">
-                  <h3 className="text-xl font-semibold mb-2">Is there a limit to how many pins I can analyze?</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Free users can analyze up to 2 pins. Pro users have unlimited pin analysis capabilities to help optimize their entire Pinterest strategy.</p>
-                </div>
-                
-                <div className="p-6 rounded-xl border border-white/30 dark:border-white/10 bg-white dark:bg-black/50">
-                  <h3 className="text-xl font-semibold mb-2">Do you offer any team or agency plans?</h3>
-                  <p className="text-gray-600 dark:text-gray-400">We're currently developing team and agency plans. If you're interested, please contact us for custom enterprise pricing.</p>
+                  <h3 className="text-xl font-semibold mb-2">How often is keyword data updated?</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Keyword rankings and search suggestions are updated every 7 days, giving you fresh data to optimize your Pinterest strategy.</p>
                 </div>
               </div>
             </div>

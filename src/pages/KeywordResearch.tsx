@@ -16,7 +16,7 @@ const KeywordResearch = () => {
         </p>
       </div>
       
-      <Card className="glass-card bg-white dark:bg-black">
+      <Card className="glass-card bg-black">
         <CardHeader>
           <CardTitle>Pinterest Keyword Explorer</CardTitle>
           <CardDescription>
