@@ -93,6 +93,26 @@ export const TRANSLATIONS = {
     createPinDescription: "Create and publish Pinterest pins directly from our platform",
     createPinButton: "Create Pin",
     
+    // Profile Page
+    profile: "Profile",
+    manageYourProfileInformation: "Manage your profile information and account settings",
+    profileInformation: "Profile Information",
+    manageYourPublicProfile: "Manage your public profile",
+    edit: "Edit",
+    save: "Save",
+    cancel: "Cancel",
+    changePhoto: "Change Photo",
+    name: "Name",
+    email: "Email",
+    emailCannotBeChanged: "Email address cannot be changed",
+    bio: "Bio",
+    tellUsAboutYourself: "Tell us about yourself",
+    website: "Website",
+    accountSecurity: "Account Security",
+    managePasswordAndSecurity: "Manage your password and account security",
+    changePassword: "Change Password",
+    updateYourPassword: "Update your password",
+    
     // Keyword Tool
     searchKeywords: "Search for keywords...",
     loading: "Loading...",
@@ -140,10 +160,7 @@ export const TRANSLATIONS = {
     account: "Account",
     notifications: "Notifications",
     privacy: "Privacy",
-    profile: "Profile",
     profileSettings: "Manage your personal information",
-    name: "Name",
-    email: "Email",
     saveChanges: "Save Changes",
     notificationSettings: "Notification Preferences",
     notificationDescription: "Control how and when you receive notifications",
@@ -233,6 +250,26 @@ export const TRANSLATIONS = {
     // Auth
     login: "Iniciar Sesión",
     signup: "Registrarse",
+
+    // Profile Page (added for Spanish)
+    profile: "Perfil",
+    manageYourProfileInformation: "Administre su información de perfil y configuración de cuenta",
+    profileInformation: "Información del Perfil",
+    manageYourPublicProfile: "Administre su perfil público",
+    edit: "Editar",
+    save: "Guardar",
+    cancel: "Cancelar",
+    changePhoto: "Cambiar Foto",
+    name: "Nombre",
+    email: "Correo",
+    emailCannotBeChanged: "El correo electrónico no se puede cambiar",
+    bio: "Biografía",
+    tellUsAboutYourself: "Cuéntanos sobre ti",
+    website: "Sitio Web",
+    accountSecurity: "Seguridad de la Cuenta",
+    managePasswordAndSecurity: "Administre su contraseña y seguridad de la cuenta",
+    changePassword: "Cambiar Contraseña",
+    updateYourPassword: "Actualice su contraseña",
     
     // Keep minimal Spanish translations for now
     // These will be expanded in the future
