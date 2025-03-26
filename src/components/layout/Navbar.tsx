@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sun, Moon, LogIn, UserPlus, Menu, X, Home } from 'lucide-react';
@@ -6,20 +7,16 @@ import { useLanguage } from '@/utils/languageUtils';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/contexts/AuthContext';
+
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const {
-    t
-  } = useLanguage();
-  const {
-    theme,
-    setTheme
-  } = useTheme();
-  const {
-    user
-  } = useAuth();
-  return <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm border-b border-white/10 dark:border-white/5">
+  const { t } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm border-b border-white/10 dark:border-white/5">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -32,17 +29,17 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center justify-center flex-1 space-x-6">
             <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <Home className="w-4 h-4" />
-              <span>Home</span>
+              <span>{t('home')}</span>
             </Link>
             <Link to="/#features" className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              Features
+              {t('features')}
             </Link>
             <Link to="/#how-it-works" className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               Try It
             </Link>
             
             <Link to="/pricing" className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              Pricing
+              {t('pricing')}
             </Link>
           </nav>
 
@@ -62,41 +59,43 @@ export const Navbar = () => {
             <LanguageSwitcher />
             
             {/* Auth Buttons */}
-            {user ? <Button variant="default" size="sm" className="gap-2 bg-pinterest-red border border-white/10" onClick={() => navigate('/dashboard')}>
-                Dashboard
-              </Button> : <div className="flex items-center gap-2">
+            {user ? (
+              <Button variant="default" size="sm" className="gap-2 bg-pinterest-red border border-white/10" onClick={() => navigate('/dashboard')}>
+                {t('dashboard')}
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2">
                 <Button variant="ghost" size="sm" className="gap-2 border border-white/10 dark:border-white/5" onClick={() => navigate('/auth')}>
                   <LogIn className="h-4 w-4" />
                   <span>{t('login')}</span>
                 </Button>
                 <Button variant="default" size="sm" className="gap-2 bg-pinterest-red border border-white/10" onClick={() => {
-              navigate('/auth');
-              setTimeout(() => document.getElementById('register-tab')?.click(), 100);
-            }}>
+                  navigate('/auth');
+                  setTimeout(() => document.getElementById('register-tab')?.click(), 100);
+                }}>
                   <UserPlus className="h-4 w-4" />
                   <span>{t('signup')}</span>
                 </Button>
-              </div>}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        {mobileMenuOpen && <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-black shadow-md p-4 flex flex-col gap-4 border-t border-white/10 dark:border-white/5">
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-black shadow-md p-4 flex flex-col gap-4 border-t border-white/10 dark:border-white/5">
             <Link to="/" className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
               <Home className="w-4 h-4" />
-              <span>Home</span>
+              <span>{t('home')}</span>
             </Link>
             <Link to="/#features" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
-              Features
+              {t('features')}
             </Link>
             <Link to="/#how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
               Try It
             </Link>
-            <Link to="/#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
-              Trust
-            </Link>
             <Link to="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-pinterest-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
-              Pricing
+              {t('pricing')}
             </Link>
             
             <div className="border-t border-gray-200 dark:border-gray-800 my-2"></div>
@@ -109,30 +108,37 @@ export const Navbar = () => {
               <LanguageSwitcher />
             </div>
             
-            {user ? <Button variant="default" size="sm" className="gap-2 bg-pinterest-red border border-white/10" onClick={() => {
-          navigate('/dashboard');
-          setMobileMenuOpen(false);
-        }}>
-                Dashboard
-              </Button> : <div className="flex flex-col gap-2">
+            {user ? (
+              <Button variant="default" size="sm" className="gap-2 bg-pinterest-red border border-white/10" onClick={() => {
+                navigate('/dashboard');
+                setMobileMenuOpen(false);
+              }}>
+                {t('dashboard')}
+              </Button>
+            ) : (
+              <div className="flex flex-col gap-2">
                 <Button variant="ghost" size="sm" className="justify-start gap-2 border border-white/10 dark:border-white/5" onClick={() => {
-            navigate('/auth');
-            setMobileMenuOpen(false);
-          }}>
+                  navigate('/auth');
+                  setMobileMenuOpen(false);
+                }}>
                   <LogIn className="h-4 w-4" />
                   {t('login')}
                 </Button>
                 <Button variant="default" size="sm" className="justify-start gap-2 bg-pinterest-red border border-white/10" onClick={() => {
-            navigate('/auth');
-            setMobileMenuOpen(false);
-            setTimeout(() => document.getElementById('register-tab')?.click(), 100);
-          }}>
+                  navigate('/auth');
+                  setMobileMenuOpen(false);
+                  setTimeout(() => document.getElementById('register-tab')?.click(), 100);
+                }}>
                   <UserPlus className="h-4 w-4" />
                   {t('signup')}
                 </Button>
-              </div>}
-          </div>}
+              </div>
+            )}
+          </div>
+        )}
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default Navbar;

@@ -20,6 +20,8 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Pricing from "./pages/Pricing";
+import PinStats from "./pages/PinStats";
+import SavedPins from "./pages/SavedPins";
 
 // Create a new query client instance outside the component
 const queryClient = new QueryClient();
@@ -48,7 +50,8 @@ const App = () => (
                 <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/pin-status" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/pin-stats" element={<ProtectedRoute><PinStats /></ProtectedRoute>} />
+                <Route path="/saved-pins" element={<ProtectedRoute><SavedPins /></ProtectedRoute>} />
                 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />

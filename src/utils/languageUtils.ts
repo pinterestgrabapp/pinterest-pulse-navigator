@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TRANSLATIONS, DEFAULT_LANGUAGE } from '@/lib/constants';
 
 // Define types
@@ -17,10 +17,12 @@ export const useLanguage = () => {
   useEffect(() => {
     // Save language preference to localStorage when it changes
     localStorage.setItem('language', language);
+    // Add HTML lang attribute for better accessibility
+    document.documentElement.lang = language;
   }, [language]);
 
   // Function to get translations based on the current language
-  const t = (key: TranslationKey): string => {
+  const t = useCallback((key: TranslationKey): string => {
     if (!TRANSLATIONS[language]) {
       console.warn(`Language "${language}" is not available, using default language "${DEFAULT_LANGUAGE}"`);
       return TRANSLATIONS[DEFAULT_LANGUAGE][key] || key;
@@ -29,7 +31,7 @@ export const useLanguage = () => {
     return (TRANSLATIONS[language] as Record<string, string>)[key] || 
            TRANSLATIONS[DEFAULT_LANGUAGE][key] || 
            key;
-  };
+  }, [language]);
 
   return {
     language,

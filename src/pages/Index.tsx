@@ -1,3 +1,4 @@
+
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -117,8 +118,14 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Feature 1 */}
               <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                <div className="w-12 h-12 rounded-xl bg-pinterest-red flex items-center justify-center text-white mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <div className="flex items-center justify-center mb-6">
+                  <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pinterest-red">
+                    <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="2" strokeDasharray="10 5" />
+                    <circle cx="100" cy="100" r="40" fill="none" stroke="currentColor" strokeWidth="2" />
+                    <path d="M100,70 L100,130" stroke="currentColor" strokeWidth="3" />
+                    <path d="M70,100 L130,100" stroke="currentColor" strokeWidth="3" />
+                    <circle cx="100" cy="100" r="15" fill="currentColor" fillOpacity="0.3" stroke="currentColor" strokeWidth="1" />
+                  </svg>
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('keywordResearchFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -128,8 +135,14 @@ const Index = () => {
               
               {/* Feature 2 */}
               <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                <div className="w-12 h-12 rounded-xl bg-pinterest-red flex items-center justify-center text-white mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bar-chart"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+                <div className="flex items-center justify-center mb-6">
+                  <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pinterest-red">
+                    <rect x="40" y="40" width="120" height="120" rx="10" stroke="currentColor" strokeWidth="2" />
+                    <path d="M70,130 L70,90" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M100,130 L100,70" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M130,130 L130,100" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M40,150 L160,150" stroke="currentColor" strokeWidth="2" />
+                  </svg>
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('rankTrackingFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -139,8 +152,20 @@ const Index = () => {
               
               {/* Feature 3 */}
               <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                <div className="w-12 h-12 rounded-xl bg-pinterest-red flex items-center justify-center text-white mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-line-chart"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <div className="flex items-center justify-center mb-6">
+                  <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pinterest-red">
+                    <rect x="50" y="50" width="100" height="100" rx="10" stroke="currentColor" strokeWidth="2" />
+                    <rect x="65" y="70" width="70" height="40" rx="5" fill="currentColor" fillOpacity="0.2" />
+                    <rect x="65" y="120" width="40" height="10" rx="2" fill="currentColor" fillOpacity="0.2" />
+                    <path d="M40,40 L70,70" stroke="currentColor" strokeWidth="2" />
+                    <path d="M160,40 L130,70" stroke="currentColor" strokeWidth="2" />
+                    <path d="M40,160 L70,130" stroke="currentColor" strokeWidth="2" />
+                    <path d="M160,160 L130,130" stroke="currentColor" strokeWidth="2" />
+                    <circle cx="40" cy="40" r="10" fill="currentColor" fillOpacity="0.3" />
+                    <circle cx="160" cy="40" r="10" fill="currentColor" fillOpacity="0.3" />
+                    <circle cx="40" cy="160" r="10" fill="currentColor" fillOpacity="0.3" />
+                    <circle cx="160" cy="160" r="10" fill="currentColor" fillOpacity="0.3" />
+                  </svg>
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{t('pinAnalysisFeature')}</h3>
                 <p className="text-gray-600 dark:text-gray-400">
