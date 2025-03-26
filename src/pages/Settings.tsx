@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,12 +5,11 @@ import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/utils/languageUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, LucideShield, User } from "lucide-react";
-
 const Settings = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <DashboardLayout>
+  const {
+    t
+  } = useLanguage();
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('settings')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -45,22 +43,14 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">{t('name')}</label>
-                  <input 
-                    type="text" 
-                    className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700"
-                    defaultValue="John Doe"
-                  />
+                  <input type="text" className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700" defaultValue="John Doe" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">{t('email')}</label>
-                  <input 
-                    type="email" 
-                    className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700"
-                    defaultValue="john@example.com"
-                  />
+                  <input type="email" className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700" defaultValue="john@example.com" />
                 </div>
               </div>
-              <Button>{t('saveChanges')}</Button>
+              <Button className="text-white bg-pinterest-red">{t('saveChanges')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -126,8 +116,6 @@ const Settings = () => {
           </Card>
         </TabsContent>
       </Tabs>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default Settings;
