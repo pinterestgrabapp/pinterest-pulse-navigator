@@ -66,7 +66,8 @@ export default {
         pinterest: {
           red: '#E60023',
           light: '#FFEBEE',
-          dark: '#C2000D'
+          dark: '#C2000D',
+          glow: '#FF1744'
         },
         modern: {
           background: '#F9FAFB',
@@ -130,6 +131,22 @@ export default {
         'pulse-subtle': {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.85' }
+        },
+        'glow-pulse': {
+          '0%, 100%': { 
+            boxShadow: '0 0 15px rgba(230, 0, 35, 0.7), 0 0 30px rgba(230, 0, 35, 0.3)'
+          },
+          '50%': { 
+            boxShadow: '0 0 25px rgba(230, 0, 35, 0.9), 0 0 40px rgba(230, 0, 35, 0.5)'
+          }
+        },
+        'shimmer': {
+          '0%': { 
+            backgroundPosition: '-200% 0' 
+          },
+          '100%': { 
+            backgroundPosition: '200% 0' 
+          }
         }
 			},
 			animation: {
@@ -140,7 +157,9 @@ export default {
         'fade-in-right': 'fade-in-right 0.5s ease-out',
         'scale-in': 'scale-in 0.5s ease-out',
         'float': 'float 5s ease-in-out infinite',
-        'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite'
+        'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
+        'glow-pulse': 'glow-pulse 3s infinite',
+        'shimmer': 'shimmer 3s infinite linear'
 			},
       transitionDuration: {
         '1500': '1500ms',

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -197,6 +198,70 @@
   
   .modern-dashboard-card-body {
     @apply p-6;
+  }
+  
+  /* Glowing and luminescent effects */
+  .glow-red {
+    @apply text-pinterest-red;
+    text-shadow: 0 0 8px rgba(230, 0, 35, 0.7), 0 0 16px rgba(230, 0, 35, 0.5);
+  }
+  
+  .glow-red-bg {
+    @apply bg-pinterest-red;
+    box-shadow: 0 0 15px 2px rgba(230, 0, 35, 0.4), 0 0 30px 5px rgba(230, 0, 35, 0.2);
+  }
+  
+  .btn-dreamy {
+    @apply bg-pinterest-red text-white transition-all duration-500;
+    box-shadow: 0 0 10px rgba(230, 0, 35, 0.5), 0 0 20px rgba(230, 0, 35, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-dreamy:hover {
+    @apply bg-pinterest-dark;
+    box-shadow: 0 0 15px rgba(230, 0, 35, 0.7), 0 0 30px rgba(230, 0, 35, 0.4);
+  }
+  
+  .btn-dreamy::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    transition: all 0.8s;
+    opacity: 0;
+  }
+  
+  .btn-dreamy:hover::after {
+    animation: shine 1.5s ease-out;
+    opacity: 1;
+  }
+  
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) rotate(45deg);
+    }
+    100% {
+      transform: translateX(100%) rotate(45deg);
+    }
+  }
+  
+  .dreamy-border {
+    @apply border border-pinterest-red transition-all duration-300;
+    box-shadow: 0 0 10px rgba(230, 0, 35, 0.3);
+  }
+  
+  .dreamy-border:hover {
+    box-shadow: 0 0 15px rgba(230, 0, 35, 0.5), 0 0 5px rgba(230, 0, 35, 0.3) inset;
   }
 }
 

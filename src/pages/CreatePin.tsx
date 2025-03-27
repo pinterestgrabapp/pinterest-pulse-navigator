@@ -1,16 +1,177 @@
+
+import { useState, useRef, ChangeEvent } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, Upload } from "lucide-react";
 import { useLanguage } from "@/utils/languageUtils";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "@/hooks/use-theme";
+
 const CreatePin = () => {
-  const {
-    t
-  } = useLanguage();
-  return <DashboardLayout>
+  const { t } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { theme } = useTheme();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [keywords, setKeywords] = useState("");
+  const [link, setLink] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileChange(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (file: File) => {
+    // Check if file is an image
+    if (!file.type.match('image.*')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setImageFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileChange(e.target.files[0]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!imageFile) {
+      toast({
+        title: "Image required",
+        description: "Please upload an image for your pin",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!title) {
+      toast({
+        title: "Title required",
+        description: "Please enter a title for your pin",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsUploading(true);
+      
+      // Store image in Supabase Storage
+      const fileName = `${user?.id}_${Date.now()}_${imageFile.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('pins')
+        .upload(fileName, imageFile);
+        
+      if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('pins')
+        .getPublicUrl(fileName);
+        
+      const imageUrl = urlData.publicUrl;
+      
+      // Store pin data in database
+      const { error: insertError } = await supabase
+        .from('pins')
+        .insert({
+          user_id: user?.id,
+          title,
+          description,
+          keywords: keywords.split(',').map(k => k.trim()),
+          link,
+          image_url: imageUrl,
+        });
+        
+      if (insertError) throw insertError;
+      
+      toast({
+        title: "Pin created successfully!",
+        description: "Your pin has been created and is ready to view",
+      });
+      
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setKeywords("");
+      setLink("");
+      setImageFile(null);
+      setImagePreview(null);
+    } catch (error) {
+      console.error('Error creating pin:', error);
+      toast({
+        title: "Error creating pin",
+        description: "There was a problem creating your pin. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('createPin')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -26,29 +187,57 @@ const CreatePin = () => {
               <CardDescription>{t('pinDetailsDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="title">{t('pinTitle')}</Label>
-                  <Input id="title" placeholder={t('pinTitlePlaceholder')} />
+                  <Input 
+                    id="title" 
+                    placeholder={t('pinTitlePlaceholder')} 
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="description">{t('pinDescription')}</Label>
-                  <Textarea id="description" placeholder={t('pinDescriptionPlaceholder')} className="min-h-[120px]" />
+                  <Textarea 
+                    id="description" 
+                    placeholder={t('pinDescriptionPlaceholder')} 
+                    className="min-h-[120px]"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="keywords">{t('pinKeywords')}</Label>
-                  <Input id="keywords" placeholder={t('pinKeywordsPlaceholder')} />
+                  <Input 
+                    id="keywords" 
+                    placeholder={t('pinKeywordsPlaceholder')}
+                    value={keywords}
+                    onChange={(e) => setKeywords(e.target.value)}
+                  />
                   <p className="text-xs text-gray-500">{t('pinKeywordsHelp')}</p>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="link">{t('destinationLink')}</Label>
-                  <Input id="link" placeholder="https://example.com/my-page" type="url" />
+                  <Input 
+                    id="link" 
+                    placeholder="https://example.com/my-page" 
+                    type="url"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                  />
                 </div>
                 
-                <Button type="submit" className="bg-pinterest-red text-white">{t('createPinButton')}</Button>
+                <Button 
+                  type="submit" 
+                  className="bg-pinterest-red hover:bg-pinterest-dark text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  disabled={isUploading}
+                >
+                  {isUploading ? 'Creating Pin...' : t('createPinButton')}
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -62,14 +251,44 @@ const CreatePin = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center">
-                <div className="w-full aspect-[2/3] bg-gray-100 dark:bg-gray-800 rounded-lg mb-4 flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700">
-                  <div className="text-center p-4">
-                    <ImagePlus className="h-10 w-10 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-500">{t('dragImageHere')}</p>
-                    <p className="text-xs text-gray-400 mt-1">{t('recommendedSize')}</p>
-                  </div>
+                <div 
+                  className={`w-full aspect-[2/3] ${theme === 'dark' ? 'bg-black' : 'bg-white'} rounded-lg mb-4 flex items-center justify-center border-2 border-dashed ${dragActive ? 'border-pinterest-red' : 'border-gray-300 dark:border-gray-700'} transition-all duration-300 overflow-hidden`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={triggerFileInput}
+                >
+                  {imagePreview ? (
+                    <img 
+                      src={imagePreview} 
+                      alt="Pin preview" 
+                      className="w-full h-full object-contain" 
+                    />
+                  ) : (
+                    <div className="text-center p-4">
+                      <ImagePlus className="h-10 w-10 mx-auto mb-2 text-gray-400" />
+                      <p className="text-sm text-gray-500">{t('dragImageHere')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('recommendedSize')}</p>
+                    </div>
+                  )}
                 </div>
-                <Button variant="outline" className="w-full">{t('uploadImage')}</Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileInputChange}
+                />
+                <Button 
+                  variant="outline" 
+                  className="w-full flex items-center justify-center gap-2 hover:bg-pinterest-red hover:text-white transition-all duration-300"
+                  onClick={triggerFileInput}
+                  type="button"
+                >
+                  <Upload className="h-4 w-4" />
+                  {t('uploadImage')}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -80,13 +299,31 @@ const CreatePin = () => {
               <CardDescription>{t('pinPreviewDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="aspect-[2/3] bg-gray-50 dark:bg-gray-800 rounded-lg mb-4 flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                <p className="text-gray-400 text-sm">{t('previewWillAppearHere')}</p>
+              <div className={`aspect-[2/3] ${theme === 'dark' ? 'bg-black' : 'bg-white'} rounded-lg mb-4 flex items-center justify-center border border-gray-200 dark:border-gray-700 overflow-hidden`}>
+                {imagePreview ? (
+                  <div className="w-full h-full relative">
+                    <img 
+                      src={imagePreview} 
+                      alt="Pin preview" 
+                      className="w-full h-full object-contain" 
+                    />
+                    {title && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                        <h3 className="text-white font-semibold text-sm">{title}</h3>
+                        {description && <p className="text-white/80 text-xs line-clamp-2 mt-1">{description}</p>}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-sm">{t('previewWillAppearHere')}</p>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-    </DashboardLayout>;
+    </DashboardLayout>
+  );
 };
+
 export default CreatePin;

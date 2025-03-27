@@ -24,7 +24,15 @@ import PinStats from "./pages/PinStats";
 import SavedPins from "./pages/SavedPins";
 
 // Create a new query client instance outside the component
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <React.StrictMode>
@@ -34,7 +42,7 @@ const App = () => (
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter>
+            <BrowserRouter basename="/">
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Index />} />
