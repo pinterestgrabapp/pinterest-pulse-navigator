@@ -123,7 +123,7 @@ const Auth = () => {
         <div className="mb-8 text-center">
           <Link to="/" className="inline-flex items-center">
             <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
-            <span className="ml-2 font-bold text-2xl glow-text">Pinterest Grab</span>
+            <span className="ml-2 font-bold text-2xl glow-text text-white">Pinterest Grab</span>
           </Link>
           
         </div>
