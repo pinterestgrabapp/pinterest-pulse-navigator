@@ -1,47 +1,36 @@
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useLanguage } from "@/utils/languageUtils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Link } from "react-router-dom";
 import { Mail, MessageCircle, Video, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const HelpPage = () => {
-  const { t } = useLanguage();
-  
-  const faqs = [
-    {
-      question: "How do I analyze a Pinterest pin?",
-      answer: "Navigate to the Pin Analysis page, enter the URL of the Pinterest pin you want to analyze in the input field, and click on the 'Analyze' button. The system will extract keywords and other data from the pin."
-    },
-    {
-      question: "How accurate is the keyword extraction?",
-      answer: "Our keyword extraction uses advanced AI models to identify relevant keywords from Pinterest pins. While it's highly accurate, we recommend reviewing the extracted keywords to ensure they align with your content goals."
-    },
-    {
-      question: "Can I export my analyzed data?",
-      answer: "Yes, Pro users can download basic data, while Plus users have access to advanced exporting features for both the Keyword Explorer and Account Explorer tools."
-    },
-    {
-      question: "Is there a limit to how many pins I can analyze?",
-      answer: "Pro users can track up to 25 keyword rankings and 50 Pinterest search suggestion changes. Plus users have unlimited tracking capabilities."
-    },
-    {
-      question: "How do I save my favorite pins?",
-      answer: "After analyzing a pin, you can save it to your collection by clicking the bookmark icon. Visit the Saved Pins page to view all your saved pins. Plus users can organize saved pins into custom lists."
-    },
-    {
-      question: "How is the Pin Score calculated?",
-      answer: "The Pin Score is calculated based on a weighted formula that considers saves, clicks, impressions, and engagement rates. Higher scores indicate pins with better performance and potential reach."
-    },
-    {
-      question: "How do I track keyword rankings?",
-      answer: "Use our keyword tracking feature to monitor how your pins rank for specific keywords. Pro users can track up to 25 keywords, while Plus users have unlimited tracking capabilities."
-    }
-  ];
-  
-  return (
-    <DashboardLayout>
+  const {
+    t
+  } = useLanguage();
+  const faqs = [{
+    question: "How do I analyze a Pinterest pin?",
+    answer: "Navigate to the Pin Analysis page, enter the URL of the Pinterest pin you want to analyze in the input field, and click on the 'Analyze' button. The system will extract keywords and other data from the pin."
+  }, {
+    question: "How accurate is the keyword extraction?",
+    answer: "Our keyword extraction uses advanced AI models to identify relevant keywords from Pinterest pins. While it's highly accurate, we recommend reviewing the extracted keywords to ensure they align with your content goals."
+  }, {
+    question: "Can I export my analyzed data?",
+    answer: "Yes, Pro users can download basic data, while Plus users have access to advanced exporting features for both the Keyword Explorer and Account Explorer tools."
+  }, {
+    question: "Is there a limit to how many pins I can analyze?",
+    answer: "Pro users can track up to 25 keyword rankings and 50 Pinterest search suggestion changes. Plus users have unlimited tracking capabilities."
+  }, {
+    question: "How do I save my favorite pins?",
+    answer: "After analyzing a pin, you can save it to your collection by clicking the bookmark icon. Visit the Saved Pins page to view all your saved pins. Plus users can organize saved pins into custom lists."
+  }, {
+    question: "How is the Pin Score calculated?",
+    answer: "The Pin Score is calculated based on a weighted formula that considers saves, clicks, impressions, and engagement rates. Higher scores indicate pins with better performance and potential reach."
+  }, {
+    question: "How do I track keyword rankings?",
+    answer: "Use our keyword tracking feature to monitor how your pins rank for specific keywords. Pro users can track up to 25 keywords, while Plus users have unlimited tracking capabilities."
+  }];
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Help Center</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -87,14 +76,12 @@ const HelpPage = () => {
         </div>
         <div className="p-6">
           <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
+            {faqs.map((faq, index) => <AccordionItem key={index} value={`item-${index}`}>
                 <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
                 <AccordionContent>
                   <p className="text-gray-400">{faq.answer}</p>
                 </AccordionContent>
-              </AccordionItem>
-            ))}
+              </AccordionItem>)}
           </Accordion>
         </div>
       </div>
@@ -122,7 +109,7 @@ const HelpPage = () => {
             
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-rose-900 rounded-lg">
+                <div className="p-2 rounded-lg bg-pinterest-red">
                   <MessageCircle className="h-5 w-5 text-rose-400" />
                 </div>
                 <h3 className="text-lg font-medium">Live Chat</h3>
@@ -137,8 +124,6 @@ const HelpPage = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default HelpPage;
