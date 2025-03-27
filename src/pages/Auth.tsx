@@ -138,7 +138,9 @@ const Auth = () => {
               
               <TabsContent value="login" className="pt-4">
                 <CardTitle className="text-2xl glow-text">Welcome Back</CardTitle>
-                
+                <CardDescription>
+                  {t('loginToAccount')}
+                </CardDescription>
               </TabsContent>
               
               <TabsContent value="register" className="pt-4">
@@ -172,7 +174,7 @@ const Auth = () => {
                     field
                   }) => <FormItem>
                           <FormLabel>{t('password')}</FormLabel>
-                          <FormControl>
+                          <FormControl className="text-white">
                             <div className="relative">
                               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                               <Input type="password" placeholder="••••••••" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
