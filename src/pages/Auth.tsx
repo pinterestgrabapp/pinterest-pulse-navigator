@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,18 +9,16 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Github, Google } from "lucide-react";
+import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Github, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/utils/languageUtils";
 import { supabase } from "@/integrations/supabase/client";
 
-// Form schema for login
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-// Form schema for registration
 const registerSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   email: z.string().email({ message: "Invalid email address" }),
@@ -39,7 +36,6 @@ const Auth = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  // Login form
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -48,7 +44,6 @@ const Auth = () => {
     },
   });
 
-  // Register form
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -59,7 +54,6 @@ const Auth = () => {
     },
   });
 
-  // Handle login submission
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
@@ -76,7 +70,6 @@ const Auth = () => {
     }
   };
 
-  // Handle registration submission
   const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
@@ -85,7 +78,6 @@ const Auth = () => {
         title: t('registrationSuccess'),
         description: t('accountCreated'),
       });
-      // Login the user after successful registration
       await signIn(values.email, values.password);
       navigate('/dashboard');
     } catch (error) {
@@ -95,7 +87,6 @@ const Auth = () => {
     }
   };
 
-  // Handle Google sign in
   const handleGoogleSignIn = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -217,7 +208,7 @@ const Auth = () => {
                         className="w-full gap-2"
                         onClick={handleGoogleSignIn}
                       >
-                        <Google className="h-4 w-4" />
+                        <Globe className="h-4 w-4" />
                         Google
                       </Button>
                     </div>
@@ -323,7 +314,7 @@ const Auth = () => {
                         className="w-full gap-2"
                         onClick={handleGoogleSignIn}
                       >
-                        <Google className="h-4 w-4" />
+                        <Globe className="h-4 w-4" />
                         Google
                       </Button>
                     </div>
