@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Sun, Moon, LogIn, UserPlus, Menu, X, Home } from 'lucide-react';
@@ -7,14 +6,20 @@ import { useLanguage } from '@/utils/languageUtils';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/contexts/AuthContext';
-
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useLanguage();
-  const { theme, setTheme } = useTheme();
-  const { user } = useAuth();
+  const {
+    t
+  } = useLanguage();
+  const {
+    theme,
+    setTheme
+  } = useTheme();
+  const {
+    user
+  } = useAuth();
 
   // Function to handle smooth scrolling to section when on the home page
   const scrollToSection = (sectionId: string) => {
@@ -30,14 +35,13 @@ export const Navbar = () => {
       navigate(`/#${sectionId}`);
     }
   };
-
   return <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm border-b border-white/10 dark:border-white/5">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
-            <span className="ml-2 font-semibold text-lg glow-text">Pinterest Grab</span>
+            <span className="ml-2 font-semibold text-lg glow-text text-white">Pinterest Grab</span>
           </Link>
 
           {/* Main Navigation - Center Aligned */}
