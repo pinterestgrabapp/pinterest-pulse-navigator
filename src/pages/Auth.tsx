@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,54 +13,67 @@ import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Globe } from "lucide-rea
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/utils/languageUtils";
 import { supabase } from "@/integrations/supabase/client";
-
 const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.string().email({
+    message: "Invalid email address"
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters"
+  })
 });
-
 const registerSchema = z.object({
-  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string().min(6, { message: "Confirm Password must be at least 6 characters" }),
-}).refine((data) => data.password === data.confirmPassword, {
+  username: z.string().min(3, {
+    message: "Username must be at least 3 characters"
+  }),
+  email: z.string().email({
+    message: "Invalid email address"
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters"
+  }),
+  confirmPassword: z.string().min(6, {
+    message: "Confirm Password must be at least 6 characters"
+  })
+}).refine(data => data.password === data.confirmPassword, {
   message: "Passwords do not match",
-  path: ["confirmPassword"],
+  path: ["confirmPassword"]
 });
-
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const {
+    signIn,
+    signUp
+  } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { t } = useLanguage();
-
+  const {
+    toast
+  } = useToast();
+  const {
+    t
+  } = useLanguage();
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   });
-
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
-    },
+      confirmPassword: ""
+    }
   });
-
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
       toast({
         title: t('loginSuccess'),
-        description: t('welcomeBack'),
+        description: t('welcomeBack')
       });
       navigate('/dashboard');
     } catch (error) {
@@ -70,14 +82,13 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
-
   const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
       await signUp(values.email, values.password, values.username);
       toast({
         title: t('registrationSuccess'),
-        description: t('accountCreated'),
+        description: t('accountCreated')
       });
       await signIn(values.email, values.password);
       navigate('/dashboard');
@@ -87,16 +98,16 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
-
   const handleGoogleSignIn = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const {
+        error
+      } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin + '/dashboard'
         }
       });
-      
       if (error) throw error;
     } catch (error) {
       console.error("Google sign in error:", error);
@@ -107,18 +118,14 @@ const Auth = () => {
       });
     }
   };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-black dark:to-gray-900 p-4">
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-black dark:to-gray-900 p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-flex items-center">
             <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
             <span className="ml-2 font-bold text-2xl glow-text">Pinterest Grab</span>
           </Link>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            {t('authDescription')}
-          </p>
+          
         </div>
 
         <Card className="border-gray-200 dark:border-gray-800 shadow-[0_0_20px_rgba(230,0,35,0.2)] dark:shadow-[0_0_20px_rgba(230,0,35,0.3)]">
@@ -150,11 +157,9 @@ const Auth = () => {
               <Form {...loginForm}>
                 <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
                   <CardContent className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={loginForm.control} name="email" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>{t('email')}</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -163,15 +168,11 @@ const Auth = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={loginForm.control} name="password" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>{t('password')}</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -180,9 +181,7 @@ const Auth = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </CardContent>
                   
                   <CardFooter className="flex-col space-y-4">
@@ -203,12 +202,7 @@ const Auth = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 gap-2 w-full">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        className="w-full gap-2 hover:shadow-[0_0_15px_rgba(230,0,35,0.5)]"
-                        onClick={handleGoogleSignIn}
-                      >
+                      <Button type="button" variant="outline" className="w-full gap-2 hover:shadow-[0_0_15px_rgba(230,0,35,0.5)]" onClick={handleGoogleSignIn}>
                         <Globe className="h-4 w-4" />
                         Google
                       </Button>
@@ -222,11 +216,9 @@ const Auth = () => {
               <Form {...registerForm}>
                 <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
                   <CardContent className="space-y-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={registerForm.control} name="username" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>{t('username')}</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -235,15 +227,11 @@ const Auth = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={registerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={registerForm.control} name="email" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>{t('email')}</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -252,15 +240,11 @@ const Auth = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={registerForm.control} name="password" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>{t('password')}</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -269,15 +253,11 @@ const Auth = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={registerForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={registerForm.control} name="confirmPassword" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>{t('confirmPassword')}</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -286,9 +266,7 @@ const Auth = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </CardContent>
                   
                   <CardFooter className="flex-col space-y-4">
@@ -309,12 +287,7 @@ const Auth = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 gap-2 w-full">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        className="w-full gap-2 hover:shadow-[0_0_15px_rgba(230,0,35,0.5)]"
-                        onClick={handleGoogleSignIn}
-                      >
+                      <Button type="button" variant="outline" className="w-full gap-2 hover:shadow-[0_0_15px_rgba(230,0,35,0.5)]" onClick={handleGoogleSignIn}>
                         <Globe className="h-4 w-4" />
                         Google
                       </Button>
@@ -335,8 +308,6 @@ const Auth = () => {
           </CardFooter>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Auth;
