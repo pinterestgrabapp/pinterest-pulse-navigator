@@ -138,7 +138,7 @@ const Auth = () => {
               
               <TabsContent value="login" className="pt-4">
                 <CardTitle className="text-2xl glow-text">Welcome Back</CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white">
                   {t('loginToAccount')}
                 </CardDescription>
               </TabsContent>
