@@ -147,14 +147,6 @@ export default {
           '100%': { 
             backgroundPosition: '200% 0' 
           }
-        },
-        'text-glow': {
-          '0%, 100%': {
-            textShadow: '0 0 8px rgba(230, 0, 35, 0.7), 0 0 16px rgba(230, 0, 35, 0.5)'
-          },
-          '50%': {
-            textShadow: '0 0 15px rgba(230, 0, 35, 0.9), 0 0 25px rgba(230, 0, 35, 0.7)'
-          }
         }
 			},
 			animation: {
@@ -167,8 +159,7 @@ export default {
         'float': 'float 5s ease-in-out infinite',
         'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
         'glow-pulse': 'glow-pulse 3s infinite',
-        'shimmer': 'shimmer 3s infinite linear',
-        'text-glow': 'text-glow 3s infinite'
+        'shimmer': 'shimmer 3s infinite linear'
 			},
       transitionDuration: {
         '1500': '1500ms',

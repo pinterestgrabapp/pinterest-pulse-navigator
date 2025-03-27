@@ -22,7 +22,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Pricing from "./pages/Pricing";
 import PinStats from "./pages/PinStats";
 import SavedPins from "./pages/SavedPins";
-import PinterestCallback from "./pages/PinterestCallback";
 
 // Create a new query client instance outside the component
 const queryClient = new QueryClient({
@@ -50,7 +49,6 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/pricing" element={<Pricing />} />
-                <Route path="/pinterest-callback" element={<PinterestCallback />} />
                 
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />

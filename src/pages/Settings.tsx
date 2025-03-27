@@ -1,20 +1,17 @@
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/utils/languageUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bell, LucideShield, User, Pin } from "lucide-react";
-import PinterestConnect from "@/components/PinterestConnect";
-
+import { Bell, LucideShield, User } from "lucide-react";
 const Settings = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <DashboardLayout>
+  const {
+    t
+  } = useLanguage();
+  return <DashboardLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 glow-text">{t('settings')}</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('settings')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
           {t('settingsDescription')}
         </p>
@@ -22,50 +19,46 @@ const Settings = () => {
       
       <Tabs defaultValue="account" className="w-full">
         <TabsList className="mb-6">
-          <TabsTrigger value="account" className="gap-2 hover:glow-text">
+          <TabsTrigger value="account" className="gap-2">
             <User className="h-4 w-4" />
             <span>{t('account')}</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="gap-2 hover:glow-text">
+          <TabsTrigger value="notifications" className="gap-2">
             <Bell className="h-4 w-4" />
             <span>{t('notifications')}</span>
           </TabsTrigger>
-          <TabsTrigger value="privacy" className="gap-2 hover:glow-text">
+          <TabsTrigger value="privacy" className="gap-2">
             <LucideShield className="h-4 w-4" />
             <span>{t('privacy')}</span>
-          </TabsTrigger>
-          <TabsTrigger value="integrations" className="gap-2 hover:glow-text">
-            <Pin className="h-4 w-4" />
-            <span>Integrations</span>
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="account">
-          <Card className="glass-card mb-6 hover:shadow-[0_0_15px_rgba(230,0,35,0.3)] transition-all duration-300">
+          <Card className="glass-card mb-6">
             <CardHeader>
-              <CardTitle className="glow-text">{t('profile')}</CardTitle>
+              <CardTitle>{t('profile')}</CardTitle>
               <CardDescription>{t('profileSettings')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">{t('name')}</label>
-                  <input type="text" className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-pinterest-red focus:border-transparent focus:outline-none" defaultValue="John Doe" />
+                  <input type="text" className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700" defaultValue="John Doe" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">{t('email')}</label>
-                  <input type="email" className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-pinterest-red focus:border-transparent focus:outline-none" defaultValue="john@example.com" />
+                  <input type="email" className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700" defaultValue="john@example.com" />
                 </div>
               </div>
-              <Button className="text-white bg-pinterest-red hover:bg-pinterest-dark animate-glow-pulse">{t('saveChanges')}</Button>
+              <Button className="text-white bg-pinterest-red">{t('saveChanges')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="notifications">
-          <Card className="glass-card hover:shadow-[0_0_15px_rgba(230,0,35,0.3)] transition-all duration-300">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="glow-text">{t('notificationSettings')}</CardTitle>
+              <CardTitle>{t('notificationSettings')}</CardTitle>
               <CardDescription>{t('notificationDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -97,9 +90,9 @@ const Settings = () => {
         </TabsContent>
         
         <TabsContent value="privacy">
-          <Card className="glass-card hover:shadow-[0_0_15px_rgba(230,0,35,0.3)] transition-all duration-300">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="glow-text">{t('privacySettings')}</CardTitle>
+              <CardTitle>{t('privacySettings')}</CardTitle>
               <CardDescription>{t('privacyDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -122,32 +115,7 @@ const Settings = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
-        <TabsContent value="integrations">
-          <div className="grid gap-6 md:grid-cols-2">
-            <PinterestConnect />
-            
-            <Card className="bg-black border border-gray-800 rounded-lg p-6 shadow-lg hover:shadow-[0_0_15px_rgba(230,0,35,0.5)] transition-all duration-300">
-              <CardHeader className="px-0 pt-0">
-                <CardTitle className="glow-text">API Credentials</CardTitle>
-                <CardDescription>
-                  Manage your API keys and application credentials
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-0 pt-0">
-                <p className="mb-4 text-gray-300">
-                  Generate and manage API keys for accessing the Pinterest Grab API.
-                </p>
-                <Button variant="outline" className="w-full border-pinterest-red text-pinterest-red hover:bg-pinterest-red hover:text-white animate-glow-pulse">
-                  Manage API Keys
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
       </Tabs>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default Settings;
