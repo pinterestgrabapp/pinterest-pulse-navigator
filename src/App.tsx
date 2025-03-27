@@ -51,9 +51,10 @@ const App = () => (
                 <Route path="/pricing" element={<Pricing />} />
                 
                 {/* Protected Routes */}
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/keyword-research" element={<ProtectedRoute><KeywordResearch /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
                 <Route path="/pin-analysis" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
+                <Route path="/keyword-research" element={<ProtectedRoute><KeywordResearch /></ProtectedRoute>} />
+                <Route path="/dashboard-home" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/create-pin" element={<ProtectedRoute><CreatePin /></ProtectedRoute>} />
                 <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

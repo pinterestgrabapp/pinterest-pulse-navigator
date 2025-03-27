@@ -10,9 +10,9 @@ export const DashboardSidebar = () => {
   const { theme } = useTheme();
   
   const navigationItems = [
-    { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard' },
+    { icon: TrendingUp, label: 'pinAnalysis', href: '/dashboard' },
     { icon: Search, label: 'keywordResearch', href: '/keyword-research' },
-    { icon: TrendingUp, label: 'pinAnalysis', href: '/pin-analysis' },
+    { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard-home' },
     { icon: BarChart4, label: 'pinStats', href: '/pin-stats' },
     { icon: Bookmark, label: 'savedPins', href: '/saved-pins' },
     { icon: FileDown, label: 'export', href: '/export' },
@@ -38,18 +38,28 @@ export const DashboardSidebar = () => {
                 <Link 
                   to={item.href} 
                   className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors relative overflow-hidden ${
-                    location.pathname === item.href 
+                    location.pathname === item.href || 
+                    (item.href === '/dashboard' && location.pathname === '/pin-analysis') ||
+                    (item.href === '/dashboard-home' && location.pathname === '/dashboard')
                       ? 'font-medium text-pinterest-red border border-white/20 shadow-[0_0_15px_rgba(234,56,76,0.3)]' 
                       : 'hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_10px_rgba(234,56,76,0.3)] hover:border hover:border-white/20 dark:hover:border-white/20 text-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  {location.pathname === item.href && (
+                  {(location.pathname === item.href || 
+                    (item.href === '/dashboard' && location.pathname === '/pin-analysis') ||
+                    (item.href === '/dashboard-home' && location.pathname === '/dashboard')) && (
                     <span className="absolute inset-0 bg-black dark:bg-black"></span>
                   )}
-                  {location.pathname === item.href && (
+                  {(location.pathname === item.href || 
+                    (item.href === '/dashboard' && location.pathname === '/pin-analysis') ||
+                    (item.href === '/dashboard-home' && location.pathname === '/dashboard')) && (
                     <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366]/20 to-[#ff0066]/20 blur-sm"></span>
                   )}
-                  <item.icon className={`h-4 w-4 relative z-10 ${location.pathname === item.href ? 'text-pinterest-red' : ''}`} />
+                  <item.icon className={`h-4 w-4 relative z-10 ${
+                    location.pathname === item.href || 
+                    (item.href === '/dashboard' && location.pathname === '/pin-analysis') ||
+                    (item.href === '/dashboard-home' && location.pathname === '/dashboard')
+                      ? 'text-pinterest-red' : ''}`} />
                   <span className="relative z-10">{t(item.label)}</span>
                 </Link>
               </li>

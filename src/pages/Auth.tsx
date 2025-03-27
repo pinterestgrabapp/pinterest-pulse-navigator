@@ -1,197 +1,348 @@
 
-import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
-import { Loader2 } from 'lucide-react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import { useLanguage } from '@/utils/languageUtils';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Github, Google } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/utils/languageUtils";
+import { supabase } from "@/integrations/supabase/client";
+
+// Form schema for login
+const loginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+});
+
+// Form schema for registration
+const registerSchema = z.object({
+  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  confirmPassword: z.string().min(6, { message: "Confirm Password must be at least 6 characters" }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
 
 const Auth = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [activeTab, setActiveTab] = useState('login');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
-  const { signIn, signUp, user, loading } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  // If user is already logged in, redirect to dashboard
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  // Login form
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  // Register form
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  // Handle login submission
+  const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setIsLoading(true);
     try {
-      if (activeTab === 'login') {
-        await signIn(email, password);
-        navigate('/dashboard');
-      } else {
-        if (password.length < 6) {
-          toast({
-            title: "Password too short",
-            description: "Password must be at least 6 characters",
-            variant: "destructive",
-          });
-          return;
-        }
-        await signUp(email, password, username);
-        setActiveTab('login');
-      }
+      await signIn(values.email, values.password);
+      toast({
+        title: t('loginSuccess'),
+        description: t('welcomeBack'),
+      });
+      navigate('/dashboard');
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle registration submission
+  const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
+    setIsLoading(true);
+    try {
+      await signUp(values.email, values.password, values.username);
+      toast({
+        title: t('registrationSuccess'),
+        description: t('accountCreated'),
+      });
+      // Login the user after successful registration
+      await signIn(values.email, values.password);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Registration error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle Google sign in
+  const handleGoogleSignIn = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard'
+        }
+      });
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error("Google sign in error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to sign in with Google. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <main className="flex-1 flex items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-md">
-          <Card className="glass-card border-none shadow-lg">
-            <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl font-bold">
-                {activeTab === 'login' ? 'Sign In' : 'Create Account'}
-              </CardTitle>
-              <CardDescription>
-                {activeTab === 'login' 
-                  ? 'Enter your email and password to sign in' 
-                  : 'Enter your details to create an account'}
-              </CardDescription>
-            </CardHeader>
-            
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="login">Sign In</TabsTrigger>
-                <TabsTrigger value="register">Sign Up</TabsTrigger>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-black dark:to-gray-900 p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <Link to="/" className="inline-flex items-center">
+            <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
+            <span className="ml-2 font-bold text-2xl">Pinterest Grab</span>
+          </Link>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            {t('authDescription')}
+          </p>
+        </div>
+
+        <Card className="border-gray-200 dark:border-gray-800">
+          <CardHeader>
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">{t('login')}</TabsTrigger>
+                <TabsTrigger value="register" id="register-tab">{t('signup')}</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="login">
-                <form onSubmit={handleSubmit}>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        placeholder="email@example.com" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="password">Password</Label>
-                        <a href="#" className="text-xs text-primary hover:underline">
-                          Forgot password?
-                        </a>
-                      </div>
-                      <Input 
-                        id="password" 
-                        type="password" 
-                        placeholder="••••••••" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-pinterest-red hover:bg-pinterest-dark text-white"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('loading')}
-                        </>
-                      ) : (
-                        'Sign In'
-                      )}
-                    </Button>
-                  </CardFooter>
-                </form>
+              <TabsContent value="login" className="pt-4">
+                <CardTitle className="text-2xl">{t('welcomeBack')}</CardTitle>
+                <CardDescription>
+                  {t('loginToAccount')}
+                </CardDescription>
               </TabsContent>
               
-              <TabsContent value="register">
-                <form onSubmit={handleSubmit}>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input 
-                        id="username" 
-                        type="text" 
-                        placeholder="johndoe" 
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email-register">Email</Label>
-                      <Input 
-                        id="email-register" 
-                        type="email" 
-                        placeholder="email@example.com" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password-register">Password</Label>
-                      <Input 
-                        id="password-register" 
-                        type="password" 
-                        placeholder="••••••••" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Password must be at least 6 characters long
-                      </p>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-pinterest-red hover:bg-pinterest-dark text-white"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('loading')}
-                        </>
-                      ) : (
-                        'Create Account'
-                      )}
-                    </Button>
-                  </CardFooter>
-                </form>
+              <TabsContent value="register" className="pt-4">
+                <CardTitle className="text-2xl">{t('createAccount')}</CardTitle>
+                <CardDescription>
+                  {t('fillDetails')}
+                </CardDescription>
               </TabsContent>
             </Tabs>
-          </Card>
-        </div>
-      </main>
-      
-      <Footer />
+          </CardHeader>
+          
+          <Tabs defaultValue="login" className="w-full">
+            <TabsContent value="login" className="pt-0">
+              <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('email')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                              <Input placeholder="you@example.com" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('password')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                  
+                  <CardFooter className="flex-col space-y-4">
+                    <Button type="submit" className="w-full bg-pinterest-red hover:bg-pinterest-dark gap-2" disabled={isLoading}>
+                      {isLoading ? t('loggingIn') : t('login')} 
+                      {!isLoading && <LogIn className="h-4 w-4" />}
+                    </Button>
+                    
+                    <div className="relative w-full">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-300 dark:border-gray-700"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white dark:bg-gray-950 px-2 text-gray-500 dark:text-gray-400">
+                          {t('orContinueWith')}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-2 w-full">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="w-full gap-2"
+                        onClick={handleGoogleSignIn}
+                      >
+                        <Google className="h-4 w-4" />
+                        Google
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </form>
+              </Form>
+            </TabsContent>
+            
+            <TabsContent value="register" className="pt-0">
+              <Form {...registerForm}>
+                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('username')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                              <Input placeholder="johndoe" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={registerForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('email')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                              <Input placeholder="you@example.com" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={registerForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('password')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={registerForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('confirmPassword')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                  
+                  <CardFooter className="flex-col space-y-4">
+                    <Button type="submit" className="w-full bg-pinterest-red hover:bg-pinterest-dark gap-2" disabled={isLoading}>
+                      {isLoading ? t('signingUp') : t('signup')} 
+                      {!isLoading && <UserPlus className="h-4 w-4" />}
+                    </Button>
+                    
+                    <div className="relative w-full">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-300 dark:border-gray-700"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white dark:bg-gray-950 px-2 text-gray-500 dark:text-gray-400">
+                          {t('orContinueWith')}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-2 w-full">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="w-full gap-2"
+                        onClick={handleGoogleSignIn}
+                      >
+                        <Google className="h-4 w-4" />
+                        Google
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </form>
+              </Form>
+            </TabsContent>
+          </Tabs>
+          
+          <CardFooter className="flex-col space-y-4 border-t border-gray-200 dark:border-gray-800 pt-4">
+            <div className="text-sm text-center">
+              <span className="text-gray-600 dark:text-gray-400">{t('alreadyHaveAccount')}</span>{" "}
+              <Link to="/" className="text-pinterest-red hover:underline">
+                {t('backToHome')} <ArrowRight className="inline h-3 w-3" />
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };

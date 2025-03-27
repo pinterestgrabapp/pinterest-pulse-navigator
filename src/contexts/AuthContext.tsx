@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 type AuthContextType = {
   session: Session | null;
@@ -52,10 +52,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const createUserProfile = async (user: User) => {
     try {
+      // Extract a username from email or metadata
+      let username = user.email?.split('@')[0] || '';
+      
+      // If user signed in with Google, try to get name from user metadata
+      if (user.app_metadata.provider === 'google') {
+        username = user.user_metadata.full_name || username;
+      }
+      
       const { error } = await supabase.from('profiles').upsert({
         id: user.id,
-        username: user.email?.split('@')[0],
-        avatar_url: null,
+        username: username,
+        avatar_url: user.user_metadata.avatar_url || null,
         updated_at: new Date().toISOString(),
       });
 
