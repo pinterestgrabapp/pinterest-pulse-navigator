@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -201,6 +200,16 @@
   }
   
   /* Glowing and luminescent effects */
+  .glow-text {
+    @apply text-pinterest-red;
+    text-shadow: 0 0 8px rgba(230, 0, 35, 0.7), 0 0 16px rgba(230, 0, 35, 0.5);
+  }
+  
+  .glow-text-white {
+    @apply text-white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7), 0 0 16px rgba(255, 255, 255, 0.5);
+  }
+  
   .glow-red {
     @apply text-pinterest-red;
     text-shadow: 0 0 8px rgba(230, 0, 35, 0.7), 0 0 16px rgba(230, 0, 35, 0.5);
@@ -304,4 +313,26 @@
   opacity: 0;
   transform: translateY(-20px);
   transition: opacity 500ms, transform 500ms;
+}
+
+/* Additional keyframes for glowing effects */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(230, 0, 35, 0.7), 0 0 30px rgba(230, 0, 35, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(230, 0, 35, 0.9), 0 0 40px rgba(230, 0, 35, 0.5);
+  }
+}
+
+/* Add the animation to tailwind.config.ts */
+.animate-glow-pulse {
+  animation: glow-pulse 3s infinite;
+}
+
+/* Luminescent input focus */
+input:focus, 
+textarea:focus, 
+select:focus {
+  box-shadow: 0 0 0 2px rgba(230, 0, 35, 0.2), 0 0 15px rgba(230, 0, 35, 0.3);
 }

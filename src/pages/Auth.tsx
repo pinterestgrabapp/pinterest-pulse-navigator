@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Github, Globe } from "lucide-react";
+import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/utils/languageUtils";
 import { supabase } from "@/integrations/supabase/client";
@@ -113,30 +114,30 @@ const Auth = () => {
         <div className="mb-8 text-center">
           <Link to="/" className="inline-flex items-center">
             <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
-            <span className="ml-2 font-bold text-2xl">Pinterest Grab</span>
+            <span className="ml-2 font-bold text-2xl glow-text">Pinterest Grab</span>
           </Link>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             {t('authDescription')}
           </p>
         </div>
 
-        <Card className="border-gray-200 dark:border-gray-800">
+        <Card className="border-gray-200 dark:border-gray-800 shadow-[0_0_20px_rgba(230,0,35,0.2)] dark:shadow-[0_0_20px_rgba(230,0,35,0.3)]">
           <CardHeader>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">{t('login')}</TabsTrigger>
-                <TabsTrigger value="register" id="register-tab">{t('signup')}</TabsTrigger>
+                <TabsTrigger value="login" className="hover:glow-red">{t('login')}</TabsTrigger>
+                <TabsTrigger value="register" id="register-tab" className="hover:glow-red">{t('signup')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="pt-4">
-                <CardTitle className="text-2xl">{t('welcomeBack')}</CardTitle>
+                <CardTitle className="text-2xl glow-text">Welcome Back</CardTitle>
                 <CardDescription>
                   {t('loginToAccount')}
                 </CardDescription>
               </TabsContent>
               
               <TabsContent value="register" className="pt-4">
-                <CardTitle className="text-2xl">{t('createAccount')}</CardTitle>
+                <CardTitle className="text-2xl glow-text">{t('createAccount')}</CardTitle>
                 <CardDescription>
                   {t('fillDetails')}
                 </CardDescription>
@@ -158,7 +159,7 @@ const Auth = () => {
                           <FormControl>
                             <div className="relative">
                               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input placeholder="you@example.com" className="pl-10" {...field} />
+                              <Input placeholder="you@example.com" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -175,7 +176,7 @@ const Auth = () => {
                           <FormControl>
                             <div className="relative">
                               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                              <Input type="password" placeholder="••••••••" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -185,7 +186,7 @@ const Auth = () => {
                   </CardContent>
                   
                   <CardFooter className="flex-col space-y-4">
-                    <Button type="submit" className="w-full bg-pinterest-red hover:bg-pinterest-dark gap-2" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-pinterest-red hover:bg-pinterest-dark gap-2 animate-glow-pulse" disabled={isLoading}>
                       {isLoading ? t('loggingIn') : t('login')} 
                       {!isLoading && <LogIn className="h-4 w-4" />}
                     </Button>
@@ -196,7 +197,7 @@ const Auth = () => {
                       </div>
                       <div className="relative flex justify-center text-xs uppercase">
                         <span className="bg-white dark:bg-gray-950 px-2 text-gray-500 dark:text-gray-400">
-                          {t('orContinueWith')}
+                          OR CONTINUE WITH
                         </span>
                       </div>
                     </div>
@@ -205,7 +206,7 @@ const Auth = () => {
                       <Button 
                         type="button" 
                         variant="outline" 
-                        className="w-full gap-2"
+                        className="w-full gap-2 hover:shadow-[0_0_15px_rgba(230,0,35,0.5)]"
                         onClick={handleGoogleSignIn}
                       >
                         <Globe className="h-4 w-4" />
@@ -230,7 +231,7 @@ const Auth = () => {
                           <FormControl>
                             <div className="relative">
                               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input placeholder="johndoe" className="pl-10" {...field} />
+                              <Input placeholder="johndoe" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -247,7 +248,7 @@ const Auth = () => {
                           <FormControl>
                             <div className="relative">
                               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input placeholder="you@example.com" className="pl-10" {...field} />
+                              <Input placeholder="you@example.com" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -264,7 +265,7 @@ const Auth = () => {
                           <FormControl>
                             <div className="relative">
                               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                              <Input type="password" placeholder="••••••••" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -281,7 +282,7 @@ const Auth = () => {
                           <FormControl>
                             <div className="relative">
                               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                              <Input type="password" placeholder="••••••••" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -291,7 +292,7 @@ const Auth = () => {
                   </CardContent>
                   
                   <CardFooter className="flex-col space-y-4">
-                    <Button type="submit" className="w-full bg-pinterest-red hover:bg-pinterest-dark gap-2" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-pinterest-red hover:bg-pinterest-dark gap-2 animate-glow-pulse" disabled={isLoading}>
                       {isLoading ? t('signingUp') : t('signup')} 
                       {!isLoading && <UserPlus className="h-4 w-4" />}
                     </Button>
@@ -302,7 +303,7 @@ const Auth = () => {
                       </div>
                       <div className="relative flex justify-center text-xs uppercase">
                         <span className="bg-white dark:bg-gray-950 px-2 text-gray-500 dark:text-gray-400">
-                          {t('orContinueWith')}
+                          OR CONTINUE WITH
                         </span>
                       </div>
                     </div>
@@ -311,7 +312,7 @@ const Auth = () => {
                       <Button 
                         type="button" 
                         variant="outline" 
-                        className="w-full gap-2"
+                        className="w-full gap-2 hover:shadow-[0_0_15px_rgba(230,0,35,0.5)]"
                         onClick={handleGoogleSignIn}
                       >
                         <Globe className="h-4 w-4" />
@@ -326,8 +327,8 @@ const Auth = () => {
           
           <CardFooter className="flex-col space-y-4 border-t border-gray-200 dark:border-gray-800 pt-4">
             <div className="text-sm text-center">
-              <span className="text-gray-600 dark:text-gray-400">{t('alreadyHaveAccount')}</span>{" "}
-              <Link to="/" className="text-pinterest-red hover:underline">
+              <span className="text-gray-600 dark:text-gray-400">Don't have an account? Sign up now!</span>{" "}
+              <Link to="/" className="text-pinterest-red hover:underline hover:glow-red">
                 {t('backToHome')} <ArrowRight className="inline h-3 w-3" />
               </Link>
             </div>
