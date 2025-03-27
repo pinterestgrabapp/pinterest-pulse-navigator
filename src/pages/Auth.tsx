@@ -122,7 +122,7 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-flex items-center">
-            <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8 bg-black" />
+            <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
             <span className="ml-2 font-bold text-2xl glow-text">Pinterest Grab</span>
           </Link>
           
@@ -174,7 +174,7 @@ const Auth = () => {
                     field
                   }) => <FormItem>
                           <FormLabel>{t('password')}</FormLabel>
-                          <FormControl>
+                          <FormControl className="text-white">
                             <div className="relative">
                               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                               <Input type="password" placeholder="••••••••" className="pl-10 focus:shadow-[0_0_10px_rgba(230,0,35,0.3)]" {...field} />
