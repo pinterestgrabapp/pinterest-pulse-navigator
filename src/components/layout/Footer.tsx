@@ -1,9 +1,10 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { toast } from "sonner";
 
 interface FooterProps {
   className?: string;
@@ -13,9 +14,17 @@ const Footer = ({
   className
 }: FooterProps) => {
   const { signOut, user } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut();
+    try {
+      await signOut();
+      toast.success("You have been logged out successfully");
+      navigate('/auth');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to log out. Please try again.");
+    }
   };
 
   return <footer className={cn("bg-white dark:bg-black py-6 border-t border-gray-200 dark:border-white/5", className)}>
@@ -29,13 +38,13 @@ const Footer = ({
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <Link to="/help" className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors">
+            <Link to="/help" className="text-gray-600 hover:text-pinterest-red dark:text-gray-400 dark:hover:text-pinterest-red transition-colors hover:glow-text-red">
               Help
             </Link>
-            <Link to="/pricing" className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors">
+            <Link to="/pricing" className="text-gray-600 hover:text-pinterest-red dark:text-gray-400 dark:hover:text-pinterest-red transition-colors hover:glow-text-red">
               Pricing
             </Link>
-            <Link to="/settings" className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors">
+            <Link to="/settings" className="text-gray-600 hover:text-pinterest-red dark:text-gray-400 dark:hover:text-pinterest-red transition-colors hover:glow-text-red">
               Settings
             </Link>
             {user && (
@@ -43,9 +52,10 @@ const Footer = ({
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout} 
-                className="text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-500 flex items-center gap-2 transition-colors"
+                className="text-gray-600 hover:text-pinterest-red dark:text-gray-400 dark:hover:text-pinterest-red flex items-center gap-2 transition-colors group"
               >
-                <LogOut className="h-4 w-4" /> Logout
+                <LogOut className="h-4 w-4 group-hover:text-pinterest-red transition-colors" /> 
+                <span className="group-hover:text-pinterest-red">Logout</span>
               </Button>
             )}
           </div>

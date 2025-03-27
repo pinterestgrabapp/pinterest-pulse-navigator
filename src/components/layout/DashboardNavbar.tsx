@@ -14,28 +14,26 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const DashboardNavbar = () => {
   const { t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   const handleLogout = async () => {
     try {
       await signOut();
-      toast({
-        title: "Logged out successfully",
+      toast.success("Logged out successfully", {
         description: "You have been logged out of your account",
       });
-      navigate('/');
+      navigate('/auth');
     } catch (error) {
       console.error("Logout error:", error);
-      toast({
-        title: "Logout failed",
+      toast.error("Logout failed", {
         description: "There was an error logging you out. Please try again.",
-        variant: "destructive"
       });
     }
   };
@@ -76,29 +74,36 @@ const DashboardNavbar = () => {
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2 border border-white/10 dark:border-white/5 rounded-lg hover:bg-black hover:text-pinterest-red transition-all duration-200">
-                  <User className="h-4 w-4" />
-                  <span className="hidden md:inline">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="gap-2 border border-white/10 dark:border-white/5 rounded-lg hover:bg-black hover:text-pinterest-red transition-all duration-200 relative group overflow-hidden"
+                >
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366]/30 to-[#ff0066]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></span>
+                  <User className="h-4 w-4 relative z-10" />
+                  <span className="hidden md:inline relative z-10">
                     {user.email?.split('@')[0]}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 border border-white/10 dark:border-white/5 bg-white dark:bg-black shadow-xl">
                 <DropdownMenuItem asChild>
-                  <Link to="/dashboard" className="cursor-pointer">Dashboard</Link>
+                  <Link to="/dashboard" className="cursor-pointer hover:text-pinterest-red transition-colors">Dashboard</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/settings" className="cursor-pointer">Settings</Link>
+                  <Link to="/settings" className="cursor-pointer hover:text-pinterest-red transition-colors">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="cursor-pointer">Profile</Link>
+                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onClick={handleLogout}
-                  className="cursor-pointer text-red-500 hover:text-red-700 flex items-center gap-2"
+                  className="cursor-pointer text-pinterest-red hover:text-pinterest-red hover:bg-pinterest-red/10 flex items-center gap-2 transition-all duration-200 relative group overflow-hidden"
                 >
-                  <LogOut className="h-4 w-4" /> Logout
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366]/20 to-[#ff0066]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                  <LogOut className="h-4 w-4 relative z-10" /> 
+                  <span className="relative z-10">Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

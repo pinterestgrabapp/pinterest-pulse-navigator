@@ -1,5 +1,6 @@
 
 import { useState, useRef, ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus, Upload } from "lucide-react";
 import { useLanguage } from "@/utils/languageUtils";
 import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/hooks/use-theme";
@@ -18,6 +20,7 @@ const CreatePin = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [title, setTitle] = useState("");
@@ -132,6 +135,9 @@ const CreatePin = () => {
         
       const imageUrl = urlData.publicUrl;
       
+      // Parse keywords into array
+      const keywordsArray = keywords.split(',').map(k => k.trim());
+      
       // Store pin data in database
       const { error: insertError } = await supabase
         .from('pins')
@@ -139,7 +145,7 @@ const CreatePin = () => {
           user_id: user?.id,
           title,
           description,
-          keywords: keywords.split(',').map(k => k.trim()),
+          keywords: keywordsArray,
           link,
           image_url: imageUrl,
         });
@@ -150,6 +156,9 @@ const CreatePin = () => {
         title: "Pin created successfully!",
         description: "Your pin has been created and is ready to view",
       });
+
+      // Show toast notification
+      toast.success("Pin created successfully!");
       
       // Reset form
       setTitle("");
@@ -158,6 +167,12 @@ const CreatePin = () => {
       setLink("");
       setImageFile(null);
       setImagePreview(null);
+      
+      // Navigate to saved pins
+      setTimeout(() => {
+        navigate('/saved-pins');
+      }, 1500);
+      
     } catch (error) {
       console.error('Error creating pin:', error);
       toast({
@@ -168,6 +183,14 @@ const CreatePin = () => {
     } finally {
       setIsUploading(false);
     }
+  };
+
+  // Determine background styles based on theme
+  const getBgStyle = () => {
+    return {
+      backgroundColor: theme === 'dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)',
+      borderColor: dragActive ? 'rgb(234, 56, 76)' : theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+    };
   };
 
   return (
@@ -181,12 +204,13 @@ const CreatePin = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>{t('pinDetails')}</CardTitle>
+          <Card className="glass-card relative overflow-hidden border border-white/10">
+            <div className="absolute inset-0 bg-pinterest-red/5 backdrop-blur-sm rounded-lg"></div>
+            <CardHeader className="relative z-10">
+              <CardTitle className="text-2xl">{t('pinDetails')}</CardTitle>
               <CardDescription>{t('pinDetailsDescription')}</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="title">{t('pinTitle')}</Label>
@@ -195,6 +219,7 @@ const CreatePin = () => {
                     placeholder={t('pinTitlePlaceholder')} 
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    className="border-white/10 focus-visible:ring-pinterest-red/70"
                   />
                 </div>
                 
@@ -203,7 +228,7 @@ const CreatePin = () => {
                   <Textarea 
                     id="description" 
                     placeholder={t('pinDescriptionPlaceholder')} 
-                    className="min-h-[120px]"
+                    className="min-h-[120px] border-white/10 focus-visible:ring-pinterest-red/70"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
@@ -216,6 +241,7 @@ const CreatePin = () => {
                     placeholder={t('pinKeywordsPlaceholder')}
                     value={keywords}
                     onChange={(e) => setKeywords(e.target.value)}
+                    className="border-white/10 focus-visible:ring-pinterest-red/70"
                   />
                   <p className="text-xs text-gray-500">{t('pinKeywordsHelp')}</p>
                 </div>
@@ -228,15 +254,19 @@ const CreatePin = () => {
                     type="url"
                     value={link}
                     onChange={(e) => setLink(e.target.value)}
+                    className="border-white/10 focus-visible:ring-pinterest-red/70"
                   />
                 </div>
                 
                 <Button 
                   type="submit" 
-                  className="bg-pinterest-red hover:bg-pinterest-dark text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  className="bg-pinterest-red hover:bg-pinterest-dark text-white shadow-md hover:shadow-lg transition-all duration-300 relative overflow-hidden group"
                   disabled={isUploading}
                 >
-                  {isUploading ? 'Creating Pin...' : t('createPinButton')}
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366] to-[#ff0066] opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></span>
+                  <span className="relative z-10">
+                    {isUploading ? 'Creating Pin...' : t('createPinButton')}
+                  </span>
                 </Button>
               </form>
             </CardContent>
@@ -244,15 +274,17 @@ const CreatePin = () => {
         </div>
         
         <div>
-          <Card className="glass-card">
-            <CardHeader>
+          <Card className="glass-card border border-white/10 relative overflow-hidden">
+            <div className="absolute inset-0 bg-pinterest-red/5 backdrop-blur-sm rounded-lg"></div>
+            <CardHeader className="relative z-10">
               <CardTitle>{t('pinImage')}</CardTitle>
               <CardDescription>{t('pinImageDescription')}</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
               <div className="flex flex-col items-center justify-center">
                 <div 
-                  className={`w-full aspect-[2/3] ${theme === 'dark' ? 'bg-black' : 'bg-white'} rounded-lg mb-4 flex items-center justify-center border-2 border-dashed ${dragActive ? 'border-pinterest-red' : 'border-gray-300 dark:border-gray-700'} transition-all duration-300 overflow-hidden`}
+                  className={`w-full aspect-[2/3] rounded-lg mb-4 flex items-center justify-center border-2 border-dashed transition-all duration-300 overflow-hidden`}
+                  style={getBgStyle()}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
@@ -282,24 +314,33 @@ const CreatePin = () => {
                 />
                 <Button 
                   variant="outline" 
-                  className="w-full flex items-center justify-center gap-2 hover:bg-pinterest-red hover:text-white transition-all duration-300"
+                  className="w-full flex items-center justify-center gap-2 border-white/10 hover:bg-pinterest-red hover:text-white transition-all duration-300 group relative overflow-hidden"
                   onClick={triggerFileInput}
                   type="button"
                 >
-                  <Upload className="h-4 w-4" />
-                  {t('uploadImage')}
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366] to-[#ff0066] opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></span>
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    {t('uploadImage')}
+                  </span>
                 </Button>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="glass-card mt-6">
-            <CardHeader>
+          <Card className="glass-card mt-6 border border-white/10 relative overflow-hidden">
+            <div className="absolute inset-0 bg-pinterest-red/5 backdrop-blur-sm rounded-lg"></div>
+            <CardHeader className="relative z-10">
               <CardTitle>{t('pinPreview')}</CardTitle>
               <CardDescription>{t('pinPreviewDescription')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className={`aspect-[2/3] ${theme === 'dark' ? 'bg-black' : 'bg-white'} rounded-lg mb-4 flex items-center justify-center border border-gray-200 dark:border-gray-700 overflow-hidden`}>
+            <CardContent className="relative z-10">
+              <div 
+                className={`aspect-[2/3] rounded-lg mb-4 flex items-center justify-center border border-white/10 overflow-hidden`}
+                style={{
+                  backgroundColor: theme === 'dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)'
+                }}
+              >
                 {imagePreview ? (
                   <div className="w-full h-full relative">
                     <img 
