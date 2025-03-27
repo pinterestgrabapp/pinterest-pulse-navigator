@@ -13,7 +13,6 @@ import { Mail, Lock, User, LogIn, UserPlus, ArrowRight, Globe } from "lucide-rea
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/utils/languageUtils";
 import { supabase } from "@/integrations/supabase/client";
-
 const loginSchema = z.object({
   email: z.string().email({
     message: "Invalid email address"
@@ -22,7 +21,6 @@ const loginSchema = z.object({
     message: "Password must be at least 6 characters"
   })
 });
-
 const registerSchema = z.object({
   username: z.string().min(3, {
     message: "Username must be at least 3 characters"
@@ -40,7 +38,6 @@ const registerSchema = z.object({
   message: "Passwords do not match",
   path: ["confirmPassword"]
 });
-
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -54,7 +51,6 @@ const Auth = () => {
   const {
     t
   } = useLanguage();
-
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -62,7 +58,6 @@ const Auth = () => {
       password: ""
     }
   });
-
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -72,7 +67,6 @@ const Auth = () => {
       confirmPassword: ""
     }
   });
-
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
@@ -88,7 +82,6 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
-
   const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
@@ -105,7 +98,6 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
-
   const handleGoogleSignIn = async () => {
     try {
       const {
@@ -126,7 +118,6 @@ const Auth = () => {
       });
     }
   };
-
   return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-black dark:to-gray-900 p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
@@ -147,9 +138,7 @@ const Auth = () => {
               
               <TabsContent value="login" className="pt-4">
                 <CardTitle className="text-2xl glow-text">Welcome Back</CardTitle>
-                <CardDescription>
-                  {t('loginToAccount')}
-                </CardDescription>
+                
               </TabsContent>
               
               <TabsContent value="register" className="pt-4">
@@ -319,5 +308,4 @@ const Auth = () => {
       </div>
     </div>;
 };
-
 export default Auth;
