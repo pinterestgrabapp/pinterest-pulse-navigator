@@ -1,4 +1,3 @@
-
 import { useState, useRef, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -9,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus, Upload } from "lucide-react";
 import { useLanguage } from "@/utils/languageUtils";
-import { useToast } from "@/components/ui/use-toast";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/hooks/use-theme";
@@ -156,9 +154,6 @@ const CreatePin = () => {
         title: "Pin created successfully!",
         description: "Your pin has been created and is ready to view",
       });
-
-      // Show toast notification
-      toast.success("Pin created successfully!");
       
       // Reset form
       setTitle("");

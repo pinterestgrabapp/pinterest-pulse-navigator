@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 interface FooterProps {
   className?: string;
@@ -15,15 +15,23 @@ const Footer = ({
 }: FooterProps) => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success("You have been logged out successfully");
+      toast({
+        title: "Success",
+        description: "You have been logged out successfully"
+      });
       navigate('/auth');
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Failed to log out. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
