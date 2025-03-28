@@ -1,2 +1,7 @@
 
 project_id = "nfmstsrqfyhpooikhfns"
+app_id = "1510337"
+
+# Enable CORS headers
+[http]
+cors_allowed_origins = ["*"]

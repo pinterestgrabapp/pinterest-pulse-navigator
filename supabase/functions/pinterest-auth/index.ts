@@ -1,134 +1,146 @@
 
-// Follow Deno conventions for imports
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7';
-import { corsHeaders } from '../_shared/cors.ts';
+// This is a Supabase Edge Function that handles the Pinterest OAuth flow
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { corsHeaders } from "../_shared/cors.ts";
 
-// Pinterest API constants
-const PINTEREST_TOKEN_URL = "https://api.pinterest.com/v5/oauth/token";
+// Set up the Pinterest API credentials
+const PINTEREST_APP_ID = Deno.env.get("PINTEREST_APP_ID") || "";
+const PINTEREST_APP_SECRET = Deno.env.get("PINTEREST_APP_SECRET") || "";
+const PINTEREST_REDIRECT_URI = Deno.env.get("PINTEREST_REDIRECT_URI") || "";
 
-Deno.serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
+// Function to exchange the authorization code for an access token
+async function exchangeCodeForToken(code: string) {
   try {
-    const { code } = await req.json();
-    
-    if (!code) {
-      return new Response(
-        JSON.stringify({ error: "No authorization code provided" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Get environment variables
-    const pinterestAppId = Deno.env.get("PINTEREST_APP_ID");
-    const pinterestAppSecret = Deno.env.get("PINTEREST_APP_SECRET");
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    
-    // Validate we have all required secrets
-    if (!pinterestAppId || !pinterestAppSecret || !supabaseUrl || !supabaseServiceKey) {
-      console.error("Missing required environment variables");
-      return new Response(
-        JSON.stringify({ error: "Server configuration error" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Extract the origin for the redirect URI
-    const origin = req.headers.get("origin") || "https://yourdomain.com";
-    const redirectUri = `${origin}/pinterest-callback`;
-
-    // Prepare the request to exchange code for access token
-    const formData = new URLSearchParams();
-    formData.append("grant_type", "authorization_code");
-    formData.append("code", code);
-    formData.append("redirect_uri", redirectUri);
-    
-    console.log(`Exchanging code for token with redirect URI: ${redirectUri}`);
-    
-    // Make request to Pinterest API to exchange code for token
-    const response = await fetch(PINTEREST_TOKEN_URL, {
+    const tokenResponse = await fetch("https://api.pinterest.com/v5/oauth/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": `Basic ${btoa(`${pinterestAppId}:${pinterestAppSecret}`)}`
       },
-      body: formData.toString()
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        code: code,
+        redirect_uri: PINTEREST_REDIRECT_URI,
+        client_id: PINTEREST_APP_ID,
+        client_secret: PINTEREST_APP_SECRET,
+      }),
     });
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-      console.error("Pinterest API error:", data);
-      return new Response(
-        JSON.stringify({ error: "Failed to exchange code for token", details: data }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+
+    if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.json();
+      console.error("Pinterest token exchange error:", errorData);
+      throw new Error(`Pinterest API error: ${JSON.stringify(errorData)}`);
     }
-    
-    // Get user ID from the request headers
-    const authHeader = req.headers.get("authorization");
-    const token = authHeader?.split(" ")[1];
-    
-    if (!token) {
-      return new Response(
-        JSON.stringify({ error: "Authentication required" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    
-    // Initialize Supabase client with service role key for admin access
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Verify the user token and get user ID
-    const { data: userData, error: userError } = await supabase.auth.getUser(token);
-    
-    if (userError || !userData.user) {
-      console.error("Error getting user:", userError);
-      return new Response(
-        JSON.stringify({ error: "Invalid user token" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    
-    const userId = userData.user.id;
-    
-    // Calculate expiration date
-    const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + data.expires_in);
-    
-    // Store the credentials in Supabase
-    const { error } = await supabase
-      .from("pinterest_credentials")
-      .upsert({
-        user_id: userId,
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-        expires_at: expiresAt.toISOString(),
-        updated_at: new Date().toISOString()
-      });
-    
-    if (error) {
-      console.error("Error storing credentials:", error);
-      return new Response(
-        JSON.stringify({ error: "Failed to store credentials" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    
-    return new Response(
-      JSON.stringify({ success: true }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-    
+
+    return await tokenResponse.json();
   } catch (error) {
-    console.error("Server error:", error);
+    console.error("Error exchanging code for token:", error);
+    throw error;
+  }
+}
+
+// Function to get user info from Pinterest API
+async function getPinterestUserInfo(accessToken: string) {
+  try {
+    const userResponse = await fetch("https://api.pinterest.com/v5/user_account", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!userResponse.ok) {
+      const errorData = await userResponse.json();
+      console.error("Pinterest user info error:", errorData);
+      throw new Error(`Pinterest API error: ${JSON.stringify(errorData)}`);
+    }
+
+    return await userResponse.json();
+  } catch (error) {
+    console.error("Error getting Pinterest user info:", error);
+    throw error;
+  }
+}
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  try {
+    // Parse the request URL
+    const url = new URL(req.url);
+    const code = url.searchParams.get("code");
+    const userId = url.searchParams.get("userId");
+    const state = url.searchParams.get("state");
+
+    // Validate required parameters
+    if (!code || !userId) {
+      return new Response(
+        JSON.stringify({ error: "Missing required parameters" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Exchange the authorization code for an access token
+    const tokenData = await exchangeCodeForToken(code);
+    console.log("Token exchange successful");
+
+    // Get Pinterest user info
+    const userInfo = await getPinterestUserInfo(tokenData.access_token);
+    console.log("User info retrieved:", userInfo.username);
+
+    // Connect to Supabase API using the supplied SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+    // Store the credentials in the database
+    const storeResponse = await fetch(`${SUPABASE_URL}/rest/v1/pinterest_credentials`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "apikey": `${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Prefer": "resolution=merge-duplicates",
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        expires_at: new Date(Date.now() + tokenData.expires_in * 1000).toISOString(),
+      }),
+    });
+
+    if (!storeResponse.ok) {
+      const errorData = await storeResponse.json();
+      console.error("Error storing credentials:", errorData);
+      throw new Error(`Supabase API error: ${JSON.stringify(errorData)}`);
+    }
+
+    console.log("Pinterest credentials stored successfully");
+
+    // Return success response
     return new Response(
-      JSON.stringify({ error: "Internal server error", message: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ 
+        success: true, 
+        message: "Pinterest authentication successful", 
+        username: userInfo.username 
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Error in Pinterest auth function:", error);
+    return new Response(
+      JSON.stringify({ error: error.message || "Internal server error" }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   }
 });

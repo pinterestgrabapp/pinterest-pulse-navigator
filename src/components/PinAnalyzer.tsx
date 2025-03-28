@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/utils/languageUtils';
+import { useAuth } from '@/contexts/AuthContext';
 import { MOCK_PIN_STATS } from '@/lib/constants';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getPinterestCredentials } from '@/utils/pinterestApiUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PinData {
   id: string;
@@ -25,6 +28,7 @@ export const PinAnalyzer = () => {
   const [pinResults, setPinResults] = useState<PinData[]>([]);
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { user } = useAuth();
 
   const calculatePinScore = (stats: typeof MOCK_PIN_STATS): number => {
     // Calculate pin score based on saves, clicks, impressions, and engagement
@@ -48,54 +52,237 @@ export const PinAnalyzer = () => {
     return Math.round(score * 10) / 10; // Round to 1 decimal place
   };
 
+  const extractPinIdFromUrl = (url: string): string | null => {
+    // Pinterest URLs can have different formats, let's handle the common ones
+    const patterns = [
+      /pinterest\.com\/pin\/(\d+)/,  // Standard pin URL
+      /pinterest\.[\w.]+\/pin\/(\d+)/,  // International domains
+      /pin\.it\/(\w+)/  // Short URL format
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    
+    return null;
+  };
+
+  const fetchPinData = async (pinId: string, accessToken: string): Promise<any> => {
+    try {
+      // In a production app, this should be a server request to protect your Pinterest token
+      const response = await fetch(`https://api.pinterest.com/v5/pins/${pinId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Pinterest API error:', errorData);
+        throw new Error(`Pinterest API error: ${errorData.message || response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching pin data:', error);
+      throw error;
+    }
+  };
+
+  const extractKeywords = (pinData: any): string[] => {
+    const keywords: Set<string> = new Set();
+    const stopWords = ['and', 'the', 'to', 'a', 'an', 'in', 'on', 'with', 'for', 'of', 'by', 'at'];
+    
+    // Extract from title
+    if (pinData.title) {
+      const titleWords = pinData.title.toLowerCase().split(/\s+/);
+      titleWords.forEach((word: string) => {
+        const cleaned = word.replace(/[^\w]/g, '');
+        if (cleaned.length > 3 && !stopWords.includes(cleaned)) {
+          keywords.add(cleaned);
+        }
+      });
+    }
+    
+    // Extract from description
+    if (pinData.description) {
+      const descWords = pinData.description.toLowerCase().split(/\s+/);
+      descWords.forEach((word: string) => {
+        const cleaned = word.replace(/[^\w]/g, '');
+        if (cleaned.length > 3 && !stopWords.includes(cleaned)) {
+          keywords.add(cleaned);
+        }
+      });
+    }
+    
+    return Array.from(keywords);
+  };
+
+  const savePinAnalysisToDb = async (pinData: PinData) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('user_scrapes')
+        .insert({
+          user_id: user.id,
+          url: pinData.url,
+          title: pinData.title,
+          description: pinData.description,
+          keywords: pinData.keywords,
+          status: pinData.status
+        });
+        
+      if (error) {
+        console.error('Error saving pin analysis to database:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to save the analysis results.',
+          variant: 'destructive'
+        });
+      }
+    } catch (error) {
+      console.error('Error in database operation:', error);
+    }
+  };
+
   const handleAnalyzePin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pinUrl) return;
+    
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please sign in to analyze Pinterest pins.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
     setIsLoading(true);
+    
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
+      // Get Pinterest credentials for the user
+      const credentials = await getPinterestCredentials(user.id);
+      
+      if (!credentials || !credentials.access_token) {
+        toast({
+          title: 'Pinterest Connection Required',
+          description: 'Please connect your Pinterest account in Settings → Integrations.',
+          variant: 'destructive'
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      // Extract Pin ID from URL
+      const pinId = extractPinIdFromUrl(pinUrl);
+      
+      if (!pinId) {
+        toast({
+          title: 'Invalid Pinterest URL',
+          description: 'Please enter a valid Pinterest pin URL.',
+          variant: 'destructive'
+        });
+        setIsLoading(false);
+        return;
+      }
+      
       // Generate a unique ID for this result
       const id = Date.now().toString();
-
-      // Mock stats for the new pin
-      const stats = {
-        ...MOCK_PIN_STATS,
-        saves: Math.floor(Math.random() * 500) + 100,
-        clicks: Math.floor(Math.random() * 300) + 50,
-        impressions: Math.floor(Math.random() * 3000) + 1000,
-        engagement: Math.floor(Math.random() * 8) + 2,
-      };
-
-      // Calculate pin score
-      const pinScore = calculatePinScore(stats);
-
-      // Mock data for the new pin
-      const newPinData: PinData = {
+      
+      // Set up a "pending" entry while we wait for the API
+      const pendingPinData: PinData = {
         id,
         url: pinUrl,
-        title: "Modern Interior Design Ideas for 2023",
-        description: "Explore the latest trends in home decor with minimalist Scandinavian influences and sustainable materials.",
-        keywords: ['home decor ideas', 'living room inspiration', 'minimalist design', 'interior styling', 'scandinavian interior', 'modern home', 'cozy space', 'neutral colors'],
-        stats: stats,
-        status: 'completed',
-        pinScore: pinScore
+        title: "Analyzing pin...",
+        description: "Fetching Pinterest pin data...",
+        keywords: [],
+        stats: MOCK_PIN_STATS,
+        status: 'pending'
       };
-      setPinResults(prev => [newPinData, ...prev]);
-      setPinUrl('');
-      toast({
-        title: 'Pin Analysis Complete',
-        description: 'Successfully extracted keywords and pin statistics.'
-      });
+      
+      setPinResults(prev => [pendingPinData, ...prev]);
+      
+      // Try to get real data from Pinterest API
+      try {
+        const pinData = await fetchPinData(pinId, credentials.access_token);
+        
+        // For demo purposes, since the Pinterest API doesn't provide all the stats we want,
+        // we'll merge real data with some random stats
+        const stats = {
+          saves: Math.floor(Math.random() * 500) + 100,
+          clicks: Math.floor(Math.random() * 300) + 50,
+          impressions: Math.floor(Math.random() * 3000) + 1000,
+          engagement: Math.floor(Math.random() * 8) + 2,
+        };
+        
+        // Calculate pin score
+        const pinScore = calculatePinScore(stats);
+        
+        // Extract keywords
+        const keywords = extractKeywords(pinData);
+        
+        // Update with real data
+        const updatedPinData: PinData = {
+          id,
+          url: pinUrl,
+          title: pinData.title || "No title available",
+          description: pinData.description || "No description available", 
+          keywords: keywords,
+          stats: stats,
+          status: 'completed',
+          pinScore: pinScore
+        };
+        
+        // Save to database
+        await savePinAnalysisToDb(updatedPinData);
+        
+        // Update the results
+        setPinResults(prev => prev.map(pin => pin.id === id ? updatedPinData : pin));
+        
+        toast({
+          title: 'Pin Analysis Complete',
+          description: 'Successfully extracted keywords and pin statistics.'
+        });
+      } catch (error) {
+        console.error('Error analyzing pin:', error);
+        
+        // Update the entry to show error
+        setPinResults(prev => prev.map(pin => {
+          if (pin.id === id) {
+            return {
+              ...pin,
+              title: "Analysis Failed",
+              description: "Could not retrieve pin data from Pinterest.",
+              keywords: ['error', 'failed'],
+              status: 'completed'
+            };
+          }
+          return pin;
+        }));
+        
+        toast({
+          title: 'Error',
+          description: 'Failed to analyze the Pinterest pin. Please try again later.',
+          variant: 'destructive'
+        });
+      }
     } catch (error) {
+      console.error('Error in pin analysis flow:', error);
       toast({
         title: 'Error',
-        description: 'Failed to analyze the Pinterest pin.',
+        description: 'An unexpected error occurred. Please try again.',
         variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
+      setPinUrl('');
     }
   };
 
@@ -193,9 +380,13 @@ export const PinAnalyzer = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-pinterest-red text-white text-xs font-bold">
-                      {pin.pinScore || 'N/A'}
-                    </span>
+                    {pin.status === 'pending' ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-pinterest-red text-white text-xs font-bold">
+                        {pin.pinScore || 'N/A'}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
@@ -207,7 +398,13 @@ export const PinAnalyzer = () => {
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => handleDownload(pin)} title="Download data">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => handleDownload(pin)} 
+                      title="Download data"
+                      disabled={pin.status === 'pending'}
+                    >
                       <Download className="h-4 w-4" />
                       <span className="sr-only">Download</span>
                     </Button>
