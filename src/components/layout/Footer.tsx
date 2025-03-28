@@ -44,7 +44,7 @@ const Footer = ({
           
           
           
-          <div className="text-gray-600 dark:text-gray-400 text-sm mx-[180px]">
+          <div className="text-gray-600 dark:text-gray-400 text-sm mx-[240px]">
             &copy; {new Date().getFullYear()} Pinterest Grab. All rights reserved.
           </div>
         </div>
