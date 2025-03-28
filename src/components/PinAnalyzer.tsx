@@ -215,7 +215,7 @@ export const PinAnalyzer = () => {
         
         // For demo purposes, since the Pinterest API doesn't provide all the stats we want,
         // we'll merge real data with some random stats
-        const stats = {
+        const rawStats = {
           saves: Math.floor(Math.random() * 500) + 100,
           clicks: Math.floor(Math.random() * 300) + 50,
           impressions: Math.floor(Math.random() * 3000) + 1000,
@@ -223,7 +223,18 @@ export const PinAnalyzer = () => {
         };
         
         // Calculate pin score
-        const pinScore = calculatePinScore(stats);
+        const pinScore = calculatePinScore(rawStats);
+        
+        // Create the complete stats object with all required properties
+        const stats = {
+          ...rawStats,
+          pinScore: pinScore,
+          createdAt: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })
+        };
         
         // Extract keywords
         const keywords = extractKeywords(pinData);
