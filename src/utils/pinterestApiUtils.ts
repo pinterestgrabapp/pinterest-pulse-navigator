@@ -16,7 +16,7 @@ export const PINTEREST_SCOPES = [
 ].join(",");
 
 // Get Pinterest API credentials - needs to be set up in your Pinterest Developer account
-export const PINTEREST_APP_ID = "YOUR_PINTEREST_APP_ID"; // Replace with your actual App ID
+export const PINTEREST_APP_ID = import.meta.env.VITE_PINTEREST_APP_ID || "1510337"; // Use secret or fallback
 
 // Helper function to generate Pinterest OAuth URL
 export const getPinterestAuthUrl = () => {
