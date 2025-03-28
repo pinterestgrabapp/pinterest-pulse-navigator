@@ -44,13 +44,19 @@ const PinterestCallback = () => {
         }
 
         // Call our secure Supabase Edge Function to exchange the code for tokens
-        const { error: exchangeError } = await supabase.functions.invoke('pinterest-auth', {
-          body: { code },
+        const { data, error: exchangeError } = await supabase.functions.invoke('pinterest-auth', {
+          body: { 
+            code, 
+            userId: user.id 
+          },
         });
 
         if (exchangeError) {
+          console.error("Error exchanging token:", exchangeError);
           throw new Error(`Token exchange failed: ${exchangeError.message}`);
         }
+
+        console.log("Pinterest connection response:", data);
 
         toast({
           title: "Pinterest Connected",
@@ -59,9 +65,9 @@ const PinterestCallback = () => {
 
         // Redirect to settings or dashboard
         navigate("/settings");
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error processing Pinterest callback:", err);
-        setError("Failed to connect your Pinterest account. Please try again.");
+        setError(`Failed to connect your Pinterest account: ${err.message}`);
       } finally {
         setLoading(false);
       }

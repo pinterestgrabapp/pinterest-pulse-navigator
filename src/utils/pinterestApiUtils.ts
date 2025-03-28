@@ -1,12 +1,13 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Pinterest API configuration
 export const PINTEREST_API_URL = "https://api.pinterest.com/v5";
 export const PINTEREST_AUTH_URL = "https://www.pinterest.com/oauth";
+
+// Make sure the redirect URI uses the full URL including the protocol
 export const PINTEREST_REDIRECT_URI = `${window.location.origin}/pinterest-callback`;
 
-// Pinterest API scopes
+// Pinterest API scopes - adding all needed scopes
 export const PINTEREST_SCOPES = [
   "boards:read",
   "pins:read",
@@ -15,15 +16,17 @@ export const PINTEREST_SCOPES = [
   "boards:write"
 ].join(",");
 
-// Get Pinterest API credentials - needs to be set up in your Pinterest Developer account
-export const PINTEREST_APP_ID = import.meta.env.VITE_PINTEREST_APP_ID || "1510337"; // Use secret or fallback
+// Get Pinterest API credentials
+export const PINTEREST_APP_ID = import.meta.env.VITE_PINTEREST_APP_ID || "1510337";
 
 // Helper function to generate Pinterest OAuth URL
 export const getPinterestAuthUrl = () => {
   const state = generateRandomString(32);
   localStorage.setItem("pinterest_auth_state", state);
   
-  return `${PINTEREST_AUTH_URL}?client_id=${PINTEREST_APP_ID}&redirect_uri=${encodeURIComponent(PINTEREST_REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(PINTEREST_SCOPES)}&state=${state}`;
+  const authUrl = `${PINTEREST_AUTH_URL}?client_id=${PINTEREST_APP_ID}&redirect_uri=${encodeURIComponent(PINTEREST_REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(PINTEREST_SCOPES)}&state=${state}`;
+  console.log("Generated Pinterest auth URL:", authUrl);
+  return authUrl;
 };
 
 // Generate a random string for state parameter
@@ -38,34 +41,44 @@ const generateRandomString = (length: number) => {
 
 // Check if user has connected their Pinterest account
 export const isPinterestConnected = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("pinterest_credentials")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from("pinterest_credentials")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle(); // Using maybeSingle instead of single to avoid errors when no record is found
+      
+    if (error) {
+      console.error("Error checking Pinterest connection:", error);
+      return false;
+    }
     
-  if (error) {
-    console.error("Error checking Pinterest connection:", error);
+    return !!data && !!data.access_token;
+  } catch (err) {
+    console.error("Exception checking Pinterest connection:", err);
     return false;
   }
-  
-  return !!data && !!data.access_token;
 };
 
 // Get Pinterest credentials for user
 export const getPinterestCredentials = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("pinterest_credentials")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from("pinterest_credentials")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle(); // Using maybeSingle instead of single
+      
+    if (error) {
+      console.error("Error getting Pinterest credentials:", error);
+      return null;
+    }
     
-  if (error) {
-    console.error("Error getting Pinterest credentials:", error);
+    return data;
+  } catch (err) {
+    console.error("Exception getting Pinterest credentials:", err);
     return null;
   }
-  
-  return data;
 };
 
 // Fetch Pinterest pins for the authenticated user

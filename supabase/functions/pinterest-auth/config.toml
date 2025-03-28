@@ -2,6 +2,7 @@
 project_id = "nfmstsrqfyhpooikhfns"
 app_id = "1510337"
 
-# Enable CORS headers
 [http]
+port = 54321
 cors_allowed_origins = ["*"]
+cors_allowed_headers = ["authorization", "x-client-info", "apikey", "content-type"]
