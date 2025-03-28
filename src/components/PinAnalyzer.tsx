@@ -30,7 +30,7 @@ export const PinAnalyzer = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
 
-  const calculatePinScore = (stats: typeof MOCK_PIN_STATS): number => {
+  const calculatePinScore = (stats: { saves: number; clicks: number; impressions: number; engagement: number }): number => {
     // Calculate pin score based on saves, clicks, impressions, and engagement
     const saveWeight = 0.4;
     const clickWeight = 0.2;
@@ -228,7 +228,7 @@ export const PinAnalyzer = () => {
         // Create the complete stats object with all required properties
         const stats = {
           ...rawStats,
-          pinScore: pinScore,
+          pinScore,
           createdAt: new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
