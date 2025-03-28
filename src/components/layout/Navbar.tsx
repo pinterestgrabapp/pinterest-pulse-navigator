@@ -51,9 +51,7 @@ export const Navbar = () => {
               <span>{t('home')}</span>
             </Link>
             
-            <button onClick={() => scrollToSection('features')} className="px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-black dark:hover:bg-black hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_12px_rgba(234,56,76,0.6)] hover:border hover:border-white/20 dark:hover:border-white/20 transition-all duration-300">
-              {t('features')}
-            </button>
+            
             
             <button onClick={() => scrollToSection('how-it-works')} className="px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-black dark:hover:bg-black hover:text-pinterest-red dark:hover:text-pinterest-red hover:shadow-[0_0_12px_rgba(234,56,76,0.6)] hover:border hover:border-white/20 dark:hover:border-white/20 transition-all duration-300">
               Try It
