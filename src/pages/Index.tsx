@@ -7,6 +7,7 @@ import { useLanguage } from '@/utils/languageUtils';
 import { APP_NAME, APP_DESCRIPTION } from '@/lib/constants';
 import KeywordDownloader from "@/components/KeywordDownloader";
 import { useAuth } from "@/contexts/AuthContext";
+
 const Index = () => {
   const {
     t
@@ -14,6 +15,7 @@ const Index = () => {
   const {
     user
   } = useAuth();
+
   return <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
       <Navbar />
       
@@ -65,7 +67,7 @@ const Index = () => {
         <section id="how-it-works" className="py-20 bg-white dark:bg-black">
           <div className="container px-4 mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text bg-gradient-to-r from-pinterest-red to-pink-600 text-white">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text bg-gradient-to-r from-pinterest-red to-pink-600 text-white glow-text">
                 How It Works
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -268,4 +270,5 @@ const Index = () => {
       <Footer />
     </div>;
 };
+
 export default Index;
