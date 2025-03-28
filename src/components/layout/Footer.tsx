@@ -39,10 +39,7 @@ const Footer = ({
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-6" />
-              <span className="font-medium">Pinterest Grab</span>
-            </Link>
+            
           </div>
           
           
