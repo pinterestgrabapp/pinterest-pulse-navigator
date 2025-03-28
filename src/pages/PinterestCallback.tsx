@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +29,7 @@ const PinterestCallback = () => {
 
         // Verify the state to prevent CSRF attacks
         if (!state || state !== storedState) {
-          setError("Invalid state parameter");
+          setError("Invalid state parameter. This could be a security issue.");
           setLoading(false);
           return;
         }
@@ -42,35 +43,13 @@ const PinterestCallback = () => {
           return;
         }
 
-        // In a real application, we would use a secure backend to exchange the code for an access token
-        // For demonstration purposes, we'll simulate this step
-        // Note: This should be done on your server using an Edge Function to keep your app secret secure
-        
-        // Simulate token exchange
-        const simulatedTokenData = {
-          access_token: "simulated_access_token", // In a real app, this comes from Pinterest API
-          refresh_token: "simulated_refresh_token", // In a real app, this comes from Pinterest API
-          expires_in: 3600 // 1 hour expiration
-        };
+        // Call our secure Supabase Edge Function to exchange the code for tokens
+        const { error: exchangeError } = await supabase.functions.invoke('pinterest-auth', {
+          body: { code },
+        });
 
-        // Calculate expiration date
-        const expiresAt = new Date();
-        expiresAt.setSeconds(expiresAt.getSeconds() + simulatedTokenData.expires_in);
-
-        // Store the credentials in Supabase
-        const { error: supabaseError } = await supabase
-          .from("pinterest_credentials")
-          .upsert({
-            user_id: user.id,
-            access_token: simulatedTokenData.access_token,
-            refresh_token: simulatedTokenData.refresh_token,
-            expires_at: expiresAt.toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .select();
-
-        if (supabaseError) {
-          throw supabaseError;
+        if (exchangeError) {
+          throw new Error(`Token exchange failed: ${exchangeError.message}`);
         }
 
         toast({
