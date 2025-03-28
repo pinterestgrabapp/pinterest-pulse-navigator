@@ -1,4 +1,3 @@
-
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -8,13 +7,14 @@ import { useLanguage } from '@/utils/languageUtils';
 import { APP_NAME, APP_DESCRIPTION } from '@/lib/constants';
 import KeywordDownloader from "@/components/KeywordDownloader";
 import { useAuth } from "@/contexts/AuthContext";
-
 const Index = () => {
-  const { t } = useLanguage();
-  const { user } = useAuth();
-
-  return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
+  const {
+    t
+  } = useLanguage();
+  const {
+    user
+  } = useAuth();
+  return <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
       <Navbar />
       
       <main className="flex-1">
@@ -28,15 +28,21 @@ const Index = () => {
               <div className="inline-block mb-4 px-3 py-1 rounded-full bg-pinterest-red/20 border border-pinterest-red/30 text-pinterest-red text-sm font-medium animate-fade-in">
                 {APP_NAME}
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up" style={{
+              animationDelay: '0.1s'
+            }}>
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-700 dark:from-white dark:to-gray-400">
                   {t('hero')}
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed animate-fade-in-up" style={{
+              animationDelay: '0.2s'
+            }}>
                 {t('heroSubtitle')}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{
+              animationDelay: '0.3s'
+            }}>
                 <Button asChild size="lg" className="rounded-full px-8 bg-pinterest-red hover:bg-pinterest-dark border border-white/10">
                   <Link to={user ? "/dashboard" : "/auth"}>
                     {t('getStarted')} <ArrowRight className="ml-2 h-4 w-4" />
@@ -59,7 +65,7 @@ const Index = () => {
         <section id="how-it-works" className="py-20 bg-white dark:bg-black">
           <div className="container px-4 mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pinterest-red to-pink-600">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text bg-gradient-to-r from-pinterest-red to-pink-600 text-white">
                 How It Works
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -117,7 +123,9 @@ const Index = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Feature 1 */}
-              <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+              <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{
+              animationDelay: '0.1s'
+            }}>
                 <div className="flex items-center justify-center mb-6">
                   <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pinterest-red">
                     <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="2" strokeDasharray="10 5" />
@@ -134,7 +142,9 @@ const Index = () => {
               </div>
               
               {/* Feature 2 */}
-              <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{
+              animationDelay: '0.2s'
+            }}>
                 <div className="flex items-center justify-center mb-6">
                   <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pinterest-red">
                     <rect x="40" y="40" width="120" height="120" rx="10" stroke="currentColor" strokeWidth="2" />
@@ -151,7 +161,9 @@ const Index = () => {
               </div>
               
               {/* Feature 3 */}
-              <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{
+              animationDelay: '0.3s'
+            }}>
                 <div className="flex items-center justify-center mb-6">
                   <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pinterest-red">
                     <rect x="50" y="50" width="100" height="100" rx="10" stroke="currentColor" strokeWidth="2" />
@@ -254,8 +266,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
