@@ -31,6 +31,7 @@ import {
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PinAnalyzer from '@/components/PinAnalyzer';
 import { useLanguage } from '@/utils/languageUtils';
+import GlowingChart from '@/components/ui/glowing-chart';
 
 // Mock data for charts
 const mockAreaData = [
@@ -141,63 +142,79 @@ const Dashboard = () => {
       
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Impressions Over Time</CardTitle>
-            <CardDescription>Your pin visibility growth over the past months</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={mockAreaData}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Area 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="hsl(var(--primary))" 
-                    fill="hsl(var(--primary))" 
-                    fillOpacity={0.2} 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        <GlowingChart title="Impressions Over Time" description="Your pin visibility growth over the past months">
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={mockAreaData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ea384c" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#ea384c" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.3} />
+                <XAxis dataKey="name" stroke="#888" />
+                <YAxis stroke="#888" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    borderColor: '#ea384c', 
+                    borderRadius: '8px',
+                    boxShadow: '0 0 10px rgba(234,56,76,0.5)',
+                  }} 
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#ea384c"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorValue)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </GlowingChart>
         
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Top Performing Keywords</CardTitle>
-            <CardDescription>Keywords driving the most traffic to your pins</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={mockKeywordData}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={80} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar 
-                    dataKey="value" 
-                    fill="hsl(var(--primary))" 
-                    radius={[0, 4, 4, 0]} 
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        <GlowingChart title="Top Performing Keywords" description="Keywords driving the most traffic to your pins">
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={mockKeywordData}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#ea384c" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.8}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.3} />
+                <XAxis type="number" stroke="#888" />
+                <YAxis dataKey="name" type="category" width={80} stroke="#888" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    borderColor: '#ea384c', 
+                    borderRadius: '8px',
+                    boxShadow: '0 0 10px rgba(234,56,76,0.5)',
+                  }} 
+                />
+                <Legend />
+                <Bar 
+                  dataKey="value" 
+                  fill="url(#barGradient)" 
+                  radius={[0, 4, 4, 0]}
+                  className="filter drop-shadow-[0_0_3px_rgba(234,56,76,0.3)]"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </GlowingChart>
       </div>
       
       {/* Quick Actions */}

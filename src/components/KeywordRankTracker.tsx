@@ -307,42 +307,69 @@ export const KeywordRankTracker = () => {
         </div>
         
         {selectedKeyword && (
-          <div className="lg:col-span-3 bg-black text-white rounded-md border p-4">
-            <div className="mb-4">
+          <div className="lg:col-span-3 bg-black text-white rounded-xl border border-pinterest-red/30 shadow-[0_0_15px_rgba(234,56,76,0.3)] p-4 relative overflow-hidden">
+            {/* Glow effect elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-pinterest-red/5 to-transparent opacity-30"></div>
+            <div className="absolute -inset-[1px] z-0 bg-pinterest-red/10 blur-md"></div>
+            
+            <div className="mb-4 relative z-10">
               <h3 className="text-lg font-semibold">{selectedKeyword.keyword}</h3>
               <p className="text-sm text-gray-400">
                 Tracking since {new Date(selectedKeyword.dateAdded).toLocaleDateString()}
               </p>
             </div>
             
-            <div className="h-80">
+            <div className="h-80 relative z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <ReLineChart
                   data={formatChartData(selectedKeyword.history)}
                   margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
                 >
+                  <defs>
+                    <linearGradient id="rankingGradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#ea384c" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.8}/>
+                    </linearGradient>
+                    <filter id="glow-line" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="3" result="blur" />
+                      <feFlood floodColor="#ea384c" floodOpacity="0.5" result="color" />
+                      <feComposite in="color" in2="blur" operator="in" result="shadow" />
+                      <feComposite in="SourceGraphic" in2="shadow" operator="over" />
+                    </filter>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                   <XAxis dataKey="date" stroke="#888" />
                   <YAxis stroke="#888" domain={['dataMax + 5', 'dataMin - 5']} reversed />
                   <Tooltip 
                     formatter={(value: number) => [`#${value}`, 'Position']}
                     labelFormatter={(label) => `Date: ${label}`}
-                    contentStyle={{ background: '#333', borderColor: '#555' }}
+                    contentStyle={{ 
+                      background: 'rgba(0,0,0,0.8)', 
+                      borderColor: '#ea384c', 
+                      borderRadius: '8px', 
+                      boxShadow: '0 0 10px rgba(234,56,76,0.5)'
+                    }}
                   />
                   <Legend />
                   <Line 
                     type="monotone" 
                     dataKey="position" 
                     name="Ranking" 
-                    stroke="hsl(var(--primary))" 
-                    activeDot={{ r: 8 }} 
-                    strokeWidth={2}
+                    stroke="url(#rankingGradient)" 
+                    strokeWidth={3}
+                    activeDot={{ 
+                      r: 8, 
+                      stroke: "#ea384c",
+                      strokeWidth: 2,
+                      fill: "#000"
+                    }} 
+                    filter="url(#glow-line)"
                   />
                 </ReLineChart>
               </ResponsiveContainer>
             </div>
             
-            <div className="mt-4 text-sm text-gray-400">
+            <div className="mt-4 text-sm text-gray-400 relative z-10">
               <p>Lower positions represent better rankings on Pinterest search results.</p>
             </div>
           </div>

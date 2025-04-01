@@ -25,6 +25,7 @@ import {
   Legend,
   ResponsiveContainer
 } from "recharts";
+import GlowingChart from "@/components/ui/glowing-chart";
 
 // Mock data for charts
 const impressionsData = [
@@ -170,65 +171,106 @@ const PinStats = () => {
           </Card>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-black text-white border-gray-700">
-              <CardHeader>
-                <CardTitle>Impressions Over Time</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Monthly pin impressions for your account
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={impressionsData}
-                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                      <XAxis dataKey="date" stroke="#888" />
-                      <YAxis stroke="#888" />
-                      <Tooltip contentStyle={{ background: '#333', borderColor: '#555', color: '#fff' }} />
-                      <Area 
-                        type="monotone" 
-                        dataKey="value" 
-                        name="Impressions" 
-                        stroke="hsl(var(--primary))" 
-                        fill="hsl(var(--primary))" 
-                        fillOpacity={0.2} 
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+            <GlowingChart title="Impressions Over Time" description="Monthly pin impressions for your account">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={impressionsData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="impressionGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ea384c" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#ea384c" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.3} />
+                    <XAxis dataKey="date" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        borderColor: '#ea384c', 
+                        borderRadius: '8px',
+                        boxShadow: '0 0 10px rgba(234,56,76,0.5)',
+                      }} 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="value" 
+                      name="Impressions" 
+                      stroke="#ea384c" 
+                      strokeWidth={2}
+                      fillOpacity={1}
+                      fill="url(#impressionGradient)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </GlowingChart>
             
-            <Card className="bg-black text-white border-gray-700">
-              <CardHeader>
-                <CardTitle>Engagement Metrics</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Saves, clicks, and comments on your pins
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={engagementData}
-                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                      <XAxis dataKey="date" stroke="#888" />
-                      <YAxis stroke="#888" />
-                      <Tooltip contentStyle={{ background: '#333', borderColor: '#555', color: '#fff' }} />
-                      <Legend />
-                      <Bar dataKey="saves" name="Saves" fill="#ea384c" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="clicks" name="Clicks" fill="#9f1239" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="comments" name="Comments" fill="#f43f5e" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+            <GlowingChart title="Engagement Metrics" description="Saves, clicks, and comments on your pins">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={engagementData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="savesGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ea384c" stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor="#ea384c" stopOpacity={0.7}/>
+                      </linearGradient>
+                      <linearGradient id="clicksGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#9f1239" stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor="#9f1239" stopOpacity={0.7}/>
+                      </linearGradient>
+                      <linearGradient id="commentsGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.7}/>
+                      </linearGradient>
+                      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feFlood floodColor="#ea384c" floodOpacity="0.3" result="color" />
+                        <feComposite in="color" in2="blur" operator="in" result="shadow" />
+                        <feComposite in="SourceGraphic" in2="shadow" operator="over" />
+                      </filter>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.3} />
+                    <XAxis dataKey="date" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        borderColor: '#ea384c', 
+                        borderRadius: '8px',
+                        boxShadow: '0 0 10px rgba(234,56,76,0.5)',
+                      }} 
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="saves" 
+                      name="Saves" 
+                      fill="url(#savesGradient)" 
+                      radius={[4, 4, 0, 0]} 
+                      filter="url(#glow)"
+                    />
+                    <Bar 
+                      dataKey="clicks" 
+                      name="Clicks" 
+                      fill="url(#clicksGradient)" 
+                      radius={[4, 4, 0, 0]} 
+                    />
+                    <Bar 
+                      dataKey="comments" 
+                      name="Comments" 
+                      fill="url(#commentsGradient)" 
+                      radius={[4, 4, 0, 0]} 
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </GlowingChart>
           </div>
         </TabsContent>
         
