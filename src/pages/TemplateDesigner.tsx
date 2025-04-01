@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -8,15 +7,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { ArrowRight, Download, Paintbrush, Plus, Save, Trash2, Upload } from "lucide-react";
+import { Download, ImageIcon, Layers, Plus, Save, Share2, Square, Trash, Type } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Link } from "react-router-dom";
 
 const templateFormSchema = z.object({
   name: z.string().min(3, { message: "Template name must be at least 3 characters" }),
@@ -50,7 +56,6 @@ const TemplateDesigner = () => {
     },
   });
 
-  // Fetch templates
   useEffect(() => {
     const fetchTemplates = async () => {
       if (!user?.id) return;
@@ -76,7 +81,6 @@ const TemplateDesigner = () => {
     fetchTemplates();
   }, [user]);
   
-  // Handle form submission
   const onSubmit = async (values: TemplateFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to create templates");
@@ -86,7 +90,6 @@ const TemplateDesigner = () => {
     setLoading(true);
     
     try {
-      // Create template object
       const templateData = {
         background: values.backgroundUrl || canvasBackground,
         width: canvasWidth,
@@ -101,28 +104,23 @@ const TemplateDesigner = () => {
         templateType: values.templateType,
       };
       
-      // Create a canvas to generate a preview image
       const canvas = document.createElement("canvas");
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
       const ctx = canvas.getContext("2d");
       
       if (ctx) {
-        // Fill background
         ctx.fillStyle = canvasBackground;
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         
-        // Draw text as a basic preview
         ctx.fillStyle = textColor;
         ctx.font = `${boldText ? 'bold' : 'normal'} ${fontSize}px Arial`;
         ctx.textAlign = centerText ? 'center' : 'left';
         ctx.fillText("Template Preview", canvasWidth / 2, canvasHeight / 2);
       }
       
-      // Convert canvas to image URL
       const imageUrl = canvas.toDataURL("image/png");
       
-      // Insert template
       const { data, error } = await supabase
         .from("pin_templates")
         .insert({
@@ -146,21 +144,17 @@ const TemplateDesigner = () => {
         description: "Your new template is ready to use"
       });
       
-      // Add to templates list
       if (data && data[0]) {
         setTemplates([data[0], ...templates]);
       }
       
-      // Reset form
       form.reset({
         name: "",
         backgroundUrl: "",
         templateType: "standard",
       });
       
-      // Reset design elements
       setDesignElements([]);
-      
     } catch (err) {
       console.error("Error creating template:", err);
       toast.error("Failed to create template", {
@@ -171,7 +165,6 @@ const TemplateDesigner = () => {
     }
   };
   
-  // Delete template
   const deleteTemplate = async (id: string) => {
     if (!user?.id) return;
     
@@ -190,7 +183,6 @@ const TemplateDesigner = () => {
         return;
       }
       
-      // Remove from templates list
       setTemplates(templates.filter(template => template.id !== id));
       
       toast.success("Template deleted", {
@@ -204,7 +196,6 @@ const TemplateDesigner = () => {
     }
   };
   
-  // Add text element
   const addTextElement = () => {
     setDesignElements([
       ...designElements,
@@ -221,16 +212,13 @@ const TemplateDesigner = () => {
     ]);
   };
   
-  // Use template in create pin page
   const useTemplate = (template: any) => {
-    // Store selected template in local storage to use in create pin page
     localStorage.setItem("selectedTemplate", JSON.stringify(template));
     
     toast.success("Template selected", {
       description: "Navigate to Create Pin to use this template"
     });
     
-    // Navigate to create pin page
     window.location.href = "/create-pin";
   };
   

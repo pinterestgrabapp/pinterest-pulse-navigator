@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { getPinterestCredentials } from "@/utils/pinterestApiUtils";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { AreaChart, BarChart, DonutChart, LineChart } from "@/components/ui/chart";
+import { AreaChart, BarChart, DonutChart, LineChart } from "@/components/ui/charts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,6 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Download, RefreshCw } from "lucide-react";
 import { format, subDays, subMonths } from "date-fns";
+import { Link } from "react-router-dom";
 
 const Analytics = () => {
   const { user } = useAuth();
@@ -24,7 +24,7 @@ const Analytics = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [selectedPin, setSelectedPin] = useState("all");
   const [pins, setPins] = useState<any[]>([]);
-  
+
   // Sample data for demonstration
   const sampleData = {
     impressions: {
@@ -207,12 +207,12 @@ const Analytics = () => {
       { id: "pin5", title: "Best Times to Post", impressions: 2456, saves: 121, clicks: 154 },
     ]
   };
-  
+
   // Check if user has connected Pinterest account
   useEffect(() => {
     const checkPinterestConnection = async () => {
       if (!user?.id) return;
-      
+
       try {
         const credentials = await getPinterestCredentials(user.id);
         setPinterestConnected(!!credentials?.access_token);
@@ -221,57 +221,32 @@ const Analytics = () => {
         setPinterestConnected(false);
       }
     };
-    
+
     checkPinterestConnection();
   }, [user]);
-  
-  // Fetch user pins
-  useEffect(() => {
-    const fetchUserPins = async () => {
-      if (!user?.id) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from("pins")
-          .select("*")
-          .eq("user_id", user.id);
-          
-        if (error) {
-          console.error("Error fetching pins:", error);
-          return;
-        }
-        
-        setPins(data || []);
-      } catch (err) {
-        console.error("Error fetching pins:", err);
-      }
-    };
-    
-    fetchUserPins();
-  }, [user]);
-  
+
   // Load analytics data
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       setLoading(true);
-      
+
       // In a real application, you would fetch analytics data from the Pinterest API
       // For this demo, we'll use sample data
-      
+
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       setAnalyticsData(sampleData);
       setLoading(false);
     };
-    
+
     fetchAnalyticsData();
   }, [timeframe, startDate, endDate, selectedPin]);
-  
+
   // Handle timeframe change
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
-    
+
     switch (value) {
       case "last7days":
         setStartDate(subDays(new Date(), 7));
@@ -292,28 +267,7 @@ const Analytics = () => {
       // Custom range is handled by the date picker
     }
   };
-  
-  // Format data for charts
-  const formatChartData = (data: any) => {
-    return data?.map((item: any) => ({
-      x: format(new Date(item.date), "MMM dd"),
-      y: item.value
-    })) || [];
-  };
-  
-  // Export analytics data
-  const exportAnalytics = () => {
-    const dataStr = JSON.stringify(analyticsData, null, 2);
-    const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
-    
-    const exportFileDefaultName = `pinterest-analytics-${format(new Date(), "yyyy-MM-dd")}.json`;
-    
-    const linkElement = document.createElement("a");
-    linkElement.setAttribute("href", dataUri);
-    linkElement.setAttribute("download", exportFileDefaultName);
-    linkElement.click();
-  };
-  
+
   return (
     <DashboardLayout>
       <div className="mb-8">
@@ -322,7 +276,7 @@ const Analytics = () => {
           Track your Pinterest performance and analyze audience engagement
         </p>
       </div>
-      
+
       {!pinterestConnected ? (
         <Card className="bg-black border-gray-800">
           <CardHeader>
@@ -357,7 +311,7 @@ const Analytics = () => {
                 </SelectContent>
               </Select>
             </div>
-            
+
             {timeframe === "custom" && (
               <div className="flex items-center gap-2">
                 <Popover>
@@ -395,7 +349,7 @@ const Analytics = () => {
                 </Popover>
               </div>
             )}
-            
+
             <div className="flex items-center gap-2">
               <Select 
                 value={selectedPin} 
@@ -413,24 +367,24 @@ const Analytics = () => {
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Button variant="outline" size="icon" onClick={() => window.location.reload()}>
                 <RefreshCw className="h-4 w-4" />
               </Button>
-              
+
               <Button variant="outline" size="icon" onClick={exportAnalytics}>
                 <Download className="h-4 w-4" />
               </Button>
             </div>
           </div>
-          
+
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="performance">Pin Performance</TabsTrigger>
               <TabsTrigger value="audience">Audience Insights</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="overview">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <Card className="bg-black border-gray-800">
@@ -444,7 +398,7 @@ const Analytics = () => {
                     </p>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium">Engagements</CardTitle>
@@ -456,7 +410,7 @@ const Analytics = () => {
                     </p>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium">Clicks</CardTitle>
@@ -468,7 +422,7 @@ const Analytics = () => {
                     </p>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium">Saves</CardTitle>
@@ -481,7 +435,7 @@ const Analytics = () => {
                   </CardContent>
                 </Card>
               </div>
-              
+
               <div className="grid grid-cols-1 gap-4 mb-6">
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
@@ -518,7 +472,7 @@ const Analytics = () => {
                   </CardContent>
                 </Card>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
@@ -547,7 +501,7 @@ const Analytics = () => {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <CardTitle>Audience Demographics</CardTitle>
@@ -571,7 +525,7 @@ const Analytics = () => {
                 </Card>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="performance">
               <div className="grid grid-cols-1 gap-4 mb-6">
                 <Card className="bg-black border-gray-800">
@@ -596,7 +550,7 @@ const Analytics = () => {
                     )}
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <CardTitle>Engagement Rate</CardTitle>
@@ -619,7 +573,7 @@ const Analytics = () => {
                     )}
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <CardTitle>Clicks vs Saves</CardTitle>
@@ -648,7 +602,7 @@ const Analytics = () => {
                 </Card>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="audience">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="bg-black border-gray-800">
@@ -672,7 +626,7 @@ const Analytics = () => {
                     )}
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <CardTitle>Audience by Age</CardTitle>
@@ -698,7 +652,7 @@ const Analytics = () => {
                     )}
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <CardTitle>Audience by Device</CardTitle>
@@ -720,7 +674,7 @@ const Analytics = () => {
                     )}
                   </CardContent>
                 </Card>
-                
+
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <CardTitle>Top Locations</CardTitle>

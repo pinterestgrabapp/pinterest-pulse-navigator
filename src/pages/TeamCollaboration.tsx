@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -8,16 +7,23 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Check, Copy, Mail, Plus, Settings, Trash2, UserPlus, Users, X } from "lucide-react";
+import { Calendar as CalendarIcon, Check, ChevronsUpDown, CircleUser, ClipboardList, Clock10, Edit, Eye, Lock, Mail, MoreHorizontal, Plus, Shield, Trash, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Link } from "react-router-dom";
 
 const workspaceFormSchema = z.object({
   name: z.string().min(3, { message: "Workspace name must be at least 3 characters" }),
@@ -58,7 +64,6 @@ const TeamCollaboration = () => {
     },
   });
   
-  // Fetch workspaces
   useEffect(() => {
     const fetchWorkspaces = async () => {
       if (!user?.id) return;
@@ -77,7 +82,6 @@ const TeamCollaboration = () => {
         
         setWorkspaces(data || []);
         
-        // Select the first workspace by default
         if (data && data.length > 0 && !selectedWorkspace) {
           setSelectedWorkspace(data[0]);
         }
@@ -91,7 +95,6 @@ const TeamCollaboration = () => {
     fetchWorkspaces();
   }, [user]);
   
-  // Fetch collaborators when a workspace is selected
   useEffect(() => {
     const fetchCollaborators = async () => {
       if (!selectedWorkspace) return;
@@ -116,7 +119,6 @@ const TeamCollaboration = () => {
     fetchCollaborators();
   }, [selectedWorkspace]);
   
-  // Handle workspace form submission
   const onWorkspaceSubmit = async (values: WorkspaceFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to create a workspace");
@@ -144,7 +146,6 @@ const TeamCollaboration = () => {
       
       toast.success("Workspace created successfully");
       
-      // Add to workspaces list
       if (data && data[0]) {
         setWorkspaces([...workspaces, data[0]]);
         setSelectedWorkspace(data[0]);
@@ -162,7 +163,6 @@ const TeamCollaboration = () => {
     }
   };
   
-  // Handle invite form submission
   const onInviteSubmit = async (values: InviteFormValues) => {
     if (!user?.id || !selectedWorkspace) {
       toast.error("You must be logged in and have a selected workspace to invite collaborators");
@@ -176,7 +176,7 @@ const TeamCollaboration = () => {
         .from("workspace_collaborators")
         .insert({
           workspace_id: selectedWorkspace.id,
-          user_id: user.id, // This will be replaced when they accept the invitation
+          user_id: user.id,
           invited_email: values.email,
           role: values.role,
           invitation_status: "pending",
@@ -195,7 +195,6 @@ const TeamCollaboration = () => {
         description: `An invitation has been sent to ${values.email}`
       });
       
-      // Add to collaborators list
       if (data && data[0]) {
         setCollaborators([...collaborators, data[0]]);
       }
@@ -212,7 +211,6 @@ const TeamCollaboration = () => {
     }
   };
   
-  // Delete workspace
   const deleteWorkspace = async (id: string) => {
     if (!user?.id) return;
     
@@ -233,10 +231,8 @@ const TeamCollaboration = () => {
       
       toast.success("Workspace deleted");
       
-      // Remove from workspaces list
       setWorkspaces(workspaces.filter(workspace => workspace.id !== id));
       
-      // Clear selected workspace if it was deleted
       if (selectedWorkspace && selectedWorkspace.id === id) {
         setSelectedWorkspace(null);
       }
@@ -248,7 +244,6 @@ const TeamCollaboration = () => {
     }
   };
   
-  // Remove collaborator
   const removeCollaborator = async (id: string) => {
     if (!user?.id || !selectedWorkspace) return;
     
@@ -269,7 +264,6 @@ const TeamCollaboration = () => {
       
       toast.success("Collaborator removed");
       
-      // Remove from collaborators list
       setCollaborators(collaborators.filter(collaborator => collaborator.id !== id));
     } catch (err) {
       console.error("Error removing collaborator:", err);
@@ -279,7 +273,6 @@ const TeamCollaboration = () => {
     }
   };
   
-  // Copy invite link
   const copyInviteLink = () => {
     if (!selectedWorkspace) return;
     
@@ -294,7 +287,6 @@ const TeamCollaboration = () => {
     toast.success("Invite link copied to clipboard");
   };
   
-  // Get role badge color
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case "admin":
@@ -306,7 +298,6 @@ const TeamCollaboration = () => {
     }
   };
   
-  // Get invitation status badge color
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "accepted":

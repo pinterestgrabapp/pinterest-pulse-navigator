@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,19 +6,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
-import { fetchUserBoards } from "@/utils/pinterestApiUtils";
-import { format } from "date-fns";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { CalendarIcon, Clock, Plus, Trash2 } from "lucide-react";
+import { Calendar as CalendarIcon, Check, Clock, Edit, ExternalLink, ImagePlus, Loader2, MoreHorizontal, Plus, RefreshCw, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { format, addDays, isAfter } from "date-fns";
+import { Link } from "react-router-dom";
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -53,7 +57,6 @@ const PinScheduler = () => {
     },
   });
 
-  // Fetch Pinterest credentials and check if connected
   useEffect(() => {
     const checkPinterestConnection = async () => {
       if (!user?.id) return;
@@ -86,7 +89,6 @@ const PinScheduler = () => {
     checkPinterestConnection();
   }, [user]);
   
-  // Fetch Pinterest boards
   const fetchPinterestBoards = async (accessToken: string) => {
     setLoadingBoards(true);
     try {
@@ -104,7 +106,6 @@ const PinScheduler = () => {
     }
   };
   
-  // Fetch scheduled pins
   useEffect(() => {
     const fetchScheduledPins = async () => {
       if (!user?.id) return;
@@ -130,7 +131,6 @@ const PinScheduler = () => {
     fetchScheduledPins();
   }, [user]);
   
-  // Handle form submission
   const onSubmit = async (values: FormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to schedule pins");
@@ -147,12 +147,10 @@ const PinScheduler = () => {
     setLoading(true);
     
     try {
-      // Combine date and time
       const scheduledDateTime = new Date(values.scheduledDate);
       const [hours, minutes] = values.scheduledTime.split(":").map(Number);
       scheduledDateTime.setHours(hours, minutes);
       
-      // Insert scheduled pin
       const { data, error } = await supabase
         .from("scheduled_pins")
         .insert({
@@ -178,17 +176,15 @@ const PinScheduler = () => {
         description: `Your pin will be posted on ${format(scheduledDateTime, "PPP 'at' p")}`
       });
       
-      // Add to scheduled pins list
       if (data && data[0]) {
         setScheduledPins([...scheduledPins, data[0]]);
       }
       
-      // Reset form
       form.reset({
         title: "",
         description: "",
         imageUrl: "",
-        boardId: values.boardId, // Keep the selected board
+        boardId: values.boardId,
         scheduledDate: new Date(),
         scheduledTime: "12:00",
       });
@@ -202,7 +198,6 @@ const PinScheduler = () => {
     }
   };
   
-  // Delete scheduled pin
   const deleteScheduledPin = async (id: string) => {
     if (!user?.id) return;
     
@@ -221,7 +216,6 @@ const PinScheduler = () => {
         return;
       }
       
-      // Remove from scheduled pins list
       setScheduledPins(scheduledPins.filter(pin => pin.id !== id));
       
       toast.success("Scheduled pin deleted", {

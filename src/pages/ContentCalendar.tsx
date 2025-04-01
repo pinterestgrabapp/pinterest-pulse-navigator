@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -7,18 +6,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, getDay, parse, add, isSameDay } from "date-fns";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Calendar as CalendarIcon, Clock, Edit3, Plus, Trash2, X } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Plus, Tag, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format, isSameDay, parseISO } from "date-fns";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const eventFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -56,10 +59,8 @@ const ContentCalendar = () => {
     },
   });
 
-  // Reset form when dialog opens
   useEffect(() => {
     if (!eventDialogOpen) {
-      // If dialog is closed, reset the form
       form.reset({
         title: "",
         description: "",
@@ -72,7 +73,6 @@ const ContentCalendar = () => {
     }
   }, [eventDialogOpen, selectedDate, form]);
   
-  // Set form values when editing an event
   useEffect(() => {
     if (selectedEvent && isEditMode) {
       form.reset({
@@ -87,7 +87,6 @@ const ContentCalendar = () => {
     }
   }, [selectedEvent, isEditMode, form]);
   
-  // Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
       if (!user?.id) return;
@@ -116,7 +115,6 @@ const ContentCalendar = () => {
     fetchEvents();
   }, [user]);
   
-  // Fetch pins
   useEffect(() => {
     const fetchPins = async () => {
       if (!user?.id) return;
@@ -141,7 +139,6 @@ const ContentCalendar = () => {
     fetchPins();
   }, [user]);
   
-  // Fetch campaigns
   useEffect(() => {
     const fetchCampaigns = async () => {
       if (!user?.id) return;
@@ -166,7 +163,6 @@ const ContentCalendar = () => {
     fetchCampaigns();
   }, [user]);
   
-  // Handle form submission
   const onSubmit = async (values: EventFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to create events");
@@ -188,7 +184,6 @@ const ContentCalendar = () => {
       };
       
       if (isEditMode && selectedEvent) {
-        // Update existing event
         const { data, error } = await supabase
           .from("content_calendar")
           .update(eventData)
@@ -206,14 +201,12 @@ const ContentCalendar = () => {
         
         toast.success("Event updated successfully");
         
-        // Update events list
         if (data && data[0]) {
           setEvents(events.map(event => 
             event.id === selectedEvent.id ? data[0] : event
           ));
         }
       } else {
-        // Create new event
         const { data, error } = await supabase
           .from("content_calendar")
           .insert(eventData)
@@ -229,7 +222,6 @@ const ContentCalendar = () => {
         
         toast.success("Event created successfully");
         
-        // Add to events list
         if (data && data[0]) {
           setEvents([...events, data[0]]);
         }
@@ -246,7 +238,6 @@ const ContentCalendar = () => {
     }
   };
   
-  // Delete event
   const deleteEvent = async (id: string) => {
     if (!user?.id) return;
     
@@ -265,12 +256,10 @@ const ContentCalendar = () => {
         return;
       }
       
-      // Remove from events list
       setEvents(events.filter(event => event.id !== id));
       
       toast.success("Event deleted");
       
-      // Close dialog if the deleted event was selected
       if (selectedEvent && selectedEvent.id === id) {
         setEventDialogOpen(false);
       }
@@ -282,20 +271,17 @@ const ContentCalendar = () => {
     }
   };
   
-  // Get events for a specific day
   const getEventsForDay = (date: Date) => {
     return events.filter(event => 
       isSameDay(parseISO(event.event_date), date)
     );
   };
   
-  // Calculate the number of events for a day (used in calendar rendering)
   const getDayEventCount = (date: Date) => {
     const count = getEventsForDay(date).length;
     return count > 0 ? count : undefined;
   };
   
-  // Render the events for the selected day
   const renderDayEvents = () => {
     const dayEvents = getEventsForDay(selectedDate);
     
