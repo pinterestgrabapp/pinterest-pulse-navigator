@@ -225,8 +225,7 @@ const TemplateDesigner = () => {
   };
   
   const handleTemplateImageUpload = () => {
-    // Explicitly cast to HTMLInputElement to ensure TypeScript knows it has a click method
-    const fileInput = document.querySelector('#template-image-upload') as HTMLInputElement | null;
+    const fileInput = document.querySelector('#template-image-upload');
     triggerClick(fileInput);
   };
   
