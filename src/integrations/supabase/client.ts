@@ -1,14 +1,28 @@
 
 import { createClient } from '@supabase/supabase-js';
 
+// Make sure these environment variables are defined and accessible
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  db: {
-    schema: 'public',
-  },
-});
+// Add fallback values or throw more descriptive errors if environment variables are missing
+if (!supabaseUrl) {
+  console.error('VITE_SUPABASE_URL environment variable is not defined');
+}
+
+if (!supabaseAnonKey) {
+  console.error('VITE_SUPABASE_ANON_KEY environment variable is not defined');
+}
+
+export const supabase = createClient(
+  supabaseUrl || '',  // Provide an empty string as fallback to prevent runtime error
+  supabaseAnonKey || '',  // Provide an empty string as fallback to prevent runtime error
+  {
+    db: {
+      schema: 'public',
+    },
+  }
+);
 
 // Add specific types for database tables to help with TypeScript
 export type Tables = {
