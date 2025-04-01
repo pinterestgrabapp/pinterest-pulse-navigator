@@ -236,10 +236,8 @@ const PinScheduler = () => {
   };
   
   const handleSelectFile = () => {
-    const fileInput = document.querySelector('#pin-image-upload') as HTMLInputElement | null;
-    if (fileInput) {
-      triggerClick(fileInput);
-    }
+    const fileInput = document.querySelector('#pin-image-upload');
+    triggerClick(fileInput);
   };
 
   return (

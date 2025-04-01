@@ -225,10 +225,8 @@ const TemplateDesigner = () => {
   };
   
   const handleTemplateImageUpload = () => {
-    const fileInput = document.querySelector('#template-image-upload') as HTMLInputElement | null;
-    if (fileInput) {
-      triggerClick(fileInput);
-    }
+    const fileInput = document.querySelector('#template-image-upload');
+    triggerClick(fileInput);
   };
   
   return (
