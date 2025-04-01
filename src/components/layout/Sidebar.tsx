@@ -1,6 +1,11 @@
 
 import { useLocation, Link } from 'react-router-dom';
-import { LayoutDashboard, Search, TrendingUp, ImagePlus, Settings, BarChart4, Bookmark, User, FileDown, HelpCircle } from 'lucide-react';
+import { 
+  LayoutDashboard, Search, TrendingUp, ImagePlus, Settings, 
+  BarChart4, Bookmark, User, FileDown, HelpCircle, 
+  Calendar, Paintbrush, BarChart2, DollarSign, 
+  Users, ShoppingCart, Clock
+} from 'lucide-react';
 import { useLanguage } from '@/utils/languageUtils';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -17,6 +22,14 @@ export const DashboardSidebar = () => {
     { icon: Bookmark, label: 'savedPins', href: '/saved-pins' },
     { icon: FileDown, label: 'export', href: '/export' },
     { icon: ImagePlus, label: 'createPin', href: '/create-pin' },
+    // New navigation items for additional features
+    { icon: Clock, label: 'pinScheduler', href: '/pin-scheduler' },
+    { icon: Paintbrush, label: 'templateDesigner', href: '/template-designer' },
+    { icon: BarChart2, label: 'analytics', href: '/analytics' },
+    { icon: DollarSign, label: 'adCampaigns', href: '/ad-campaigns' },
+    { icon: Calendar, label: 'contentCalendar', href: '/content-calendar' },
+    { icon: Users, label: 'teamCollaboration', href: '/team-collaboration' },
+    { icon: ShoppingCart, label: 'ecommerce', href: '/ecommerce' },
   ];
 
   const accountItems = [

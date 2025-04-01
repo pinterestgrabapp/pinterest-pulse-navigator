@@ -24,6 +24,15 @@ import PinStats from "./pages/PinStats";
 import SavedPins from "./pages/SavedPins";
 import PinterestCallback from "./pages/PinterestCallback";
 
+// New pages for additional features
+import PinScheduler from "./pages/PinScheduler";
+import TemplateDesigner from "./pages/TemplateDesigner";
+import Analytics from "./pages/Analytics";
+import AdCampaigns from "./pages/AdCampaigns";
+import ContentCalendar from "./pages/ContentCalendar";
+import TeamCollaboration from "./pages/TeamCollaboration";
+import Ecommerce from "./pages/Ecommerce";
+
 // Create a new query client instance outside the component
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +72,15 @@ const App = () => (
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/pin-stats" element={<ProtectedRoute><PinStats /></ProtectedRoute>} />
                 <Route path="/saved-pins" element={<ProtectedRoute><SavedPins /></ProtectedRoute>} />
+                
+                {/* New Protected Routes for Additional Features */}
+                <Route path="/pin-scheduler" element={<ProtectedRoute><PinScheduler /></ProtectedRoute>} />
+                <Route path="/template-designer" element={<ProtectedRoute><TemplateDesigner /></ProtectedRoute>} />
+                <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+                <Route path="/ad-campaigns" element={<ProtectedRoute><AdCampaigns /></ProtectedRoute>} />
+                <Route path="/content-calendar" element={<ProtectedRoute><ContentCalendar /></ProtectedRoute>} />
+                <Route path="/team-collaboration" element={<ProtectedRoute><TeamCollaboration /></ProtectedRoute>} />
+                <Route path="/ecommerce" element={<ProtectedRoute><Ecommerce /></ProtectedRoute>} />
                 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />
