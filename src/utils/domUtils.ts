@@ -5,8 +5,9 @@ export const triggerClick = (element: Element | null) => {
   
   try {
     // Try to use the click method if available (for HTMLElement)
-    if (element instanceof HTMLElement) {
-      element.click();
+    if ('click' in element) {
+      // Using 'in' operator for safer type checking
+      (element as HTMLElement).click();
     } 
     // Fallback to creating and dispatching a MouseEvent for non-HTMLElement
     else {
