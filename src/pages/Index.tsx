@@ -1,4 +1,5 @@
-import { ArrowRight, Check } from "lucide-react";
+
+import { ArrowRight, Check, Calendar, PieChart, Rocket, Paintbrush, Users, BarChart4, ShoppingCart, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
@@ -124,7 +125,7 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Feature 1 */}
+              {/* Core Features - First Row */}
               <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{
               animationDelay: '0.1s'
             }}>
@@ -143,7 +144,6 @@ const Index = () => {
                 </p>
               </div>
               
-              {/* Feature 2 */}
               <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{
               animationDelay: '0.2s'
             }}>
@@ -162,7 +162,6 @@ const Index = () => {
                 </p>
               </div>
               
-              {/* Feature 3 */}
               <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:border-pinterest-red/50 animate-fade-in-up" style={{
               animationDelay: '0.3s'
             }}>
@@ -185,6 +184,186 @@ const Index = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   {t('pinAnalysisFeatureDesc')}
                 </p>
+              </div>
+            </div>
+            
+            {/* New Advanced Features Section */}
+            <div className="mt-16">
+              <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-pinterest-red to-pink-600">
+                  Advanced Features
+                </span>
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Pin Scheduling Feature */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <Calendar className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">Pin Scheduling</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Plan and automate your pin postings to ensure consistent engagement without manual intervention.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Batch schedule pins in advance</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Optimize posting times based on audience activity</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Visual Content Creation */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <Paintbrush className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">Visual Content Creation</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Create stunning pins with our built-in design tools and templates optimized for Pinterest.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Pinterest-optimized templates</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Easy text and image editing tools</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Advanced Analytics */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <BarChart4 className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">Advanced Analytics</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Get detailed insights on pin performance, audience demographics, and engagement metrics.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Custom dashboards and reports</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Trend analysis and forecasting</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Ad Campaign Management */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <Rocket className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">Ad Campaign Management</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Create, manage, and analyze Pinterest ad campaigns all in one place.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Campaign performance monitoring</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Budget optimization tools</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Content Calendar */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <Calendar className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">Content Calendar</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Plan your pinning strategy with a built-in content calendar for seasonal trends and campaigns.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Holiday and seasonal planning</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Campaign timeline visualization</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Collaboration Tools */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <Users className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">Collaboration Tools</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Enhance workflow efficiency with team collaboration features for managing multiple accounts.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Team member roles and permissions</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Content approval workflows</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* E-commerce Integration */}
+                <div className="glass-card rounded-xl p-6 bg-white/50 dark:bg-black/50 border border-white/30 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:border-pinterest-red/50 col-span-1 md:col-span-2 lg:col-span-3 max-w-2xl mx-auto">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-pinterest-red/10 flex items-center justify-center">
+                      <ShoppingCart className="h-8 w-8 text-pinterest-red" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">E-commerce Integration</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Sync your product catalogs and track sales originating from Pinterest for your shop.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Direct product catalog syncing</span>
+                    </div>
+                    <div className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Sales attribution tracking</span>
+                    </div>
+                    <div className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Inventory management</span>
+                    </div>
+                    <div className="flex items-start">
+                      <Check className="h-5 w-5 text-pinterest-red mr-2 mt-1 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">Shopify, WooCommerce & more integrations</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
