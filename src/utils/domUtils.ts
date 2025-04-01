@@ -5,10 +5,10 @@ export const triggerClick = (element: Element | null) => {
   
   try {
     // Try to use the click method if available (for HTMLElement)
-    if (element instanceof HTMLElement && typeof element.click === 'function') {
+    if (element instanceof HTMLElement) {
       element.click();
     } 
-    // Fallback to creating and dispatching a MouseEvent
+    // Fallback to creating and dispatching a MouseEvent for non-HTMLElement
     else {
       const event = new MouseEvent('click', {
         bubbles: true,
