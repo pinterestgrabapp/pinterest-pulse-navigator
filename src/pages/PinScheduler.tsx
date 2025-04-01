@@ -98,8 +98,8 @@ const PinScheduler = () => {
       const boardsData = await fetchUserBoards(accessToken);
       if (boardsData) {
         const boardsList = Array.isArray(boardsData) ? boardsData : 
-                          (boardsData.items ? boardsData.items : 
-                          (boardsData.data ? boardsData.data : []));
+                          (boardsData as any).items ? (boardsData as any).items : 
+                          (boardsData as any).data ? (boardsData as any).data : [];
         setBoards(boardsList);
       }
     } catch (error) {
