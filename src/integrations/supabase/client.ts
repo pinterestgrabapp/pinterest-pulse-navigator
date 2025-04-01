@@ -1,22 +1,14 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Make sure these environment variables are defined and accessible
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Use the actual values from Supabase project secrets
+const supabaseUrl = 'https://nfmstsrqfyhpooikhfns.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbXN0c3JxZnlocG9vaWtoZm5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIwNzE5MjYsImV4cCI6MjA1NzY0NzkyNn0.vwSrJzvsIHuxMOxPEc8JpR6Z75OqHsst7masA58cMng';
 
-// Add fallback values or throw more descriptive errors if environment variables are missing
-if (!supabaseUrl) {
-  console.error('VITE_SUPABASE_URL environment variable is not defined');
-}
-
-if (!supabaseAnonKey) {
-  console.error('VITE_SUPABASE_ANON_KEY environment variable is not defined');
-}
-
+// Create the Supabase client
 export const supabase = createClient(
-  supabaseUrl || '',  // Provide an empty string as fallback to prevent runtime error
-  supabaseAnonKey || '',  // Provide an empty string as fallback to prevent runtime error
+  supabaseUrl,
+  supabaseAnonKey,
   {
     db: {
       schema: 'public',
