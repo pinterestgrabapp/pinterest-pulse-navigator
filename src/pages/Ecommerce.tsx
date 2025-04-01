@@ -55,7 +55,6 @@ const Ecommerce = () => {
     },
   });
 
-  // Fetch Pinterest credentials and check if connected
   useEffect(() => {
     const checkPinterestConnection = async () => {
       if (!user?.id) return;
@@ -83,7 +82,6 @@ const Ecommerce = () => {
     checkPinterestConnection();
   }, [user]);
   
-  // Fetch e-commerce integrations
   useEffect(() => {
     const fetchIntegrations = async () => {
       if (!user?.id) return;
@@ -102,7 +100,6 @@ const Ecommerce = () => {
         
         setIntegrations(data || []);
         
-        // Select the first integration by default
         if (data && data.length > 0 && !selectedIntegration) {
           setSelectedIntegration(data[0]);
         }
@@ -116,10 +113,8 @@ const Ecommerce = () => {
     fetchIntegrations();
   }, [user]);
   
-  // Generate sample product data when an integration is selected
   useEffect(() => {
     if (selectedIntegration) {
-      // Generate sample products
       const generateSampleProducts = () => {
         const productNames = [
           "Vintage Art Print Set",
@@ -149,7 +144,7 @@ const Ecommerce = () => {
             inventory: inventory,
             sales: sales,
             revenue: price * sales,
-            pinned: i < 5, // First 5 products are pinned to Pinterest
+            pinned: i < 5,
             image: `https://source.unsplash.com/random/300x300?product=${i + 1}`,
             description: `Beautiful ${productNames[i].toLowerCase()} for your home or office. High quality and handcrafted.`
           });
@@ -158,7 +153,6 @@ const Ecommerce = () => {
         return sampleProducts;
       };
       
-      // Generate sample product stats
       const generateProductStats = () => {
         const days = 30;
         const sales = [];
@@ -172,7 +166,6 @@ const Ecommerce = () => {
         for (let i = 0; i < days; i++) {
           const date = subDays(new Date(), days - i - 1);
           
-          // Add some randomness to the data
           const daySales = Math.max(0, baseSales + Math.floor(Math.random() * 10) - 5);
           const dayViews = Math.max(0, baseViews + Math.floor(Math.random() * 60) - 30);
           const dayRevenue = daySales * (baseRevenue / baseSales) + Math.floor(Math.random() * 50) - 25;
@@ -216,7 +209,6 @@ const Ecommerce = () => {
     }
   }, [selectedIntegration]);
   
-  // Handle form submission
   const onSubmit = async (values: IntegrationFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to add an integration");
@@ -226,7 +218,6 @@ const Ecommerce = () => {
     setLoading(true);
     
     try {
-      // Encrypt the API credentials (in a real app)
       const credentials = {
         apiKey: values.apiKey,
         apiSecret: values.apiSecret,
@@ -253,7 +244,6 @@ const Ecommerce = () => {
       
       toast.success("E-commerce integration added successfully");
       
-      // Add to integrations list
       if (data && data[0]) {
         setIntegrations([...integrations, data[0]]);
         setSelectedIntegration(data[0]);
@@ -271,7 +261,6 @@ const Ecommerce = () => {
     }
   };
   
-  // Delete integration
   const deleteIntegration = async (id: string) => {
     if (!user?.id) return;
     
@@ -292,10 +281,8 @@ const Ecommerce = () => {
       
       toast.success("Integration removed");
       
-      // Remove from integrations list
       setIntegrations(integrations.filter(integration => integration.id !== id));
       
-      // Clear selected integration if it was deleted
       if (selectedIntegration && selectedIntegration.id === id) {
         setSelectedIntegration(null);
       }
@@ -307,13 +294,11 @@ const Ecommerce = () => {
     }
   };
   
-  // Sync products
   const syncProducts = () => {
     if (!selectedIntegration) return;
     
     setSyncInProgress(true);
     
-    // Simulate API call delay
     setTimeout(() => {
       toast.success("Products synced successfully", {
         description: "Your product catalog has been updated"
@@ -322,7 +307,6 @@ const Ecommerce = () => {
     }, 2000);
   };
   
-  // Format chart data
   const formatChartData = (data: any) => {
     return data?.map((item: any) => ({
       x: format(new Date(item.date), "MMM dd"),
@@ -330,7 +314,6 @@ const Ecommerce = () => {
     })) || [];
   };
   
-  // Get platform icon
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case "shopify":
@@ -344,7 +327,6 @@ const Ecommerce = () => {
     }
   };
   
-  // Pin product to Pinterest
   const pinProduct = (product: any) => {
     if (!pinterestConnected) {
       toast.error("Pinterest account not connected", {
@@ -629,4 +611,196 @@ const Ecommerce = () => {
                 <Card className="bg-black border-gray-800">
                   <CardHeader>
                     <div className="flex justify-between items-center">
-                      <CardTitle>Product Catalog</
+                      <CardTitle>Product Catalog</CardTitle>
+                      <Button variant="outline" size="sm">
+                        <ArrowRight className="h-4 w-4 mr-1" />
+                        Export
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {products.map(product => (
+                        <div 
+                          key={product.id} 
+                          className="flex items-center justify-between p-3 border border-gray-800 rounded-lg"
+                        >
+                          <div className="flex items-center">
+                            <img 
+                              src={product.image} 
+                              alt={product.name} 
+                              className="w-12 h-12 object-cover rounded-md mr-3" 
+                            />
+                            <div>
+                              <h4 className="font-medium">{product.name}</h4>
+                              <p className="text-xs text-gray-400">
+                                Inventory: {product.inventory} · Sales: {product.sales}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-right mr-4">
+                              <p className="font-medium">${product.price}</p>
+                              <p className="text-xs text-gray-400">
+                                Revenue: ${product.revenue}
+                              </p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant={product.pinned ? "outline" : "default"}
+                              onClick={() => pinProduct(product)}
+                              disabled={!pinterestConnected}
+                            >
+                              {product.pinned ? (
+                                <>
+                                  <Check className="h-4 w-4 mr-1 text-green-500" />
+                                  Pinned
+                                </>
+                              ) : (
+                                <>
+                                  <ExternalLink className="h-4 w-4 mr-1" />
+                                  Pin
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="analytics">
+                <Card className="bg-black border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Sales Analytics</CardTitle>
+                    <CardDescription>
+                      Track your product performance and sales from Pinterest
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      <Card className="bg-gray-900 border-gray-800">
+                        <CardContent className="pt-6">
+                          <div className="text-2xl font-bold mb-1">
+                            {productStats?.summary.sales || 0}
+                          </div>
+                          <p className="text-xs text-gray-400">Total Sales</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-gray-900 border-gray-800">
+                        <CardContent className="pt-6">
+                          <div className="text-2xl font-bold mb-1">
+                            ${productStats?.summary.revenue || 0}
+                          </div>
+                          <p className="text-xs text-gray-400">Total Revenue</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-gray-900 border-gray-800">
+                        <CardContent className="pt-6">
+                          <div className="text-2xl font-bold mb-1">
+                            {productStats?.summary.conversionRate || 0}%
+                          </div>
+                          <p className="text-xs text-gray-400">Conversion Rate</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    <div className="h-[300px] mt-8">
+                      <h3 className="text-sm font-medium mb-4">Revenue Trend</h3>
+                      <AreaChart 
+                        data={formatChartData(productStats?.revenue)} 
+                        className="h-[250px]" 
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="pins">
+                <Card className="bg-black border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Pinterest Product Pins</CardTitle>
+                    <CardDescription>
+                      Manage your product pins on Pinterest
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {pinterestConnected ? (
+                      <div className="space-y-4">
+                        {products
+                          .filter(product => product.pinned)
+                          .map(product => (
+                            <div 
+                              key={product.id} 
+                              className="flex items-center justify-between p-3 border border-gray-800 rounded-lg"
+                            >
+                              <div className="flex items-center">
+                                <img 
+                                  src={product.image} 
+                                  alt={product.name} 
+                                  className="w-12 h-12 object-cover rounded-md mr-3" 
+                                />
+                                <div>
+                                  <h4 className="font-medium">{product.name}</h4>
+                                  <div className="flex items-center text-xs text-gray-400">
+                                    <Badge className="bg-green-500/20 text-green-500 mr-2">
+                                      Active
+                                    </Badge>
+                                    <span>Saves: 42 · Clicks: 128</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                >
+                                  <Settings className="h-4 w-4 mr-1" />
+                                  Manage
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
+                        <h3 className="text-xl font-medium mb-2">Pinterest Not Connected</h3>
+                        <p className="text-gray-400 mb-4">
+                          Connect your Pinterest account to start pinning products
+                        </p>
+                        <Button asChild>
+                          <Link to="/settings">
+                            Connect Pinterest Account
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="flex items-center justify-center h-full min-h-[400px] rounded-lg border border-dashed border-gray-800 p-8">
+              <div className="text-center">
+                <Store className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <h3 className="text-xl font-medium mb-2">No Store Selected</h3>
+                <p className="text-gray-400 mb-6 max-w-md">
+                  Connect your e-commerce store or select an existing connection to view your products
+                </p>
+                <Button onClick={() => setIntegrationDialogOpen(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Connect Store
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default Ecommerce;
