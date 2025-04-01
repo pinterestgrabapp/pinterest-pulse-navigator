@@ -3,19 +3,21 @@
 export const triggerClick = (element: Element | null) => {
   if (!element) return;
   
-  // Using the modern approach
-  if (typeof MouseEvent === 'function') {
-    const event = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      view: window
-    });
-    element.dispatchEvent(event);
-  } 
-  // Fallback for older browsers
-  else {
-    const event = document.createEvent('MouseEvents');
-    event.initEvent('click', true, true);
-    element.dispatchEvent(event);
+  try {
+    // Try to use the click method if available (for HTMLElement)
+    if (element instanceof HTMLElement && typeof element.click === 'function') {
+      element.click();
+    } 
+    // Fallback to creating and dispatching a MouseEvent
+    else {
+      const event = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      });
+      element.dispatchEvent(event);
+    }
+  } catch (error) {
+    console.error('Error triggering click:', error);
   }
 };
