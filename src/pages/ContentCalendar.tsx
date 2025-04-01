@@ -7,10 +7,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, getDay, parse, add, isSameDay } from "date-fns";
+import { parseISO } from "@/utils/chartUtils";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Plus, Tag, Trash2, X } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Plus, Tag, Trash2, X, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { CustomCalendar } from "@/components/ui/custom-calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -334,7 +336,7 @@ const ContentCalendar = () => {
                       setEventDialogOpen(true);
                     }}
                   >
-                    <Edit3 className="h-4 w-4" />
+                    <Edit className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -371,24 +373,16 @@ const ContentCalendar = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Calendar
+              <CustomCalendar
                 mode="single"
                 selected={selectedDate}
                 onSelect={(date) => date && setSelectedDate(date)}
-                className="rounded-md border"
-                components={{
-                  DayContainer: (props) => {
-                    const eventCount = props.date ? getDayEventCount(props.date) : undefined;
-                    return (
-                      <div className="relative">
-                        {props.children}
-                        {eventCount && (
-                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-pinterest-red"></div>
-                        )}
-                      </div>
-                    );
-                  }
-                }}
+                eventCounts={Object.fromEntries(
+                  events.map(event => [
+                    parseISO(event.event_date).toString(),
+                    getDayEventCount(parseISO(event.event_date)) || 0
+                  ])
+                )}
               />
               
               <div className="mt-4">

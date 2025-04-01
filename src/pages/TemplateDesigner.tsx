@@ -23,6 +23,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Link } from "react-router-dom";
+import { ArrowRight, Trash2, Paintbrush } from "lucide-react";
+import { triggerClick } from "@/utils/domUtils";
 
 const templateFormSchema = z.object({
   name: z.string().min(3, { message: "Template name must be at least 3 characters" }),
@@ -220,6 +222,13 @@ const TemplateDesigner = () => {
     });
     
     window.location.href = "/create-pin";
+  };
+  
+  const handleTemplateImageUpload = () => {
+    const fileInput = document.querySelector('#template-image-upload');
+    if (fileInput) {
+      triggerClick(fileInput);
+    }
   };
   
   return (

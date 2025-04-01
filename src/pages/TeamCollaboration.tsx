@@ -24,6 +24,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Link } from "react-router-dom";
+import { Trash2, Copy, UserPlus, Clock } from "lucide-react";
 
 const workspaceFormSchema = z.object({
   name: z.string().min(3, { message: "Workspace name must be at least 3 characters" }),

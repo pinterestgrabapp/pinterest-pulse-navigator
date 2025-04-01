@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { getPinterestCredentials } from "@/utils/pinterestApiUtils";
+import { formatChartData, exportAnalytics } from "@/utils/chartUtils";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { AreaChart, BarChart, DonutChart, LineChart } from "@/components/ui/charts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardFooter } from "@/components/ui/card-footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -466,7 +468,6 @@ const Analytics = () => {
                           }
                         ]}
                         yAxisWidth={60}
-                        categories={formatChartData(analyticsData.impressions?.daily).map((item: any) => item.x)}
                       />
                     )}
                   </CardContent>
@@ -545,7 +546,6 @@ const Analytics = () => {
                           }
                         ]}
                         yAxisWidth={60}
-                        categories={formatChartData(analyticsData.impressions?.daily).map((item: any) => item.x)}
                       />
                     )}
                   </CardContent>
@@ -568,7 +568,6 @@ const Analytics = () => {
                           }
                         ]}
                         yAxisWidth={60}
-                        categories={formatChartData(analyticsData.engagements?.daily).map((item: any) => item.x)}
                       />
                     )}
                   </CardContent>
@@ -595,7 +594,6 @@ const Analytics = () => {
                           }
                         ]}
                         yAxisWidth={60}
-                        categories={formatChartData(analyticsData.clicks?.daily).map((item: any) => item.x)}
                       />
                     )}
                   </CardContent>
@@ -647,7 +645,6 @@ const Analytics = () => {
                           }
                         ]}
                         yAxisWidth={60}
-                        categories={analyticsData.demographics?.age.map((item: any) => item.name)}
                       />
                     )}
                   </CardContent>
@@ -691,23 +688,4 @@ const Analytics = () => {
                           </div>
                           <div className="w-32 bg-gray-800 rounded-full h-2">
                             <div
-                              className="bg-pinterest-red h-2 rounded-full"
-                              style={{ width: `${item.value}%` }}
-                            ></div>
-                          </div>
-                          <div className="text-sm">{item.value}%</div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </>
-      )}
-    </DashboardLayout>
-  );
-};
-
-export default Analytics;
+                              className="bg

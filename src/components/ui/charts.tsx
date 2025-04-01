@@ -73,7 +73,6 @@ export function AreaChart({
               tickMargin={8}
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => String(value)}
-              categories={categories}
             />
           )}
           {showYAxis && (
@@ -156,7 +155,6 @@ export function BarChart({
               tickMargin={8}
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => String(value)}
-              categories={categories}
             />
           )}
           {showYAxis && (
@@ -237,7 +235,6 @@ export function LineChart({
               tickMargin={8}
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => String(value)}
-              categories={categories}
             />
           )}
           {showYAxis && (
@@ -281,7 +278,7 @@ export function LineChart({
 }
 
 export interface DonutChartProps {
-  data: Array<{ name: string; value: number }>;
+  data: Array<{ name: string; value: number; color?: string }>;
   className?: string;
   label?: string;
   labelClassName?: string;

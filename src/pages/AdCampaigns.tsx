@@ -27,6 +27,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { BarChart3, Bell, ChevronDown, ChevronUp, CircleDollarSign, DollarSign, HelpCircle, Info, Link2, PieChart, Plus, Settings2, Target, Trash2, TrendingUp } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { Link } from "react-router-dom";
+import { AlertCircle, CalendarIcon } from "lucide-react";
+import { isAfter } from "@/utils/chartUtils";
 
 const adCampaignFormSchema = z.object({
   name: z.string().min(3, { message: "Campaign name must be at least 3 characters." }),
@@ -71,7 +73,6 @@ const AdCampaigns = () => {
     },
   });
   
-  // Sample data for demonstration
   const sampleCampaignData = {
     impressions: {
       total: 123456,
@@ -123,7 +124,6 @@ const AdCampaigns = () => {
     }
   };
   
-  // Check if user has connected Pinterest account
   useEffect(() => {
     const checkPinterestConnection = async () => {
       if (!user?.id) return;
@@ -151,7 +151,6 @@ const AdCampaigns = () => {
     checkPinterestConnection();
   }, [user]);
   
-  // Fetch user pins
   useEffect(() => {
     const fetchUserPins = async () => {
       if (!user?.id) return;
@@ -176,7 +175,6 @@ const AdCampaigns = () => {
     fetchUserPins();
   }, [user]);
   
-  // Fetch ad campaigns
   useEffect(() => {
     const fetchCampaigns = async () => {
       if (!user?.id) return;
@@ -195,7 +193,6 @@ const AdCampaigns = () => {
         
         setCampaigns(data || []);
         
-        // Select the first campaign by default
         if (data && data.length > 0 && !selectedCampaign) {
           setSelectedCampaign(data[0]);
         }
@@ -209,7 +206,6 @@ const AdCampaigns = () => {
     fetchCampaigns();
   }, [user]);
   
-  // Handle form submission
   const onSubmit = async (values: AdCampaignFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to add a campaign");
@@ -237,7 +233,6 @@ const AdCampaigns = () => {
       
       toast.success("Ad campaign added successfully");
       
-      // Add to campaigns list
       if (data && data[0]) {
         setCampaigns([...campaigns, data[0]]);
         setSelectedCampaign(data[0]);
@@ -255,7 +250,6 @@ const AdCampaigns = () => {
     }
   };
   
-  // Delete campaign
   const deleteCampaign = async (id: string) => {
     if (!user?.id) return;
     
@@ -276,10 +270,8 @@ const AdCampaigns = () => {
       
       toast.success("Campaign removed");
       
-      // Remove from campaigns list
       setCampaigns(campaigns.filter(campaign => campaign.id !== id));
       
-      // Clear selected campaign if it was deleted
       if (selectedCampaign && selectedCampaign.id === id) {
         setSelectedCampaign(null);
       }
@@ -291,7 +283,6 @@ const AdCampaigns = () => {
     }
   };
   
-  // Format chart data
   const formatChartData = (data: any) => {
     return data?.map((item: any) => ({
       x: format(new Date(item.date), "MMM dd"),

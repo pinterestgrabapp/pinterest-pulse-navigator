@@ -24,6 +24,9 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format, addDays, isAfter } from "date-fns";
 import { Link } from "react-router-dom";
+import { fetchUserBoards } from "@/utils/chartUtils";
+import { CardFooter } from "@/components/ui/card-footer";
+import { triggerClick } from "@/utils/domUtils";
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -229,6 +232,13 @@ const PinScheduler = () => {
     }
   };
   
+  const handleSelectFile = () => {
+    const fileInput = document.querySelector('#pin-image-upload');
+    if (fileInput) {
+      triggerClick(fileInput);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="mb-8">
@@ -243,7 +253,7 @@ const PinScheduler = () => {
           <CardHeader>
             <CardTitle>Connect Your Pinterest Account</CardTitle>
             <CardDescription>
-              You need to connect your Pinterest account to use the Pin Scheduler feature
+              You need to connect your Pinterest account to schedule pins
             </CardDescription>
           </CardHeader>
           <CardFooter>
