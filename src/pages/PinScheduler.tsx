@@ -96,8 +96,11 @@ const PinScheduler = () => {
     setLoadingBoards(true);
     try {
       const boardsData = await fetchUserBoards(accessToken);
-      if (boardsData && boardsData.items) {
-        setBoards(boardsData.items);
+      if (boardsData) {
+        const boardsList = Array.isArray(boardsData) ? boardsData : 
+                          (boardsData.items ? boardsData.items : 
+                          (boardsData.data ? boardsData.data : []));
+        setBoards(boardsList);
       }
     } catch (error) {
       console.error("Error fetching boards:", error);

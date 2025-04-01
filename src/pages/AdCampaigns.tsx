@@ -29,6 +29,7 @@ import { format, subDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { AlertCircle, CalendarIcon } from "lucide-react";
 import { isAfter } from "@/utils/chartUtils";
+import { Image as ImageIcon } from "lucide-react";
 
 const adCampaignFormSchema = z.object({
   name: z.string().min(3, { message: "Campaign name must be at least 3 characters." }),
