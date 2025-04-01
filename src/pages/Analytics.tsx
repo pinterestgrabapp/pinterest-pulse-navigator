@@ -27,7 +27,6 @@ const Analytics = () => {
   const [selectedPin, setSelectedPin] = useState("all");
   const [pins, setPins] = useState<any[]>([]);
 
-  // Sample data for demonstration
   const sampleData = {
     impressions: {
       total: 24578,
@@ -210,7 +209,6 @@ const Analytics = () => {
     ]
   };
 
-  // Check if user has connected Pinterest account
   useEffect(() => {
     const checkPinterestConnection = async () => {
       if (!user?.id) return;
@@ -227,15 +225,10 @@ const Analytics = () => {
     checkPinterestConnection();
   }, [user]);
 
-  // Load analytics data
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       setLoading(true);
 
-      // In a real application, you would fetch analytics data from the Pinterest API
-      // For this demo, we'll use sample data
-
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       setAnalyticsData(sampleData);
@@ -245,7 +238,6 @@ const Analytics = () => {
     fetchAnalyticsData();
   }, [timeframe, startDate, endDate, selectedPin]);
 
-  // Handle timeframe change
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
 
@@ -688,4 +680,25 @@ const Analytics = () => {
                           </div>
                           <div className="w-32 bg-gray-800 rounded-full h-2">
                             <div
-                              className="bg
+                              className="bg-pinterest-red h-full rounded-full"
+                              style={{ width: `${item.value}%` }}
+                            ></div>
+                          </div>
+                          <div className="w-8 text-right text-xs text-gray-400">
+                            {item.value}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
+    </DashboardLayout>
+  );
+};
+
+export default Analytics;
