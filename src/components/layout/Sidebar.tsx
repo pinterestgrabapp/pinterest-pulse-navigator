@@ -15,14 +15,14 @@ export const DashboardSidebar = () => {
   const { theme } = useTheme();
   
   const navigationItems = [
+    { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard-home' },
     { icon: TrendingUp, label: 'pinAnalysis', href: '/dashboard' },
     { icon: Search, label: 'keywordResearch', href: '/keyword-research' },
-    { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard-home' },
     { icon: BarChart4, label: 'pinStats', href: '/pin-stats' },
     { icon: Bookmark, label: 'savedPins', href: '/saved-pins' },
     { icon: FileDown, label: 'export', href: '/export' },
     { icon: ImagePlus, label: 'createPin', href: '/create-pin' },
-    // New navigation items for additional features (Pin Scheduler and Template Designer removed)
+    // New navigation items for additional features
     { icon: BarChart2, label: 'analytics', href: '/analytics' },
     { icon: DollarSign, label: 'adCampaigns', href: '/ad-campaigns' },
     { icon: Calendar, label: 'contentCalendar', href: '/content-calendar' },

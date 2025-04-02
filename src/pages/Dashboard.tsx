@@ -28,6 +28,7 @@ import {
   Bar,
   Legend
 } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PinAnalyzer from '@/components/PinAnalyzer';
 import { useLanguage } from '@/utils/languageUtils';
@@ -55,6 +56,15 @@ const mockKeywordData = [
 const Dashboard = () => {
   const [showPinAnalyzer, setShowPinAnalyzer] = useState(false);
   const { t } = useLanguage();
+  const navigate = useNavigate();
+
+  const handleCreatePin = () => {
+    navigate('/create-pin');
+  };
+
+  const handleTrackRankings = () => {
+    navigate('/keyword-research');
+  };
 
   return (
     <DashboardLayout>
@@ -240,6 +250,7 @@ const Dashboard = () => {
           <Button 
             variant="outline"
             className="justify-start h-auto py-6 gap-4 glass-card hover:bg-accent"
+            onClick={handleCreatePin}
           >
             <div className="w-10 h-10 rounded-lg bg-pinterest-red flex items-center justify-center text-white">
               <ImagePlus className="h-5 w-5" />
@@ -255,6 +266,7 @@ const Dashboard = () => {
           <Button 
             variant="outline"
             className="justify-start h-auto py-6 gap-4 glass-card hover:bg-accent"
+            onClick={handleTrackRankings}
           >
             <div className="w-10 h-10 rounded-lg bg-pinterest-red flex items-center justify-center text-white">
               <TrendingUp className="h-5 w-5" />

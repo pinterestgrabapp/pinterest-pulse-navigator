@@ -33,7 +33,7 @@ const DashboardNavbar = () => {
   return <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md shadow-sm border-b border-white/5">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link to="/dashboard" className="flex items-center">
+        <Link to="/dashboard-home" className="flex items-center">
           <img src="/lovable-uploads/6d729402-326b-4ed3-a98b-f5f9eb232592.png" alt="Pinterest Grab" className="h-8" />
           <span className="ml-2 font-semibold text-lg">Pinterest Grab</span>
         </Link>
@@ -56,13 +56,10 @@ const DashboardNavbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 border border-white/10 bg-black shadow-xl">
                 <DropdownMenuItem asChild>
-                  
+                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="cursor-pointer hover:text-pinterest-red transition-colors">Settings</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-pinterest-red hover:text-pinterest-red hover:bg-pinterest-red/10 flex items-center gap-2 transition-all duration-200 relative group overflow-hidden">
