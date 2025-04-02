@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const PinterestCallback = () => {
   const [loading, setLoading] = useState(true);
@@ -63,11 +63,34 @@ const PinterestCallback = () => {
           description: "Your Pinterest account has been successfully connected!",
         });
 
-        // Redirect to settings or dashboard
-        navigate("/settings");
+        // Close the popup if this page is in a popup
+        if (window.opener && !window.opener.closed) {
+          window.opener.focus();
+          // Optional: pass data back to opener
+          window.opener.postMessage({
+            type: "PINTEREST_AUTH_SUCCESS",
+            data: { success: true }
+          }, window.location.origin);
+          window.close();
+        } else {
+          // If not in a popup, redirect to settings
+          navigate("/settings");
+        }
       } catch (err: any) {
         console.error("Error processing Pinterest callback:", err);
         setError(`Failed to connect your Pinterest account: ${err.message}`);
+        
+        // If in popup, still try to close it after showing the error
+        setTimeout(() => {
+          if (window.opener && !window.opener.closed) {
+            window.opener.focus();
+            window.opener.postMessage({
+              type: "PINTEREST_AUTH_ERROR",
+              error: err.message
+            }, window.location.origin);
+            window.close();
+          }
+        }, 4000); // Give some time to see the error
       } finally {
         setLoading(false);
       }
@@ -78,9 +101,9 @@ const PinterestCallback = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-black dark:to-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black to-gray-900">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 glow-text">Connecting to Pinterest...</h1>
+          <h1 className="text-2xl font-bold mb-4 text-white">Connecting to Pinterest...</h1>
           <div className="animate-pulse flex space-x-4">
             <div className="h-3 w-3 bg-pinterest-red rounded-full"></div>
             <div className="h-3 w-3 bg-pinterest-red rounded-full"></div>
@@ -93,15 +116,21 @@ const PinterestCallback = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-black dark:to-gray-900">
-        <div className="text-center max-w-md mx-auto p-6 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black to-gray-900">
+        <div className="text-center max-w-md mx-auto p-6 bg-black border border-gray-800 rounded-xl shadow-lg">
           <h1 className="text-2xl font-bold mb-4 text-red-500">Connection Error</h1>
-          <p className="mb-6 text-gray-600 dark:text-gray-300">{error}</p>
+          <p className="mb-6 text-gray-300">{error}</p>
           <button
-            onClick={() => navigate("/settings")}
-            className="btn-dreamy px-4 py-2 rounded-lg"
+            onClick={() => {
+              if (window.opener && !window.opener.closed) {
+                window.close(); // Close popup if in popup
+              } else {
+                navigate("/settings"); // Navigate if not in popup
+              }
+            }}
+            className="btn-dreamy px-4 py-2 rounded-lg bg-pinterest-red text-white"
           >
-            Return to Settings
+            {window.opener ? "Close Window" : "Return to Settings"}
           </button>
         </div>
       </div>

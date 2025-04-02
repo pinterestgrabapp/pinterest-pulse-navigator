@@ -30,6 +30,33 @@ export const getPinterestAuthUrl = () => {
   return authUrl;
 };
 
+// Function to open Pinterest auth in a popup window
+export const openPinterestAuthPopup = () => {
+  const authUrl = getPinterestAuthUrl();
+  const width = 600;
+  const height = 700;
+  const left = window.innerWidth / 2 - width / 2;
+  const top = window.innerHeight / 2 - height / 2;
+  
+  // Open popup window with specified dimensions and position
+  const popup = window.open(
+    authUrl,
+    "Pinterest Authorization",
+    `width=${width},height=${height},left=${left},top=${top},location=yes,toolbar=no,menubar=no`
+  );
+  
+  // Check if popup was blocked
+  if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+    console.error("Pinterest popup was blocked. Please allow popups for this site.");
+    alert("Pinterest popup was blocked. Please allow popups for this site.");
+    // Fallback to redirect
+    window.location.href = authUrl;
+    return null;
+  }
+  
+  return popup;
+};
+
 // Generate a random string for state parameter
 const generateRandomString = (length: number) => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
