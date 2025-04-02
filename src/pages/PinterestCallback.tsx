@@ -4,32 +4,54 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const PinterestCallback = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   useEffect(() => {
     const handlePinterestCallback = async () => {
-      if (!user) {
-        setError("You must be logged in to connect your Pinterest account");
-        setLoading(false);
-        return;
-      }
-
       try {
         // Get the code and state from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
         const state = urlParams.get("state");
         const storedState = localStorage.getItem("pinterest_auth_state");
+        
+        // Check if we have a user
+        if (!user) {
+          const errorMessage = "You must be logged in to connect your Pinterest account";
+          setError(errorMessage);
+          
+          // If in popup, try to message parent window
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+              type: "PINTEREST_AUTH_ERROR",
+              error: errorMessage
+            }, window.location.origin);
+          }
+          
+          setLoading(false);
+          return;
+        }
 
         // Verify the state to prevent CSRF attacks
         if (!state || state !== storedState) {
-          setError("Invalid state parameter. This could be a security issue.");
+          const errorMessage = "Invalid state parameter. This could be a security issue.";
+          setError(errorMessage);
+          
+          // If in popup, message parent window
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+              type: "PINTEREST_AUTH_ERROR",
+              error: errorMessage
+            }, window.location.origin);
+          }
+          
           setLoading(false);
           return;
         }
@@ -38,11 +60,23 @@ const PinterestCallback = () => {
         localStorage.removeItem("pinterest_auth_state");
 
         if (!code) {
-          setError("No authorization code received from Pinterest");
+          const errorMessage = "No authorization code received from Pinterest";
+          setError(errorMessage);
+          
+          // If in popup, message parent window
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+              type: "PINTEREST_AUTH_ERROR",
+              error: errorMessage
+            }, window.location.origin);
+          }
+          
           setLoading(false);
           return;
         }
 
+        console.log("Exchanging code for token with userId:", user.id);
+        
         // Call our secure Supabase Edge Function to exchange the code for tokens
         const { data, error: exchangeError } = await supabase.functions.invoke('pinterest-auth', {
           body: { 
@@ -56,48 +90,50 @@ const PinterestCallback = () => {
           throw new Error(`Token exchange failed: ${exchangeError.message}`);
         }
 
-        console.log("Pinterest connection response:", data);
+        console.log("Pinterest connection successful:", data);
 
-        toast({
+        // Show success message
+        uiToast({
           title: "Pinterest Connected",
           description: "Your Pinterest account has been successfully connected!",
         });
 
-        // Close the popup if this page is in a popup
+        // If this page is in a popup, close it and notify the opener
         if (window.opener && !window.opener.closed) {
           window.opener.focus();
-          // Optional: pass data back to opener
           window.opener.postMessage({
             type: "PINTEREST_AUTH_SUCCESS",
-            data: { success: true }
+            data: { success: true, username: data?.username }
           }, window.location.origin);
-          window.close();
+          
+          // Give the message time to be received before closing
+          setTimeout(() => window.close(), 500);
         } else {
           // If not in a popup, redirect to settings
           navigate("/settings");
         }
       } catch (err: any) {
         console.error("Error processing Pinterest callback:", err);
-        setError(`Failed to connect your Pinterest account: ${err.message}`);
+        const errorMessage = `Failed to connect your Pinterest account: ${err.message}`;
+        setError(errorMessage);
         
-        // If in popup, still try to close it after showing the error
-        setTimeout(() => {
-          if (window.opener && !window.opener.closed) {
-            window.opener.focus();
-            window.opener.postMessage({
-              type: "PINTEREST_AUTH_ERROR",
-              error: err.message
-            }, window.location.origin);
-            window.close();
-          }
-        }, 4000); // Give some time to see the error
+        // If in popup, still try to message the parent window
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({
+            type: "PINTEREST_AUTH_ERROR",
+            error: errorMessage
+          }, window.location.origin);
+          
+          // Give the message time to be received before closing
+          setTimeout(() => window.close(), 2000);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     handlePinterestCallback();
-  }, [user, navigate, toast]);
+  }, [user, navigate, uiToast]);
 
   if (loading) {
     return (

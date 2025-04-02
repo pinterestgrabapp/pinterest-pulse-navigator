@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const PINTEREST_API_URL = "https://api.pinterest.com/v5";
 export const PINTEREST_AUTH_URL = "https://www.pinterest.com/oauth";
 
-// Make sure the redirect URI uses the full URL including the protocol
+// Make sure the redirect URI matches exactly what's configured in Pinterest Developer console
 export const PINTEREST_REDIRECT_URI = `${window.location.origin}/pinterest-callback`;
 
 // Pinterest API scopes - adding all needed scopes
@@ -30,7 +30,7 @@ export const getPinterestAuthUrl = () => {
   return authUrl;
 };
 
-// Function to open Pinterest auth in a popup window
+// Improved function to open Pinterest auth in a popup window with better error handling
 export const openPinterestAuthPopup = () => {
   const authUrl = getPinterestAuthUrl();
   const width = 600;
@@ -38,23 +38,29 @@ export const openPinterestAuthPopup = () => {
   const left = window.innerWidth / 2 - width / 2;
   const top = window.innerHeight / 2 - height / 2;
   
-  // Open popup window with specified dimensions and position
-  const popup = window.open(
-    authUrl,
-    "Pinterest Authorization",
-    `width=${width},height=${height},left=${left},top=${top},location=yes,toolbar=no,menubar=no`
-  );
-  
-  // Check if popup was blocked
-  if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-    console.error("Pinterest popup was blocked. Please allow popups for this site.");
-    alert("Pinterest popup was blocked. Please allow popups for this site.");
-    // Fallback to redirect
-    window.location.href = authUrl;
+  try {
+    // Open popup window with specified dimensions and position
+    const popup = window.open(
+      authUrl,
+      "Pinterest Authorization",
+      `width=${width},height=${height},left=${left},top=${top},location=yes,toolbar=no,menubar=no`
+    );
+    
+    // Check if popup was blocked
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      console.error("Pinterest popup was blocked. Please allow popups for this site.");
+      alert("Pinterest popup was blocked. Please allow popups for this site.");
+      // Fallback to redirect
+      window.location.href = authUrl;
+      return null;
+    }
+    
+    return popup;
+  } catch (error) {
+    console.error("Error opening Pinterest auth popup:", error);
+    alert("Error opening Pinterest authentication. Please try again.");
     return null;
   }
-  
-  return popup;
 };
 
 // Generate a random string for state parameter
