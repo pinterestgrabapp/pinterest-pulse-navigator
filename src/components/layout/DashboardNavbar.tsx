@@ -18,14 +18,14 @@ const DashboardNavbar = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success("Logged out successfully", {
-        description: "You have been logged out of your account"
+      toast.success(t("logout"), {
+        description: t("logoutSuccess")
       });
       navigate('/auth');
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Logout failed", {
-        description: "There was an error logging you out. Please try again."
+      toast.error(t("logoutFailed"), {
+        description: t("logoutErrorMessage")
       });
     }
   };
@@ -56,16 +56,16 @@ const DashboardNavbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 border border-white/10 bg-black shadow-xl">
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">Profile</Link>
+                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">{t('profile')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/settings" className="cursor-pointer hover:text-pinterest-red transition-colors">Settings</Link>
+                  <Link to="/settings" className="cursor-pointer hover:text-pinterest-red transition-colors">{t('settings')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-pinterest-red hover:text-pinterest-red hover:bg-pinterest-red/10 flex items-center gap-2 transition-all duration-200 relative group overflow-hidden">
                   <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366]/20 to-[#ff0066]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   <LogOut className="h-4 w-4 relative z-10" /> 
-                  <span className="relative z-10">Logout</span>
+                  <span className="relative z-10">{t('logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>}

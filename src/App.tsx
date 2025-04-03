@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/utils/languageUtils";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import KeywordResearch from "./pages/KeywordResearch";
@@ -47,42 +47,44 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter basename="/">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/help" element={<Help />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/pinterest-callback" element={<PinterestCallback />} />
-                
-                {/* Protected Routes */}
-                <Route path="/dashboard" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
-                <Route path="/pin-analysis" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
-                <Route path="/keyword-research" element={<ProtectedRoute><KeywordResearch /></ProtectedRoute>} />
-                <Route path="/dashboard-home" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/create-pin" element={<ProtectedRoute><CreatePin /></ProtectedRoute>} />
-                <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/pin-stats" element={<ProtectedRoute><PinStats /></ProtectedRoute>} />
-                <Route path="/saved-pins" element={<ProtectedRoute><SavedPins /></ProtectedRoute>} />
-                
-                {/* New Protected Routes for Additional Features */}
-                <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-                <Route path="/ad-campaigns" element={<ProtectedRoute><AdCampaigns /></ProtectedRoute>} />
-                <Route path="/content-calendar" element={<ProtectedRoute><ContentCalendar /></ProtectedRoute>} />
-                <Route path="/team-collaboration" element={<ProtectedRoute><TeamCollaboration /></ProtectedRoute>} />
-                <Route path="/ecommerce" element={<ProtectedRoute><Ecommerce /></ProtectedRoute>} />
-                
-                {/* 404 Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          <LanguageProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter basename="/">
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/pinterest-callback" element={<PinterestCallback />} />
+                  
+                  {/* Protected Routes */}
+                  <Route path="/dashboard" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
+                  <Route path="/pin-analysis" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
+                  <Route path="/keyword-research" element={<ProtectedRoute><KeywordResearch /></ProtectedRoute>} />
+                  <Route path="/dashboard-home" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/create-pin" element={<ProtectedRoute><CreatePin /></ProtectedRoute>} />
+                  <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  <Route path="/pin-stats" element={<ProtectedRoute><PinStats /></ProtectedRoute>} />
+                  <Route path="/saved-pins" element={<ProtectedRoute><SavedPins /></ProtectedRoute>} />
+                  
+                  {/* New Protected Routes for Additional Features */}
+                  <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+                  <Route path="/ad-campaigns" element={<ProtectedRoute><AdCampaigns /></ProtectedRoute>} />
+                  <Route path="/content-calendar" element={<ProtectedRoute><ContentCalendar /></ProtectedRoute>} />
+                  <Route path="/team-collaboration" element={<ProtectedRoute><TeamCollaboration /></ProtectedRoute>} />
+                  <Route path="/ecommerce" element={<ProtectedRoute><Ecommerce /></ProtectedRoute>} />
+                  
+                  {/* 404 Route */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </LanguageProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

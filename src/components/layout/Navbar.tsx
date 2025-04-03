@@ -46,7 +46,7 @@ export const Navbar = () => {
             </Link>
             
             <button onClick={() => scrollToSection('how-it-works')} className="px-4 py-2 rounded-md text-gray-300 hover:bg-black hover:text-pinterest-red hover:shadow-[0_0_12px_rgba(234,56,76,0.6)] hover:border hover:border-white/20 transition-all duration-300">
-              Try It
+              {t('tryIt')}
             </button>
             
             <Link to="/pricing" className="px-4 py-2 rounded-md text-gray-300 hover:bg-black hover:text-pinterest-red hover:shadow-[0_0_12px_rgba(234,56,76,0.6)] hover:border hover:border-white/20 transition-all duration-300">
@@ -95,7 +95,7 @@ export const Navbar = () => {
             </button>
             
             <button onClick={() => scrollToSection('how-it-works')} className="text-left text-gray-300 hover:text-pinterest-red hover:glow-red transition-colors py-2">
-              Try It
+              {t('tryIt')}
             </button>
             
             <Link to="/pricing" className="text-gray-300 hover:text-pinterest-red hover:glow-red transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>

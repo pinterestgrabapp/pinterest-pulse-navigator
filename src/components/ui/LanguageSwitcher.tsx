@@ -12,12 +12,16 @@ import { LANGUAGES } from '@/lib/constants';
 import { useLanguage, Language } from '@/utils/languageUtils';
 
 export const LanguageSwitcher = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [open, setOpen] = useState(false);
   
   const handleSelectLanguage = (code: string) => {
     setLanguage(code as Language);
     setOpen(false);
+    
+    // Add a page reload after language change to ensure all components re-render
+    // with the new language (this is optional but ensures a clean state)
+    // window.location.reload();
   };
   
   // Find current language information
