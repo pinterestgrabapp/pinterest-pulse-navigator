@@ -2,7 +2,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/utils/languageUtils';
+import { useLanguage } from '@/utils/languageUtils'; // The import path remains the same
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';

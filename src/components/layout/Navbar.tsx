@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogIn, UserPlus, Menu, X, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/utils/languageUtils';
+import { useLanguage } from '@/utils/languageUtils'; // The import path remains the same
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import { useAuth } from '@/contexts/AuthContext';
 

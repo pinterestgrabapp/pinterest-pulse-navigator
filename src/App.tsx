@@ -8,30 +8,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/utils/languageUtils";
 import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
-import KeywordResearch from "./pages/KeywordResearch";
-import PinAnalysis from "./pages/PinAnalysis";
-import CreatePin from "./pages/CreatePin";
-import Settings from "./pages/Settings";
-import Profile from "./pages/Profile";
-import Export from "./pages/Export";
-import Help from "./pages/Help";
-import Auth from "./pages/Auth";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Pricing from "./pages/Pricing";
-import PinStats from "./pages/PinStats";
-import SavedPins from "./pages/SavedPins";
-import PinterestCallback from "./pages/PinterestCallback";
 
-// New pages for additional features
-import Analytics from "./pages/Analytics";
-import AdCampaigns from "./pages/AdCampaigns";
-import ContentCalendar from "./pages/ContentCalendar";
-import TeamCollaboration from "./pages/TeamCollaboration";
-import Ecommerce from "./pages/Ecommerce";
-
-// Create a new query client instance outside the component
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
