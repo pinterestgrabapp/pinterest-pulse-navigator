@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef, useCallback } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,144 +6,74 @@ import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/utils/languageUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, LucideShield, User, Link } from "lucide-react";
-import { openPinterestAuthPopup, isPinterestConnected } from "@/utils/pinterestApiUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import PinterestLoginPopup from "@/components/PinterestLoginPopup";
 
 const Settings = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [pinterestStatus, setPinterestStatus] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pinterestUsername, setPinterestUsername] = useState<string>("");
   const [showConnectDialog, setShowConnectDialog] = useState<boolean>(false);
+  const [showPinterestLoginPopup, setShowPinterestLoginPopup] = useState<boolean>(false);
   
-  // Ref to store the Pinterest auth popup
-  const pinterestPopupRef = useRef<Window | null>(null);
-  // Interval ref to check popup status
-  const popupCheckIntervalRef = useRef<number | null>(null);
-
-  // Check Pinterest connection on mount
+  // Check if user has connected Pinterest before (from localStorage for this demo)
   useEffect(() => {
-    const checkPinterestConnection = async () => {
-      if (user) {
-        setLoading(true);
-        try {
-          const isConnected = await isPinterestConnected(user.id);
-          setPinterestStatus(isConnected);
-          
-          // Get Pinterest username if connected
-          if (isConnected) {
-            const { data } = await fetch('/api/pinterest/user-info')
-              .then(res => res.json())
-              .catch(() => ({ data: null }));
-              
-            if (data?.username) {
-              setPinterestUsername(data.username);
-            }
-          }
-        } catch (error) {
-          console.error("Error checking Pinterest connection:", error);
-        } finally {
-          setLoading(false);
+    if (user) {
+      setLoading(true);
+      try {
+        // In a real app, this would be fetched from your database
+        const savedConnection = localStorage.getItem(`pinterest_connection_${user.id}`);
+        if (savedConnection) {
+          const connectionData = JSON.parse(savedConnection);
+          setPinterestStatus(true);
+          setPinterestUsername(connectionData.username || "");
         }
+      } catch (error) {
+        console.error("Error checking Pinterest connection:", error);
+      } finally {
+        setLoading(false);
       }
-    };
-    checkPinterestConnection();
+    }
   }, [user]);
 
-  // Setup message listener for Pinterest auth popup
-  useEffect(() => {
-    const handlePinterestAuthMessage = (event: MessageEvent) => {
-      // Verify origin for security
-      if (event.origin !== window.location.origin) {
-        return;
-      }
-      
-      // Handle success message
-      if (event.data?.type === "PINTEREST_AUTH_SUCCESS") {
-        toast.success("Pinterest account connected successfully!");
-        setPinterestStatus(true);
-        if (event.data?.data?.username) {
-          setPinterestUsername(event.data.data.username);
-        }
-        // Clear popup check interval if exists
-        if (popupCheckIntervalRef.current) {
-          window.clearInterval(popupCheckIntervalRef.current);
-          popupCheckIntervalRef.current = null;
-        }
-      }
-      
-      // Handle error message
-      if (event.data?.type === "PINTEREST_AUTH_ERROR") {
-        toast.error(`Pinterest connection failed: ${event.data.error}`);
-        // Clear popup check interval if exists
-        if (popupCheckIntervalRef.current) {
-          window.clearInterval(popupCheckIntervalRef.current);
-          popupCheckIntervalRef.current = null;
-        }
-      }
-    };
-    
-    // Add event listener for messages from popup
-    window.addEventListener("message", handlePinterestAuthMessage);
-    
-    // Cleanup function
-    return () => {
-      window.removeEventListener("message", handlePinterestAuthMessage);
-      // Clear any existing intervals
-      if (popupCheckIntervalRef.current) {
-        window.clearInterval(popupCheckIntervalRef.current);
-      }
-    };
-  }, []);
+  // Handle Pinterest account connection
+  const handleConnectPinterest = () => {
+    setShowPinterestLoginPopup(true);
+  };
 
-  // Handle Pinterest connection
-  const handleConnectPinterest = useCallback(() => {
-    // Clear any existing popup check interval
-    if (popupCheckIntervalRef.current) {
-      window.clearInterval(popupCheckIntervalRef.current);
-      popupCheckIntervalRef.current = null;
-    }
-    
-    // Open the Pinterest auth popup
-    const popup = openPinterestAuthPopup();
-    
-    if (popup) {
-      // Store the popup reference
-      pinterestPopupRef.current = popup;
+  // Handle successful Pinterest login
+  const handlePinterestLoginSuccess = (username: string) => {
+    // In a real app, you would store this in your database
+    if (user) {
+      localStorage.setItem(`pinterest_connection_${user.id}`, JSON.stringify({
+        username,
+        connectedAt: new Date().toISOString()
+      }));
       
-      // Set up an interval to check if popup is closed
-      popupCheckIntervalRef.current = window.setInterval(() => {
-        if (pinterestPopupRef.current?.closed) {
-          // Popup was closed, clear the interval
-          if (popupCheckIntervalRef.current) {
-            window.clearInterval(popupCheckIntervalRef.current);
-            popupCheckIntervalRef.current = null;
-          }
-          
-          // Check if user connected Pinterest (as a fallback if message wasn't received)
-          if (user) {
-            isPinterestConnected(user.id).then(connected => {
-              if (connected && !pinterestStatus) {
-                toast.success("Pinterest account connected successfully!");
-                setPinterestStatus(true);
-              }
-            });
-          }
-        }
-      }, 1000);
-    } else {
-      // Popup failed to open, show the inline dialog instead
-      setShowConnectDialog(true);
+      setPinterestStatus(true);
+      setPinterestUsername(username);
+      
+      toast.success("Pinterest account connected successfully!", {
+        description: `Connected as ${username}`
+      });
     }
-  }, [user, pinterestStatus]);
+  };
 
-  // Handle direct (non-popup) Pinterest connection
-  const handleDirectConnect = () => {
-    // Redirect to Pinterest OAuth URL
-    window.location.href = `https://www.pinterest.com/oauth/?client_id=${import.meta.env.VITE_PINTEREST_APP_ID}&redirect_uri=${encodeURIComponent(`${window.location.origin}/pinterest-callback`)}&response_type=code&scope=boards:read,pins:read,user_accounts:read,pins:write,boards:write`;
+  // Handle disconnect
+  const handleDisconnectPinterest = () => {
+    if (user) {
+      localStorage.removeItem(`pinterest_connection_${user.id}`);
+      setPinterestStatus(false);
+      setPinterestUsername("");
+      
+      toast.success("Pinterest account disconnected", {
+        description: "Your Pinterest account has been disconnected"
+      });
+    }
   };
 
   return (
@@ -278,24 +207,40 @@ const Settings = () => {
                       <p className="font-medium">Pinterest</p>
                       <p className="text-sm text-gray-500">
                         {loading ? "Checking connection status..." : 
-                          pinterestStatus ? `Connected${pinterestUsername ? ` as ${pinterestUsername}` : ''}` : "Not connected"}
+                          pinterestStatus ? `Connected as ${pinterestUsername}` : "Not connected"}
                       </p>
                     </div>
                   </div>
-                  <Button 
-                    variant={pinterestStatus ? "outline" : "default"} 
-                    className={pinterestStatus ? "" : "bg-pinterest-red"} 
-                    onClick={handleConnectPinterest} 
-                    disabled={loading}
-                  >
-                    {pinterestStatus ? "Reconnect" : "Connect"}
-                  </Button>
+                  {pinterestStatus ? (
+                    <Button 
+                      variant="outline" 
+                      onClick={handleDisconnectPinterest} 
+                      disabled={loading}
+                    >
+                      Disconnect
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="bg-pinterest-red" 
+                      onClick={handleConnectPinterest} 
+                      disabled={loading}
+                    >
+                      Connect
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Pinterest Login Popup */}
+      <PinterestLoginPopup 
+        open={showPinterestLoginPopup} 
+        onOpenChange={setShowPinterestLoginPopup}
+        onSuccess={handlePinterestLoginSuccess}
+      />
       
       {/* Fallback dialog for when popup is blocked */}
       <Dialog open={showConnectDialog} onOpenChange={setShowConnectDialog}>
@@ -313,7 +258,10 @@ const Settings = () => {
             </p>
             <Button
               className="w-full bg-pinterest-red"
-              onClick={handleDirectConnect}
+              onClick={() => {
+                setShowConnectDialog(false);
+                setShowPinterestLoginPopup(true);
+              }}
             >
               Connect to Pinterest
             </Button>
