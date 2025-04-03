@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Pinterest API configuration - updated to use v5
@@ -49,16 +48,12 @@ export const openPinterestAuthPopup = () => {
     // Check if popup was blocked
     if (!popup || popup.closed || typeof popup.closed === 'undefined') {
       console.error("Pinterest popup was blocked. Please allow popups for this site.");
-      alert("Pinterest popup was blocked. Please allow popups for this site.");
-      // Fallback to redirect
-      window.location.href = authUrl;
       return null;
     }
     
     return popup;
   } catch (error) {
     console.error("Error opening Pinterest auth popup:", error);
-    alert("Error opening Pinterest authentication. Please try again.");
     return null;
   }
 };

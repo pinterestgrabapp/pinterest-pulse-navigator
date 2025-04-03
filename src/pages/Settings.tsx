@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import PinterestLoginPopup from "@/components/PinterestLoginPopup";
+import { isPinterestConnected, getPinterestCredentials } from "@/utils/pinterestApiUtils";
 
 const Settings = () => {
   const { t } = useLanguage();
@@ -20,59 +21,71 @@ const Settings = () => {
   const [showConnectDialog, setShowConnectDialog] = useState<boolean>(false);
   const [showPinterestLoginPopup, setShowPinterestLoginPopup] = useState<boolean>(false);
   
-  // Check if user has connected Pinterest before (from localStorage for this demo)
   useEffect(() => {
-    if (user) {
-      setLoading(true);
-      try {
-        // In a real app, this would be fetched from your database
-        const savedConnection = localStorage.getItem(`pinterest_connection_${user.id}`);
-        if (savedConnection) {
-          const connectionData = JSON.parse(savedConnection);
-          setPinterestStatus(true);
-          setPinterestUsername(connectionData.username || "");
+    const checkPinterestConnection = async () => {
+      if (user) {
+        setLoading(true);
+        try {
+          const isConnected = await isPinterestConnected(user.id);
+          
+          if (isConnected) {
+            const credentials = await getPinterestCredentials(user.id);
+            setPinterestStatus(true);
+            setPinterestUsername(credentials?.username || "Pinterest User");
+          } else {
+            setPinterestStatus(false);
+            setPinterestUsername("");
+          }
+        } catch (error) {
+          console.error("Error checking Pinterest connection:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error checking Pinterest connection:", error);
-      } finally {
-        setLoading(false);
       }
-    }
+    };
+    
+    checkPinterestConnection();
   }, [user]);
 
-  // Handle Pinterest account connection
   const handleConnectPinterest = () => {
     setShowPinterestLoginPopup(true);
   };
 
-  // Handle successful Pinterest login
   const handlePinterestLoginSuccess = (username: string) => {
-    // In a real app, you would store this in your database
-    if (user) {
-      localStorage.setItem(`pinterest_connection_${user.id}`, JSON.stringify({
-        username,
-        connectedAt: new Date().toISOString()
-      }));
-      
-      setPinterestStatus(true);
-      setPinterestUsername(username);
-      
-      toast.success("Pinterest account connected successfully!", {
-        description: `Connected as ${username}`
-      });
-    }
+    setPinterestStatus(true);
+    setPinterestUsername(username);
+    
+    toast.success("Pinterest account connected successfully!", {
+      description: `Connected as ${username}`
+    });
   };
 
-  // Handle disconnect
-  const handleDisconnectPinterest = () => {
+  const handleDisconnectPinterest = async () => {
     if (user) {
-      localStorage.removeItem(`pinterest_connection_${user.id}`);
-      setPinterestStatus(false);
-      setPinterestUsername("");
-      
-      toast.success("Pinterest account disconnected", {
-        description: "Your Pinterest account has been disconnected"
-      });
+      setLoading(true);
+      try {
+        const { data, error } = await fetch('/api/disconnect-pinterest', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: user.id }),
+        }).then(res => res.json());
+        
+        if (error) throw new Error(error);
+        
+        setPinterestStatus(false);
+        setPinterestUsername("");
+        
+        toast.success("Pinterest account disconnected", {
+          description: "Your Pinterest account has been disconnected"
+        });
+      } catch (error) {
+        console.error("Error disconnecting Pinterest:", error);
+        toast.error("Failed to disconnect Pinterest account");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -235,14 +248,12 @@ const Settings = () => {
         </TabsContent>
       </Tabs>
       
-      {/* Pinterest Login Popup */}
       <PinterestLoginPopup 
         open={showPinterestLoginPopup} 
         onOpenChange={setShowPinterestLoginPopup}
         onSuccess={handlePinterestLoginSuccess}
       />
       
-      {/* Fallback dialog for when popup is blocked */}
       <Dialog open={showConnectDialog} onOpenChange={setShowConnectDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
