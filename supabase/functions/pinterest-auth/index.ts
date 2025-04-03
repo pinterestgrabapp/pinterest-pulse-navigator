@@ -4,9 +4,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
 // Set up the Pinterest API credentials
-const PINTEREST_APP_ID = Deno.env.get("PINTEREST_APP_ID") || "";
-const PINTEREST_APP_SECRET = Deno.env.get("PINTEREST_APP_SECRET") || "";
-const PINTEREST_REDIRECT_URI = Deno.env.get("PINTEREST_REDIRECT_URI") || "";
+const PINTEREST_APP_ID = Deno.env.get("PINTEREST_APP_ID") || "1510337";
+const PINTEREST_APP_SECRET = Deno.env.get("PINTEREST_APP_SECRET") || "2395c3a967f542bc95dc867a07c6a40e40ee9fe1";
+const PINTEREST_REDIRECT_URI = Deno.env.get("PINTEREST_REDIRECT_URI") || "http://localhost:5173/pinterest-callback";
 
 // Function to exchange the authorization code for an access token
 async function exchangeCodeForToken(code: string) {
