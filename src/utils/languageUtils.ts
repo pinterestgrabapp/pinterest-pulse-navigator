@@ -1,27 +1,17 @@
 
-import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TRANSLATIONS, DEFAULT_LANGUAGE } from '@/lib/constants';
 
 // Define types
 export type Language = keyof typeof TRANSLATIONS;
 export type TranslationKey = keyof (typeof TRANSLATIONS)[typeof DEFAULT_LANGUAGE];
 
-// Create interface for the context
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
-}
-
 // Create context for language
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-// Create provider component
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+export const useLanguage = () => {
   const [language, setLanguage] = useState<Language>(() => {
     // Try to get language from localStorage
     const savedLanguage = localStorage.getItem('language') as Language;
-    return savedLanguage || detectBrowserLanguage();
+    return savedLanguage || DEFAULT_LANGUAGE;
   });
 
   useEffect(() => {
@@ -43,28 +33,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
            key;
   }, [language]);
 
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      {children}
-    </LanguageContext.Provider>
-  );
-};
-
-// Hook to use the language context
-export const useLanguage = (): LanguageContextType => {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
+  return {
+    language,
+    setLanguage,
+    t
+  };
 };
 
 // Helper to detect browser language
 export const detectBrowserLanguage = (): Language => {
-  if (typeof window === 'undefined' || !navigator) {
-    return DEFAULT_LANGUAGE;
-  }
-  
   const browserLanguage = navigator.language.split('-')[0] as Language;
   return TRANSLATIONS[browserLanguage] ? browserLanguage : DEFAULT_LANGUAGE;
 };

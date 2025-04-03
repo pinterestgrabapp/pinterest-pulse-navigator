@@ -2,7 +2,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/utils/languageUtils'; // The import path remains the same
+import { useLanguage } from '@/utils/languageUtils';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -18,14 +18,14 @@ const DashboardNavbar = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success(t("logout"), {
-        description: t("logoutSuccess")
+      toast.success("Logged out successfully", {
+        description: "You have been logged out of your account"
       });
       navigate('/auth');
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error(t("logoutFailed"), {
-        description: t("logoutErrorMessage")
+      toast.error("Logout failed", {
+        description: "There was an error logging you out. Please try again."
       });
     }
   };
@@ -56,16 +56,16 @@ const DashboardNavbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 border border-white/10 bg-black shadow-xl">
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">{t('profile')}</Link>
+                  <Link to="/profile" className="cursor-pointer hover:text-pinterest-red transition-colors">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/settings" className="cursor-pointer hover:text-pinterest-red transition-colors">{t('settings')}</Link>
+                  <Link to="/settings" className="cursor-pointer hover:text-pinterest-red transition-colors">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-pinterest-red hover:text-pinterest-red hover:bg-pinterest-red/10 flex items-center gap-2 transition-all duration-200 relative group overflow-hidden">
                   <span className="absolute inset-0 bg-gradient-to-r from-[#ff3366]/20 to-[#ff0066]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   <LogOut className="h-4 w-4 relative z-10" /> 
-                  <span className="relative z-10">{t('logout')}</span>
+                  <span className="relative z-10">Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>}
