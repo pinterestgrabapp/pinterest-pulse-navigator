@@ -6,6 +6,7 @@ type Theme = 'dark' | 'light';
 interface ThemeProviderProps {
   children: ReactNode;
   storageKey?: string;
+  // Remove defaultTheme prop as we're hardcoding to 'dark'
 }
 
 interface ThemeProviderState {
