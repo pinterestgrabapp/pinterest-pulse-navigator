@@ -25,22 +25,26 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Link } from "react-router-dom";
 import { Trash2, Copy, UserPlus, Clock } from "lucide-react";
-
 const workspaceFormSchema = z.object({
-  name: z.string().min(3, { message: "Workspace name must be at least 3 characters" }),
+  name: z.string().min(3, {
+    message: "Workspace name must be at least 3 characters"
+  })
 });
-
 const inviteFormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  role: z.enum(["viewer", "editor", "admin"]),
+  email: z.string().email({
+    message: "Please enter a valid email address"
+  }),
+  role: z.enum(["viewer", "editor", "admin"])
 });
-
 type WorkspaceFormValues = z.infer<typeof workspaceFormSchema>;
 type InviteFormValues = z.infer<typeof inviteFormSchema>;
-
 const TeamCollaboration = () => {
-  const { user } = useAuth();
-  const { toast: uiToast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    toast: uiToast
+  } = useToast();
   const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState<any>(null);
   const [collaborators, setCollaborators] = useState<any[]>([]);
@@ -49,40 +53,33 @@ const TeamCollaboration = () => {
   const [workspaceDialogOpen, setWorkspaceDialogOpen] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  
   const workspaceForm = useForm<WorkspaceFormValues>({
     resolver: zodResolver(workspaceFormSchema),
     defaultValues: {
-      name: "",
-    },
+      name: ""
+    }
   });
-  
   const inviteForm = useForm<InviteFormValues>({
     resolver: zodResolver(inviteFormSchema),
     defaultValues: {
       email: "",
-      role: "viewer",
-    },
+      role: "viewer"
+    }
   });
-  
   useEffect(() => {
     const fetchWorkspaces = async () => {
       if (!user?.id) return;
-      
       setFetchingWorkspaces(true);
       try {
-        const { data, error } = await supabase
-          .from("workspaces")
-          .select("*")
-          .eq("owner_id", user.id);
-          
+        const {
+          data,
+          error
+        } = await supabase.from("workspaces").select("*").eq("owner_id", user.id);
         if (error) {
           console.error("Error fetching workspaces:", error);
           return;
         }
-        
         setWorkspaces(data || []);
-        
         if (data && data.length > 0 && !selectedWorkspace) {
           setSelectedWorkspace(data[0]);
         }
@@ -92,51 +89,41 @@ const TeamCollaboration = () => {
         setFetchingWorkspaces(false);
       }
     };
-    
     fetchWorkspaces();
   }, [user]);
-  
   useEffect(() => {
     const fetchCollaborators = async () => {
       if (!selectedWorkspace) return;
-      
       try {
-        const { data, error } = await supabase
-          .from("workspace_collaborators")
-          .select("*")
-          .eq("workspace_id", selectedWorkspace.id);
-          
+        const {
+          data,
+          error
+        } = await supabase.from("workspace_collaborators").select("*").eq("workspace_id", selectedWorkspace.id);
         if (error) {
           console.error("Error fetching collaborators:", error);
           return;
         }
-        
         setCollaborators(data || []);
       } catch (err) {
         console.error("Error fetching collaborators:", err);
       }
     };
-    
     fetchCollaborators();
   }, [selectedWorkspace]);
-  
   const onWorkspaceSubmit = async (values: WorkspaceFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to create a workspace");
       return;
     }
-    
     setLoading(true);
-    
     try {
-      const { data, error } = await supabase
-        .from("workspaces")
-        .insert({
-          name: values.name,
-          owner_id: user.id,
-        })
-        .select();
-        
+      const {
+        data,
+        error
+      } = await supabase.from("workspaces").insert({
+        name: values.name,
+        owner_id: user.id
+      }).select();
       if (error) {
         console.error("Error creating workspace:", error);
         toast.error("Failed to create workspace", {
@@ -144,14 +131,11 @@ const TeamCollaboration = () => {
         });
         return;
       }
-      
       toast.success("Workspace created successfully");
-      
       if (data && data[0]) {
         setWorkspaces([...workspaces, data[0]]);
         setSelectedWorkspace(data[0]);
       }
-      
       setWorkspaceDialogOpen(false);
       workspaceForm.reset();
     } catch (err) {
@@ -163,27 +147,23 @@ const TeamCollaboration = () => {
       setLoading(false);
     }
   };
-  
   const onInviteSubmit = async (values: InviteFormValues) => {
     if (!user?.id || !selectedWorkspace) {
       toast.error("You must be logged in and have a selected workspace to invite collaborators");
       return;
     }
-    
     setLoading(true);
-    
     try {
-      const { data, error } = await supabase
-        .from("workspace_collaborators")
-        .insert({
-          workspace_id: selectedWorkspace.id,
-          user_id: user.id,
-          invited_email: values.email,
-          role: values.role,
-          invitation_status: "pending",
-        })
-        .select();
-        
+      const {
+        data,
+        error
+      } = await supabase.from("workspace_collaborators").insert({
+        workspace_id: selectedWorkspace.id,
+        user_id: user.id,
+        invited_email: values.email,
+        role: values.role,
+        invitation_status: "pending"
+      }).select();
       if (error) {
         console.error("Error inviting collaborator:", error);
         toast.error("Failed to invite collaborator", {
@@ -191,15 +171,12 @@ const TeamCollaboration = () => {
         });
         return;
       }
-      
       toast.success("Invitation sent successfully", {
         description: `An invitation has been sent to ${values.email}`
       });
-      
       if (data && data[0]) {
         setCollaborators([...collaborators, data[0]]);
       }
-      
       setInviteDialogOpen(false);
       inviteForm.reset();
     } catch (err) {
@@ -211,17 +188,12 @@ const TeamCollaboration = () => {
       setLoading(false);
     }
   };
-  
   const deleteWorkspace = async (id: string) => {
     if (!user?.id) return;
-    
     try {
-      const { error } = await supabase
-        .from("workspaces")
-        .delete()
-        .eq("id", id)
-        .eq("owner_id", user.id);
-        
+      const {
+        error
+      } = await supabase.from("workspaces").delete().eq("id", id).eq("owner_id", user.id);
       if (error) {
         console.error("Error deleting workspace:", error);
         toast.error("Failed to delete workspace", {
@@ -229,11 +201,8 @@ const TeamCollaboration = () => {
         });
         return;
       }
-      
       toast.success("Workspace deleted");
-      
       setWorkspaces(workspaces.filter(workspace => workspace.id !== id));
-      
       if (selectedWorkspace && selectedWorkspace.id === id) {
         setSelectedWorkspace(null);
       }
@@ -244,17 +213,12 @@ const TeamCollaboration = () => {
       });
     }
   };
-  
   const removeCollaborator = async (id: string) => {
     if (!user?.id || !selectedWorkspace) return;
-    
     try {
-      const { error } = await supabase
-        .from("workspace_collaborators")
-        .delete()
-        .eq("id", id)
-        .eq("workspace_id", selectedWorkspace.id);
-        
+      const {
+        error
+      } = await supabase.from("workspace_collaborators").delete().eq("id", id).eq("workspace_id", selectedWorkspace.id);
       if (error) {
         console.error("Error removing collaborator:", error);
         toast.error("Failed to remove collaborator", {
@@ -262,9 +226,7 @@ const TeamCollaboration = () => {
         });
         return;
       }
-      
       toast.success("Collaborator removed");
-      
       setCollaborators(collaborators.filter(collaborator => collaborator.id !== id));
     } catch (err) {
       console.error("Error removing collaborator:", err);
@@ -273,21 +235,16 @@ const TeamCollaboration = () => {
       });
     }
   };
-  
   const copyInviteLink = () => {
     if (!selectedWorkspace) return;
-    
     const inviteLink = `${window.location.origin}/invite/${selectedWorkspace.id}`;
     navigator.clipboard.writeText(inviteLink);
     setCopied(true);
-    
     setTimeout(() => {
       setCopied(false);
     }, 2000);
-    
     toast.success("Invite link copied to clipboard");
   };
-  
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case "admin":
@@ -298,7 +255,6 @@ const TeamCollaboration = () => {
         return "bg-gray-500/20 text-gray-500 hover:bg-gray-500/30";
     }
   };
-  
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "accepted":
@@ -309,9 +265,7 @@ const TeamCollaboration = () => {
         return "bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30";
     }
   };
-  
-  return (
-    <DashboardLayout>
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Team Collaboration</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -342,19 +296,15 @@ const TeamCollaboration = () => {
                     
                     <Form {...workspaceForm}>
                       <form onSubmit={workspaceForm.handleSubmit(onWorkspaceSubmit)} className="space-y-4">
-                        <FormField
-                          control={workspaceForm.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
+                        <FormField control={workspaceForm.control} name="name" render={({
+                        field
+                      }) => <FormItem>
                               <FormLabel>Workspace Name</FormLabel>
                               <FormControl>
                                 <Input placeholder="My Team" {...field} />
                               </FormControl>
                               <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            </FormItem>} />
                         
                         <DialogFooter>
                           <Button type="submit" disabled={loading}>
@@ -371,23 +321,11 @@ const TeamCollaboration = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {fetchingWorkspaces ? (
-                <div className="animate-pulse space-y-4">
+              {fetchingWorkspaces ? <div className="animate-pulse space-y-4">
                   <div className="h-10 bg-gray-800 rounded w-full"></div>
                   <div className="h-10 bg-gray-800 rounded w-full"></div>
-                </div>
-              ) : workspaces.length > 0 ? (
-                <div className="space-y-2">
-                  {workspaces.map(workspace => (
-                    <div
-                      key={workspace.id}
-                      className={`flex items-center justify-between p-3 rounded-md cursor-pointer transition-colors ${
-                        selectedWorkspace?.id === workspace.id
-                          ? "bg-gray-800 border-l-4 border-pinterest-red"
-                          : "hover:bg-gray-900"
-                      }`}
-                      onClick={() => setSelectedWorkspace(workspace)}
-                    >
+                </div> : workspaces.length > 0 ? <div className="space-y-2">
+                  {workspaces.map(workspace => <div key={workspace.id} className={`flex items-center justify-between p-3 rounded-md cursor-pointer transition-colors ${selectedWorkspace?.id === workspace.id ? "bg-gray-800 border-l-4 border-pinterest-red" : "hover:bg-gray-900"}`} onClick={() => setSelectedWorkspace(workspace)}>
                       <div className="flex items-center">
                         <Users className="h-5 w-5 mr-3 text-gray-400" />
                         <div>
@@ -395,37 +333,28 @@ const TeamCollaboration = () => {
                           <p className="text-xs text-gray-400">Owner</p>
                         </div>
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteWorkspace(workspace.id);
-                        }}
-                      >
+                      <Button variant="ghost" size="icon" onClick={e => {
+                  e.stopPropagation();
+                  deleteWorkspace(workspace.id);
+                }}>
                         <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
                       </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6">
+                    </div>)}
+                </div> : <div className="text-center py-6">
                   <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-xl font-medium mb-2">No Workspaces</h3>
                   <p className="text-gray-400 mb-4">
                     Create a workspace to start collaborating with your team
                   </p>
-                  <Button onClick={() => setWorkspaceDialogOpen(true)}>
+                  <Button onClick={() => setWorkspaceDialogOpen(true)} className="bg-pinterest-red">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Workspace
                   </Button>
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
           
-          {selectedWorkspace && (
-            <Card className="bg-black border-gray-800">
+          {selectedWorkspace && <Card className="bg-black border-gray-800">
               <CardHeader>
                 <CardTitle>Invite Link</CardTitle>
                 <CardDescription>
@@ -434,23 +363,17 @@ const TeamCollaboration = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-2">
-                  <Input 
-                    readOnly 
-                    value={`${window.location.origin}/invite/${selectedWorkspace.id}`} 
-                    className="text-sm"
-                  />
+                  <Input readOnly value={`${window.location.origin}/invite/${selectedWorkspace.id}`} className="text-sm" />
                   <Button size="icon" variant="outline" onClick={copyInviteLink}>
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
         
         <div className="lg:col-span-2">
-          {selectedWorkspace ? (
-            <Card className="bg-black border-gray-800">
+          {selectedWorkspace ? <Card className="bg-black border-gray-800">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
@@ -476,30 +399,21 @@ const TeamCollaboration = () => {
                       
                       <Form {...inviteForm}>
                         <form onSubmit={inviteForm.handleSubmit(onInviteSubmit)} className="space-y-4">
-                          <FormField
-                            control={inviteForm.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
+                          <FormField control={inviteForm.control} name="email" render={({
+                        field
+                      }) => <FormItem>
                                 <FormLabel>Email Address</FormLabel>
                                 <FormControl>
                                   <Input placeholder="colleague@example.com" {...field} />
                                 </FormControl>
                                 <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                              </FormItem>} />
                           
-                          <FormField
-                            control={inviteForm.control}
-                            name="role"
-                            render={({ field }) => (
-                              <FormItem>
+                          <FormField control={inviteForm.control} name="role" render={({
+                        field
+                      }) => <FormItem>
                                 <FormLabel>Role</FormLabel>
-                                <Select 
-                                  onValueChange={field.onChange} 
-                                  defaultValue={field.value}
-                                >
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
                                   <FormControl>
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select a role" />
@@ -512,9 +426,7 @@ const TeamCollaboration = () => {
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                              </FormItem>} />
                           
                           <DialogFooter>
                             <Button type="submit" disabled={loading}>
@@ -554,9 +466,7 @@ const TeamCollaboration = () => {
                         </Badge>
                       </div>
                       
-                      {collaborators.length > 0 ? (
-                        collaborators.map(collaborator => (
-                          <div key={collaborator.id} className="flex items-center justify-between p-3 bg-gray-900 rounded-md">
+                      {collaborators.length > 0 ? collaborators.map(collaborator => <div key={collaborator.id} className="flex items-center justify-between p-3 bg-gray-900 rounded-md">
                             <div className="flex items-center">
                               <Avatar className="h-10 w-10 mr-3">
                                 <AvatarFallback>{collaborator.invited_email?.charAt(0).toUpperCase()}</AvatarFallback>
@@ -574,18 +484,11 @@ const TeamCollaboration = () => {
                               <Badge className={getRoleBadgeColor(collaborator.role)}>
                                 {collaborator.role}
                               </Badge>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => removeCollaborator(collaborator.id)}
-                              >
+                              <Button variant="ghost" size="icon" onClick={() => removeCollaborator(collaborator.id)}>
                                 <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
                               </Button>
                             </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-6">
+                          </div>) : <div className="text-center py-6">
                           <Mail className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                           <h3 className="text-xl font-medium mb-2">No Team Members</h3>
                           <p className="text-gray-400 mb-4">
@@ -595,8 +498,7 @@ const TeamCollaboration = () => {
                             <UserPlus className="mr-2 h-4 w-4" />
                             Invite Members
                           </Button>
-                        </div>
-                      )}
+                        </div>}
                     </div>
                   </TabsContent>
                   
@@ -648,26 +550,21 @@ const TeamCollaboration = () => {
                   </TabsContent>
                 </Tabs>
               </CardContent>
-            </Card>
-          ) : (
-            <Card className="bg-black border-gray-800 h-full flex items-center justify-center">
+            </Card> : <Card className="bg-black border-gray-800 h-full flex items-center justify-center">
               <CardContent className="p-6 text-center">
                 <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                 <h3 className="text-xl font-medium mb-2">No Workspace Selected</h3>
                 <p className="text-gray-400 mb-4">
                   Select a workspace from the list or create a new one to get started
                 </p>
-                <Button onClick={() => setWorkspaceDialogOpen(true)}>
+                <Button onClick={() => setWorkspaceDialogOpen(true)} className="bg-pinterest-red">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Workspace
                 </Button>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
       </div>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default TeamCollaboration;
