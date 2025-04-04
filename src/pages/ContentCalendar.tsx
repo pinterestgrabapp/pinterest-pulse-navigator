@@ -253,7 +253,7 @@ const ContentCalendar = () => {
           <p className="text-gray-400 mb-4">
             There are no events scheduled for {format(selectedDate, "MMMM d, yyyy")}
           </p>
-          <Button onClick={() => setEventDialogOpen(true)}>
+          <Button onClick={() => setEventDialogOpen(true)} className="bg-pinterest-red">
             <Plus className="mr-2 h-4 w-4" />
             Add Event
           </Button>
