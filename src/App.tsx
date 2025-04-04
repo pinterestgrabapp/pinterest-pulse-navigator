@@ -31,7 +31,7 @@ import Pricing from "./pages/Pricing";
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider storageKey="vite-ui-theme">
       <AuthProvider>
         <LanguageProvider>
           <Toaster />
