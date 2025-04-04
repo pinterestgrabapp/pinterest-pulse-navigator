@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import KeywordResearch from "./pages/KeywordResearch";
 import PinAnalysis from "./pages/PinAnalysis";
+import PinterestAnalytics from "./pages/PinterestAnalytics";
 import CreatePin from "./pages/CreatePin";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
@@ -70,6 +71,7 @@ const App = () => (
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/pin-stats" element={<ProtectedRoute><PinStats /></ProtectedRoute>} />
                 <Route path="/saved-pins" element={<ProtectedRoute><SavedPins /></ProtectedRoute>} />
+                <Route path="/pinterest-analytics" element={<ProtectedRoute><PinterestAnalytics /></ProtectedRoute>} />
                 
                 {/* New Protected Routes for Additional Features */}
                 <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />

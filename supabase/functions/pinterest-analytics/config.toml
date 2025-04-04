@@ -1,0 +1,5 @@
+
+project_id = "nfmstsrqfyhpooikhfns"
+
+[functions.pinterest-analytics]
+verify_jwt = true
