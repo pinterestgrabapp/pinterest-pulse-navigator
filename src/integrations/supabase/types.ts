@@ -222,6 +222,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pinterest_analytics: {
+        Row: {
+          created_at: string
+          id: string
+          query: string
+          results: Json
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          query: string
+          results?: Json
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          query?: string
+          results?: Json
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pinterest_credentials: {
         Row: {
           access_token: string | null
