@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -31,6 +30,15 @@ import Help from "./pages/Help";
 import Pricing from "./pages/Pricing";
 
 function App() {
+  console.log("[App] Rendering App component");
+  
+  useEffect(() => {
+    console.log("[App] App component mounted");
+    return () => {
+      console.log("[App] App component unmounted");
+    };
+  }, []);
+
   return (
     <ThemeProvider storageKey="vite-ui-theme">
       <AuthProvider>
@@ -43,7 +51,11 @@ function App() {
               <Route path="/pinterest-callback" element={<PinterestCallback />} />
               
               {/* Protected Routes */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/keyword-research" element={<ProtectedRoute><KeywordResearch /></ProtectedRoute>} />
