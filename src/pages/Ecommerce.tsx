@@ -22,19 +22,26 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { format, subDays } from "date-fns";
 import { Link } from "react-router-dom";
-
 const integrationFormSchema = z.object({
   platform: z.enum(["shopify", "woocommerce", "etsy", "bigcommerce", "squarespace"]),
-  apiKey: z.string().min(5, { message: "API Key is required" }),
-  apiSecret: z.string().min(5, { message: "API Secret is required" }),
-  storeUrl: z.string().url({ message: "Please enter a valid store URL" }),
+  apiKey: z.string().min(5, {
+    message: "API Key is required"
+  }),
+  apiSecret: z.string().min(5, {
+    message: "API Secret is required"
+  }),
+  storeUrl: z.string().url({
+    message: "Please enter a valid store URL"
+  })
 });
-
 type IntegrationFormValues = z.infer<typeof integrationFormSchema>;
-
 const Ecommerce = () => {
-  const { user } = useAuth();
-  const { toast: uiToast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    toast: uiToast
+  } = useToast();
   const [integrations, setIntegrations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchingIntegrations, setFetchingIntegrations] = useState(true);
@@ -44,62 +51,50 @@ const Ecommerce = () => {
   const [productStats, setProductStats] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [pinterestConnected, setPinterestConnected] = useState(false);
-  
   const form = useForm<IntegrationFormValues>({
     resolver: zodResolver(integrationFormSchema),
     defaultValues: {
       platform: "shopify",
       apiKey: "",
       apiSecret: "",
-      storeUrl: "",
-    },
+      storeUrl: ""
+    }
   });
-
   useEffect(() => {
     const checkPinterestConnection = async () => {
       if (!user?.id) return;
-      
       try {
-        const { data, error } = await supabase
-          .from("pinterest_credentials")
-          .select("*")
-          .eq("user_id", user.id)
-          .single();
-          
+        const {
+          data,
+          error
+        } = await supabase.from("pinterest_credentials").select("*").eq("user_id", user.id).single();
         if (error) {
           console.error("Error fetching Pinterest credentials:", error);
           setPinterestConnected(false);
           return;
         }
-        
         setPinterestConnected(!!data?.access_token);
       } catch (err) {
         console.error("Error checking Pinterest connection:", err);
         setPinterestConnected(false);
       }
     };
-    
     checkPinterestConnection();
   }, [user]);
-  
   useEffect(() => {
     const fetchIntegrations = async () => {
       if (!user?.id) return;
-      
       setFetchingIntegrations(true);
       try {
-        const { data, error } = await supabase
-          .from("ecommerce_integrations")
-          .select("*")
-          .eq("user_id", user.id);
-          
+        const {
+          data,
+          error
+        } = await supabase.from("ecommerce_integrations").select("*").eq("user_id", user.id);
         if (error) {
           console.error("Error fetching integrations:", error);
           return;
         }
-        
         setIntegrations(data || []);
-        
         if (data && data.length > 0 && !selectedIntegration) {
           setSelectedIntegration(data[0]);
         }
@@ -109,33 +104,17 @@ const Ecommerce = () => {
         setFetchingIntegrations(false);
       }
     };
-    
     fetchIntegrations();
   }, [user]);
-  
   useEffect(() => {
     if (selectedIntegration) {
       const generateSampleProducts = () => {
-        const productNames = [
-          "Vintage Art Print Set",
-          "Handcrafted Wooden Bowl",
-          "Modern Ceramic Vase",
-          "Luxury Scented Candle",
-          "Artisan Coffee Mug",
-          "Minimalist Wall Clock",
-          "Organic Cotton Throw",
-          "Leather Journal",
-          "Brass Desk Lamp",
-          "Hand-woven Basket"
-        ];
-        
+        const productNames = ["Vintage Art Print Set", "Handcrafted Wooden Bowl", "Modern Ceramic Vase", "Luxury Scented Candle", "Artisan Coffee Mug", "Minimalist Wall Clock", "Organic Cotton Throw", "Leather Journal", "Brass Desk Lamp", "Hand-woven Basket"];
         const sampleProducts = [];
-        
         for (let i = 0; i < 10; i++) {
           const price = Math.floor(Math.random() * 100) + 20;
           const inventory = Math.floor(Math.random() * 50) + 5;
           const sales = Math.floor(Math.random() * 200) + 10;
-          
           sampleProducts.push({
             id: `prod_${i + 1}`,
             name: productNames[i],
@@ -149,47 +128,37 @@ const Ecommerce = () => {
             description: `Beautiful ${productNames[i].toLowerCase()} for your home or office. High quality and handcrafted.`
           });
         }
-        
         return sampleProducts;
       };
-      
       const generateProductStats = () => {
         const days = 30;
         const sales = [];
         const views = [];
         const revenue = [];
-        
         const baseSales = 8 + Math.floor(Math.random() * 5);
         const baseViews = 120 + Math.floor(Math.random() * 50);
         const baseRevenue = 250 + Math.floor(Math.random() * 100);
-        
         for (let i = 0; i < days; i++) {
           const date = subDays(new Date(), days - i - 1);
-          
           const daySales = Math.max(0, baseSales + Math.floor(Math.random() * 10) - 5);
           const dayViews = Math.max(0, baseViews + Math.floor(Math.random() * 60) - 30);
           const dayRevenue = daySales * (baseRevenue / baseSales) + Math.floor(Math.random() * 50) - 25;
-          
           sales.push({
             date: format(date, "yyyy-MM-dd"),
             value: daySales
           });
-          
           views.push({
             date: format(date, "yyyy-MM-dd"),
             value: dayViews
           });
-          
           revenue.push({
             date: format(date, "yyyy-MM-dd"),
             value: dayRevenue
           });
         }
-        
         const totalSales = sales.reduce((sum, item) => sum + item.value, 0);
         const totalViews = views.reduce((sum, item) => sum + item.value, 0);
         const totalRevenue = revenue.reduce((sum, item) => sum + item.value, 0);
-        
         return {
           sales,
           views,
@@ -198,42 +167,36 @@ const Ecommerce = () => {
             sales: totalSales,
             views: totalViews,
             revenue: totalRevenue,
-            conversionRate: ((totalSales / totalViews) * 100).toFixed(2),
+            conversionRate: (totalSales / totalViews * 100).toFixed(2),
             averageOrderValue: (totalRevenue / totalSales).toFixed(2)
           }
         };
       };
-      
       setProducts(generateSampleProducts());
       setProductStats(generateProductStats());
     }
   }, [selectedIntegration]);
-  
   const onSubmit = async (values: IntegrationFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to add an integration");
       return;
     }
-    
     setLoading(true);
-    
     try {
       const credentials = {
         apiKey: values.apiKey,
         apiSecret: values.apiSecret,
-        storeUrl: values.storeUrl,
+        storeUrl: values.storeUrl
       };
-      
-      const { data, error } = await supabase
-        .from("ecommerce_integrations")
-        .insert({
-          user_id: user.id,
-          platform: values.platform,
-          credentials,
-          status: "active",
-        })
-        .select();
-        
+      const {
+        data,
+        error
+      } = await supabase.from("ecommerce_integrations").insert({
+        user_id: user.id,
+        platform: values.platform,
+        credentials,
+        status: "active"
+      }).select();
       if (error) {
         console.error("Error adding integration:", error);
         toast.error("Failed to add integration", {
@@ -241,14 +204,11 @@ const Ecommerce = () => {
         });
         return;
       }
-      
       toast.success("E-commerce integration added successfully");
-      
       if (data && data[0]) {
         setIntegrations([...integrations, data[0]]);
         setSelectedIntegration(data[0]);
       }
-      
       setIntegrationDialogOpen(false);
       form.reset();
     } catch (err) {
@@ -260,17 +220,12 @@ const Ecommerce = () => {
       setLoading(false);
     }
   };
-  
   const deleteIntegration = async (id: string) => {
     if (!user?.id) return;
-    
     try {
-      const { error } = await supabase
-        .from("ecommerce_integrations")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
-        
+      const {
+        error
+      } = await supabase.from("ecommerce_integrations").delete().eq("id", id).eq("user_id", user.id);
       if (error) {
         console.error("Error deleting integration:", error);
         toast.error("Failed to delete integration", {
@@ -278,11 +233,8 @@ const Ecommerce = () => {
         });
         return;
       }
-      
       toast.success("Integration removed");
-      
       setIntegrations(integrations.filter(integration => integration.id !== id));
-      
       if (selectedIntegration && selectedIntegration.id === id) {
         setSelectedIntegration(null);
       }
@@ -293,12 +245,9 @@ const Ecommerce = () => {
       });
     }
   };
-  
   const syncProducts = () => {
     if (!selectedIntegration) return;
-    
     setSyncInProgress(true);
-    
     setTimeout(() => {
       toast.success("Products synced successfully", {
         description: "Your product catalog has been updated"
@@ -306,14 +255,12 @@ const Ecommerce = () => {
       setSyncInProgress(false);
     }, 2000);
   };
-  
   const formatChartData = (data: any) => {
     return data?.map((item: any) => ({
       x: format(new Date(item.date), "MMM dd"),
       y: item.value
     })) || [];
   };
-  
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case "shopify":
@@ -326,7 +273,6 @@ const Ecommerce = () => {
         return <Store className="h-5 w-5" />;
     }
   };
-  
   const pinProduct = (product: any) => {
     if (!pinterestConnected) {
       toast.error("Pinterest account not connected", {
@@ -334,14 +280,11 @@ const Ecommerce = () => {
       });
       return;
     }
-    
     toast.success("Product pinned to Pinterest", {
       description: `${product.name} has been pinned to your Pinterest boards`
     });
   };
-  
-  return (
-    <DashboardLayout>
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">E-commerce Integration</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -349,8 +292,7 @@ const Ecommerce = () => {
         </p>
       </div>
       
-      {!pinterestConnected && (
-        <Alert className="mb-6 border-yellow-600 bg-yellow-500/20">
+      {!pinterestConnected && <Alert className="mb-6 border-yellow-600 bg-yellow-500/20">
           <AlertCircle className="h-4 w-4 text-yellow-500" />
           <AlertTitle>Pinterest account not connected</AlertTitle>
           <AlertDescription>
@@ -359,8 +301,7 @@ const Ecommerce = () => {
               <Link to="/settings">Go to Settings</Link>
             </Button>
           </AlertDescription>
-        </Alert>
-      )}
+        </Alert>}
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-4">
@@ -370,7 +311,7 @@ const Ecommerce = () => {
                 <CardTitle>Store Connections</CardTitle>
                 <Dialog open={integrationDialogOpen} onOpenChange={setIntegrationDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button size="sm">
+                    <Button size="sm" className="bg-pinterest-red">
                       <Plus className="h-4 w-4 mr-1" />
                       Connect
                     </Button>
@@ -385,16 +326,11 @@ const Ecommerce = () => {
                     
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="platform"
-                          render={({ field }) => (
-                            <FormItem>
+                        <FormField control={form.control} name="platform" render={({
+                        field
+                      }) => <FormItem>
                               <FormLabel>E-commerce Platform</FormLabel>
-                              <Select 
-                                onValueChange={field.onChange} 
-                                defaultValue={field.value}
-                              >
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select platform" />
@@ -409,55 +345,37 @@ const Ecommerce = () => {
                                 </SelectContent>
                               </Select>
                               <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            </FormItem>} />
                         
-                        <FormField
-                          control={form.control}
-                          name="storeUrl"
-                          render={({ field }) => (
-                            <FormItem>
+                        <FormField control={form.control} name="storeUrl" render={({
+                        field
+                      }) => <FormItem>
                               <FormLabel>Store URL</FormLabel>
                               <FormControl>
                                 <Input placeholder="https://your-store.com" {...field} />
                               </FormControl>
                               <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            </FormItem>} />
                         
-                        <FormField
-                          control={form.control}
-                          name="apiKey"
-                          render={({ field }) => (
-                            <FormItem>
+                        <FormField control={form.control} name="apiKey" render={({
+                        field
+                      }) => <FormItem>
                               <FormLabel>API Key</FormLabel>
                               <FormControl>
                                 <Input placeholder="your-api-key" {...field} />
                               </FormControl>
                               <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            </FormItem>} />
                         
-                        <FormField
-                          control={form.control}
-                          name="apiSecret"
-                          render={({ field }) => (
-                            <FormItem>
+                        <FormField control={form.control} name="apiSecret" render={({
+                        field
+                      }) => <FormItem>
                               <FormLabel>API Secret</FormLabel>
                               <FormControl>
-                                <Input 
-                                  type="password"
-                                  placeholder="your-api-secret" 
-                                  {...field} 
-                                />
+                                <Input type="password" placeholder="your-api-secret" {...field} />
                               </FormControl>
                               <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            </FormItem>} />
                         
                         <Alert>
                           <Info className="h-4 w-4" />
@@ -482,23 +400,11 @@ const Ecommerce = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {fetchingIntegrations ? (
-                <div className="animate-pulse space-y-4">
+              {fetchingIntegrations ? <div className="animate-pulse space-y-4">
                   <div className="h-14 bg-gray-800 rounded w-full"></div>
                   <div className="h-14 bg-gray-800 rounded w-full"></div>
-                </div>
-              ) : integrations.length > 0 ? (
-                <div className="space-y-2">
-                  {integrations.map(integration => (
-                    <div
-                      key={integration.id}
-                      className={`flex items-center justify-between p-3 rounded-md cursor-pointer transition-colors ${
-                        selectedIntegration?.id === integration.id
-                          ? "bg-gray-800 border-l-4 border-pinterest-red"
-                          : "hover:bg-gray-900"
-                      }`}
-                      onClick={() => setSelectedIntegration(integration)}
-                    >
+                </div> : integrations.length > 0 ? <div className="space-y-2">
+                  {integrations.map(integration => <div key={integration.id} className={`flex items-center justify-between p-3 rounded-md cursor-pointer transition-colors ${selectedIntegration?.id === integration.id ? "bg-gray-800 border-l-4 border-pinterest-red" : "hover:bg-gray-900"}`} onClick={() => setSelectedIntegration(integration)}>
                       <div className="flex items-center">
                         <div className="p-2 bg-gray-700 rounded-md mr-3">
                           {getPlatformIcon(integration.platform)}
@@ -513,27 +419,22 @@ const Ecommerce = () => {
                       <Badge className={integration.status === "active" ? "bg-green-500/20 text-green-500" : "bg-gray-500/20 text-gray-500"}>
                         {integration.status}
                       </Badge>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6">
+                    </div>)}
+                </div> : <div className="text-center py-6">
                   <Store className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-xl font-medium mb-2">No Stores Connected</h3>
                   <p className="text-gray-400 mb-4">
                     Connect your e-commerce store to start selling on Pinterest
                   </p>
-                  <Button onClick={() => setIntegrationDialogOpen(true)}>
+                  <Button onClick={() => setIntegrationDialogOpen(true)} className="bg-pinterest-red">
                     <Plus className="mr-2 h-4 w-4" />
                     Connect Store
                   </Button>
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
           
-          {selectedIntegration && (
-            <Card className="bg-black border-gray-800">
+          {selectedIntegration && <Card className="bg-black border-gray-800">
               <CardHeader>
                 <CardTitle>Store Settings</CardTitle>
               </CardHeader>
@@ -563,44 +464,29 @@ const Ecommerce = () => {
                 </div>
                 
                 <div className="pt-2">
-                  <Button 
-                    className="w-full" 
-                    variant="outline"
-                    onClick={syncProducts}
-                    disabled={syncInProgress}
-                  >
-                    {syncInProgress ? (
-                      <>
+                  <Button className="w-full" variant="outline" onClick={syncProducts} disabled={syncInProgress}>
+                    {syncInProgress ? <>
                         <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                         Syncing...
-                      </>
-                    ) : (
-                      <>
+                      </> : <>
                         <RefreshCw className="mr-2 h-4 w-4" />
                         Sync Products Now
-                      </>
-                    )}
+                      </>}
                   </Button>
                 </div>
                 
                 <div className="pt-2">
-                  <Button 
-                    className="w-full" 
-                    variant="destructive"
-                    onClick={() => deleteIntegration(selectedIntegration.id)}
-                  >
+                  <Button className="w-full" variant="destructive" onClick={() => deleteIntegration(selectedIntegration.id)}>
                     <Trash2 className="mr-2 h-4 w-4" />
                     Disconnect Store
                   </Button>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
         
         <div className="lg:col-span-2">
-          {selectedIntegration ? (
-            <Tabs defaultValue="products" className="w-full">
+          {selectedIntegration ? <Tabs defaultValue="products" className="w-full">
               <TabsList className="mb-4">
                 <TabsTrigger value="products">Products</TabsTrigger>
                 <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -620,17 +506,9 @@ const Ecommerce = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {products.map(product => (
-                        <div 
-                          key={product.id} 
-                          className="flex items-center justify-between p-3 border border-gray-800 rounded-lg"
-                        >
+                      {products.map(product => <div key={product.id} className="flex items-center justify-between p-3 border border-gray-800 rounded-lg">
                           <div className="flex items-center">
-                            <img 
-                              src={product.image} 
-                              alt={product.name} 
-                              className="w-12 h-12 object-cover rounded-md mr-3" 
-                            />
+                            <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded-md mr-3" />
                             <div>
                               <h4 className="font-medium">{product.name}</h4>
                               <p className="text-xs text-gray-400">
@@ -645,27 +523,17 @@ const Ecommerce = () => {
                                 Revenue: ${product.revenue}
                               </p>
                             </div>
-                            <Button 
-                              size="sm" 
-                              variant={product.pinned ? "outline" : "default"}
-                              onClick={() => pinProduct(product)}
-                              disabled={!pinterestConnected}
-                            >
-                              {product.pinned ? (
-                                <>
+                            <Button size="sm" variant={product.pinned ? "outline" : "default"} onClick={() => pinProduct(product)} disabled={!pinterestConnected}>
+                              {product.pinned ? <>
                                   <Check className="h-4 w-4 mr-1 text-green-500" />
                                   Pinned
-                                </>
-                              ) : (
-                                <>
+                                </> : <>
                                   <ExternalLink className="h-4 w-4 mr-1" />
                                   Pin
-                                </>
-                              )}
+                                </>}
                             </Button>
                           </div>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                   </CardContent>
                 </Card>
@@ -709,10 +577,7 @@ const Ecommerce = () => {
                     
                     <div className="h-[300px] mt-8">
                       <h3 className="text-sm font-medium mb-4">Revenue Trend</h3>
-                      <AreaChart 
-                        data={formatChartData(productStats?.revenue)} 
-                        className="h-[250px]" 
-                      />
+                      <AreaChart data={formatChartData(productStats?.revenue)} className="h-[250px]" />
                     </div>
                   </CardContent>
                 </Card>
@@ -727,21 +592,10 @@ const Ecommerce = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {pinterestConnected ? (
-                      <div className="space-y-4">
-                        {products
-                          .filter(product => product.pinned)
-                          .map(product => (
-                            <div 
-                              key={product.id} 
-                              className="flex items-center justify-between p-3 border border-gray-800 rounded-lg"
-                            >
+                    {pinterestConnected ? <div className="space-y-4">
+                        {products.filter(product => product.pinned).map(product => <div key={product.id} className="flex items-center justify-between p-3 border border-gray-800 rounded-lg">
                               <div className="flex items-center">
-                                <img 
-                                  src={product.image} 
-                                  alt={product.name} 
-                                  className="w-12 h-12 object-cover rounded-md mr-3" 
-                                />
+                                <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded-md mr-3" />
                                 <div>
                                   <h4 className="font-medium">{product.name}</h4>
                                   <div className="flex items-center text-xs text-gray-400">
@@ -753,19 +607,13 @@ const Ecommerce = () => {
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Button 
-                                  size="sm" 
-                                  variant="outline"
-                                >
+                                <Button size="sm" variant="outline">
                                   <Settings className="h-4 w-4 mr-1" />
                                   Manage
                                 </Button>
                               </div>
-                            </div>
-                          ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-6">
+                            </div>)}
+                      </div> : <div className="text-center py-6">
                         <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
                         <h3 className="text-xl font-medium mb-2">Pinterest Not Connected</h3>
                         <p className="text-gray-400 mb-4">
@@ -776,31 +624,25 @@ const Ecommerce = () => {
                             Connect Pinterest Account
                           </Link>
                         </Button>
-                      </div>
-                    )}
+                      </div>}
                   </CardContent>
                 </Card>
               </TabsContent>
-            </Tabs>
-          ) : (
-            <div className="flex items-center justify-center h-full min-h-[400px] rounded-lg border border-dashed border-gray-800 p-8">
+            </Tabs> : <div className="flex items-center justify-center h-full min-h-[400px] rounded-lg border border-dashed border-gray-800 p-8">
               <div className="text-center">
                 <Store className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                 <h3 className="text-xl font-medium mb-2">No Store Selected</h3>
                 <p className="text-gray-400 mb-6 max-w-md">
                   Connect your e-commerce store or select an existing connection to view your products
                 </p>
-                <Button onClick={() => setIntegrationDialogOpen(true)}>
+                <Button onClick={() => setIntegrationDialogOpen(true)} className="bg-pinterest-red">
                   <Plus className="mr-2 h-4 w-4" />
                   Connect Store
                 </Button>
               </div>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default Ecommerce;
