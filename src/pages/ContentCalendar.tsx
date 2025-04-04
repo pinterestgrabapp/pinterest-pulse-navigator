@@ -24,22 +24,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-
 const eventFormSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
+  title: z.string().min(3, {
+    message: "Title must be at least 3 characters"
+  }),
   description: z.string().optional(),
   eventType: z.enum(["pin", "campaign", "holiday", "custom"]),
   eventDate: z.date(),
-  color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid color format" }),
+  color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
+    message: "Invalid color format"
+  }),
   pinId: z.string().optional(),
-  campaignId: z.string().optional(),
+  campaignId: z.string().optional()
 });
-
 type EventFormValues = z.infer<typeof eventFormSchema>;
-
 const ContentCalendar = () => {
-  const { user } = useAuth();
-  const { toast: uiToast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    toast: uiToast
+  } = useToast();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchingEvents, setFetchingEvents] = useState(true);
@@ -49,7 +54,6 @@ const ContentCalendar = () => {
   const [pins, setPins] = useState<any[]>([]);
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [isEditMode, setIsEditMode] = useState(false);
-  
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
@@ -57,10 +61,9 @@ const ContentCalendar = () => {
       description: "",
       eventType: "custom",
       eventDate: new Date(),
-      color: "#ea384c", // Pinterest red color
-    },
+      color: "#ea384c" // Pinterest red color
+    }
   });
-
   useEffect(() => {
     if (!eventDialogOpen) {
       form.reset({
@@ -68,13 +71,12 @@ const ContentCalendar = () => {
         description: "",
         eventType: "custom",
         eventDate: selectedDate,
-        color: "#ea384c",
+        color: "#ea384c"
       });
       setIsEditMode(false);
       setSelectedEvent(null);
     }
   }, [eventDialogOpen, selectedDate, form]);
-  
   useEffect(() => {
     if (selectedEvent && isEditMode) {
       form.reset({
@@ -84,28 +86,25 @@ const ContentCalendar = () => {
         eventDate: parseISO(selectedEvent.event_date),
         color: selectedEvent.color || "#ea384c",
         pinId: selectedEvent.pin_id || undefined,
-        campaignId: selectedEvent.campaign_id || undefined,
+        campaignId: selectedEvent.campaign_id || undefined
       });
     }
   }, [selectedEvent, isEditMode, form]);
-  
   useEffect(() => {
     const fetchEvents = async () => {
       if (!user?.id) return;
-      
       setFetchingEvents(true);
       try {
-        const { data, error } = await supabase
-          .from("content_calendar")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("event_date", { ascending: true });
-          
+        const {
+          data,
+          error
+        } = await supabase.from("content_calendar").select("*").eq("user_id", user.id).order("event_date", {
+          ascending: true
+        });
         if (error) {
           console.error("Error fetching events:", error);
           return;
         }
-        
         setEvents(data || []);
       } catch (err) {
         console.error("Error fetching events:", err);
@@ -113,66 +112,52 @@ const ContentCalendar = () => {
         setFetchingEvents(false);
       }
     };
-    
     fetchEvents();
   }, [user]);
-  
   useEffect(() => {
     const fetchPins = async () => {
       if (!user?.id) return;
-      
       try {
-        const { data, error } = await supabase
-          .from("pins")
-          .select("*")
-          .eq("user_id", user.id);
-          
+        const {
+          data,
+          error
+        } = await supabase.from("pins").select("*").eq("user_id", user.id);
         if (error) {
           console.error("Error fetching pins:", error);
           return;
         }
-        
         setPins(data || []);
       } catch (err) {
         console.error("Error fetching pins:", err);
       }
     };
-    
     fetchPins();
   }, [user]);
-  
   useEffect(() => {
     const fetchCampaigns = async () => {
       if (!user?.id) return;
-      
       try {
-        const { data, error } = await supabase
-          .from("ad_campaigns")
-          .select("*")
-          .eq("user_id", user.id);
-          
+        const {
+          data,
+          error
+        } = await supabase.from("ad_campaigns").select("*").eq("user_id", user.id);
         if (error) {
           console.error("Error fetching campaigns:", error);
           return;
         }
-        
         setCampaigns(data || []);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
       }
     };
-    
     fetchCampaigns();
   }, [user]);
-  
   const onSubmit = async (values: EventFormValues) => {
     if (!user?.id) {
       toast.error("You must be logged in to create events");
       return;
     }
-    
     setLoading(true);
-    
     try {
       const eventData = {
         user_id: user.id,
@@ -182,17 +167,13 @@ const ContentCalendar = () => {
         event_date: values.eventDate.toISOString(),
         color: values.color,
         pin_id: values.pinId || null,
-        campaign_id: values.campaignId || null,
+        campaign_id: values.campaignId || null
       };
-      
       if (isEditMode && selectedEvent) {
-        const { data, error } = await supabase
-          .from("content_calendar")
-          .update(eventData)
-          .eq("id", selectedEvent.id)
-          .eq("user_id", user.id)
-          .select();
-          
+        const {
+          data,
+          error
+        } = await supabase.from("content_calendar").update(eventData).eq("id", selectedEvent.id).eq("user_id", user.id).select();
         if (error) {
           console.error("Error updating event:", error);
           toast.error("Failed to update event", {
@@ -200,20 +181,15 @@ const ContentCalendar = () => {
           });
           return;
         }
-        
         toast.success("Event updated successfully");
-        
         if (data && data[0]) {
-          setEvents(events.map(event => 
-            event.id === selectedEvent.id ? data[0] : event
-          ));
+          setEvents(events.map(event => event.id === selectedEvent.id ? data[0] : event));
         }
       } else {
-        const { data, error } = await supabase
-          .from("content_calendar")
-          .insert(eventData)
-          .select();
-          
+        const {
+          data,
+          error
+        } = await supabase.from("content_calendar").insert(eventData).select();
         if (error) {
           console.error("Error creating event:", error);
           toast.error("Failed to create event", {
@@ -221,14 +197,11 @@ const ContentCalendar = () => {
           });
           return;
         }
-        
         toast.success("Event created successfully");
-        
         if (data && data[0]) {
           setEvents([...events, data[0]]);
         }
       }
-      
       setEventDialogOpen(false);
     } catch (err) {
       console.error("Error saving event:", err);
@@ -239,17 +212,12 @@ const ContentCalendar = () => {
       setLoading(false);
     }
   };
-  
   const deleteEvent = async (id: string) => {
     if (!user?.id) return;
-    
     try {
-      const { error } = await supabase
-        .from("content_calendar")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
-        
+      const {
+        error
+      } = await supabase.from("content_calendar").delete().eq("id", id).eq("user_id", user.id);
       if (error) {
         console.error("Error deleting event:", error);
         toast.error("Failed to delete event", {
@@ -257,11 +225,8 @@ const ContentCalendar = () => {
         });
         return;
       }
-      
       setEvents(events.filter(event => event.id !== id));
-      
       toast.success("Event deleted");
-      
       if (selectedEvent && selectedEvent.id === id) {
         setEventDialogOpen(false);
       }
@@ -272,24 +237,17 @@ const ContentCalendar = () => {
       });
     }
   };
-  
   const getEventsForDay = (date: Date) => {
-    return events.filter(event => 
-      isSameDay(parseISO(event.event_date), date)
-    );
+    return events.filter(event => isSameDay(parseISO(event.event_date), date));
   };
-  
   const getDayEventCount = (date: Date) => {
     const count = getEventsForDay(date).length;
     return count > 0 ? count : undefined;
   };
-  
   const renderDayEvents = () => {
     const dayEvents = getEventsForDay(selectedDate);
-    
     if (dayEvents.length === 0) {
-      return (
-        <div className="text-center py-6">
+      return <div className="text-center py-6">
           <CalendarIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
           <h3 className="text-xl font-medium mb-2">No events on this day</h3>
           <p className="text-gray-400 mb-4">
@@ -299,63 +257,44 @@ const ContentCalendar = () => {
             <Plus className="mr-2 h-4 w-4" />
             Add Event
           </Button>
-        </div>
-      );
+        </div>;
     }
-    
-    return (
-      <div className="space-y-3">
-        {dayEvents.map(event => (
-          <Card key={event.id} className="bg-gray-900 border-gray-700">
+    return <div className="space-y-3">
+        {dayEvents.map(event => <Card key={event.id} className="bg-gray-900 border-gray-700">
             <CardContent className="p-4">
               <div className="flex justify-between items-start">
                 <div className="flex items-center">
-                  <div 
-                    className="w-4 h-4 rounded-full mr-3 flex-shrink-0" 
-                    style={{ backgroundColor: event.color || "#ea384c" }}
-                  ></div>
+                  <div className="w-4 h-4 rounded-full mr-3 flex-shrink-0" style={{
+                backgroundColor: event.color || "#ea384c"
+              }}></div>
                   <div>
                     <h3 className="font-semibold text-base">{event.title}</h3>
                     <div className="flex items-center text-sm text-gray-400 mt-1">
                       <span className="capitalize mr-3">{event.event_type}</span>
                       <span>{format(parseISO(event.event_date), "h:mm a")}</span>
                     </div>
-                    {event.description && (
-                      <p className="text-sm text-gray-300 mt-2">{event.description}</p>
-                    )}
+                    {event.description && <p className="text-sm text-gray-300 mt-2">{event.description}</p>}
                   </div>
                 </div>
                 
                 <div className="flex space-x-2">
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => {
-                      setSelectedEvent(event);
-                      setIsEditMode(true);
-                      setEventDialogOpen(true);
-                    }}
-                  >
+                  <Button variant="ghost" size="icon" onClick={() => {
+                setSelectedEvent(event);
+                setIsEditMode(true);
+                setEventDialogOpen(true);
+              }}>
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => deleteEvent(event.id)}
-                  >
+                  <Button variant="ghost" size="icon" onClick={() => deleteEvent(event.id)}>
                     <Trash2 className="h-4 w-4 text-red-500" />
                   </Button>
                 </div>
               </div>
             </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+          </Card>)}
+      </div>;
   };
-  
-  return (
-    <DashboardLayout>
+  return <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Content Calendar</h1>
         <p className="text-gray-600 dark:text-gray-300">
@@ -373,23 +312,10 @@ const ContentCalendar = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CustomCalendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                eventCounts={Object.fromEntries(
-                  events.map(event => [
-                    parseISO(event.event_date).toString(),
-                    getDayEventCount(parseISO(event.event_date)) || 0
-                  ])
-                )}
-              />
+              <CustomCalendar mode="single" selected={selectedDate} onSelect={date => date && setSelectedDate(date)} eventCounts={Object.fromEntries(events.map(event => [parseISO(event.event_date).toString(), getDayEventCount(parseISO(event.event_date)) || 0]))} />
               
               <div className="mt-4">
-                <Button 
-                  className="w-full"
-                  onClick={() => setEventDialogOpen(true)}
-                >
+                <Button onClick={() => setEventDialogOpen(true)} className="w-full bg-pinterest-red">
                   <Plus className="mr-2 h-4 w-4" />
                   Add Event for {format(selectedDate, "MMM d")}
                 </Button>
@@ -433,14 +359,10 @@ const ContentCalendar = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {fetchingEvents ? (
-                <div className="animate-pulse space-y-4">
+              {fetchingEvents ? <div className="animate-pulse space-y-4">
                   <div className="h-20 bg-gray-800 rounded"></div>
                   <div className="h-20 bg-gray-800 rounded"></div>
-                </div>
-              ) : (
-                renderDayEvents()
-              )}
+                </div> : renderDayEvents()}
             </CardContent>
           </Card>
         </div>
@@ -451,38 +373,27 @@ const ContentCalendar = () => {
           <DialogHeader>
             <DialogTitle>{isEditMode ? "Edit Event" : "Add New Event"}</DialogTitle>
             <DialogDescription>
-              {isEditMode 
-                ? "Edit the details of your calendar event" 
-                : `Create a new event for ${format(selectedDate, "MMMM d, yyyy")}`}
+              {isEditMode ? "Edit the details of your calendar event" : `Create a new event for ${format(selectedDate, "MMMM d, yyyy")}`}
             </DialogDescription>
           </DialogHeader>
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="title" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Event Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter event title" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
               
-              <FormField
-                control={form.control}
-                name="eventType"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="eventType" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Event Type</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select event type" />
@@ -496,161 +407,95 @@ const ContentCalendar = () => {
                       </SelectContent>
                     </Select>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
               
-              {form.watch("eventType") === "pin" && (
-                <FormField
-                  control={form.control}
-                  name="pinId"
-                  render={({ field }) => (
-                    <FormItem>
+              {form.watch("eventType") === "pin" && <FormField control={form.control} name="pinId" render={({
+              field
+            }) => <FormItem>
                       <FormLabel>Select Pin</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a pin" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {pins.map(pin => (
-                            <SelectItem key={pin.id} value={pin.id}>
+                          {pins.map(pin => <SelectItem key={pin.id} value={pin.id}>
                               {pin.title}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+                    </FormItem>} />}
               
-              {form.watch("eventType") === "campaign" && (
-                <FormField
-                  control={form.control}
-                  name="campaignId"
-                  render={({ field }) => (
-                    <FormItem>
+              {form.watch("eventType") === "campaign" && <FormField control={form.control} name="campaignId" render={({
+              field
+            }) => <FormItem>
                       <FormLabel>Select Campaign</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a campaign" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {campaigns.map(campaign => (
-                            <SelectItem key={campaign.id} value={campaign.id}>
+                          {campaigns.map(campaign => <SelectItem key={campaign.id} value={campaign.id}>
                               {campaign.name}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+                    </FormItem>} />}
               
               <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="eventDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
+                <FormField control={form.control} name="eventDate" render={({
+                field
+              }) => <FormItem className="flex flex-col">
                       <FormLabel>Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button
-                              variant="outline"
-                              className="w-full pl-3 text-left font-normal"
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
+                            <Button variant="outline" className="w-full pl-3 text-left font-normal">
+                              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
+                          <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
                         </PopoverContent>
                       </Popover>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
                 
-                <FormField
-                  control={form.control}
-                  name="color"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={form.control} name="color" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>Color</FormLabel>
                       <FormControl>
                         <div className="flex items-center gap-2">
-                          <Input 
-                            type="color" 
-                            {...field}
-                            className="w-10 h-10 p-1 bg-transparent"
-                          />
-                          <Input 
-                            type="text" 
-                            {...field}
-                            className="flex-1"
-                          />
+                          <Input type="color" {...field} className="w-10 h-10 p-1 bg-transparent" />
+                          <Input type="text" {...field} className="flex-1" />
                         </div>
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
               </div>
               
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="description" render={({
+              field
+            }) => <FormItem>
                     <FormLabel>Description (Optional)</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Add event details" 
-                        className="min-h-[80px]"
-                        {...field} 
-                      />
+                      <Textarea placeholder="Add event details" className="min-h-[80px]" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
               
               <DialogFooter className="gap-2">
-                {isEditMode && (
-                  <Button 
-                    type="button" 
-                    variant="destructive"
-                    onClick={() => selectedEvent && deleteEvent(selectedEvent.id)}
-                  >
+                {isEditMode && <Button type="button" variant="destructive" onClick={() => selectedEvent && deleteEvent(selectedEvent.id)}>
                     Delete
-                  </Button>
-                )}
+                  </Button>}
                 <Button type="submit" disabled={loading}>
                   {loading ? "Saving..." : isEditMode ? "Update Event" : "Add Event"}
                 </Button>
@@ -659,8 +504,6 @@ const ContentCalendar = () => {
           </Form>
         </DialogContent>
       </Dialog>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
 export default ContentCalendar;
