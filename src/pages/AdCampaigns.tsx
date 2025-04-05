@@ -732,7 +732,7 @@ const AdCampaigns = () => {
                 <p className="text-gray-400 mb-4">
                   Select a campaign to view its details and manage settings
                 </p>
-                <Button onClick={() => setCampaignDialogOpen(true)}>
+                <Button onClick={() => setCampaignDialogOpen(true)} className="bg-pinterest-red">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Campaign
                 </Button>
