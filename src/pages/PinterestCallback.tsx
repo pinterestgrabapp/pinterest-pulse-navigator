@@ -16,15 +16,12 @@ const PinterestCallback = () => {
   useEffect(() => {
     const handlePinterestCallback = async () => {
       try {
-        // Get the code and state from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get("code");
-        const state = urlParams.get("state");
-        const storedState = localStorage.getItem("pinterest_auth_state");
+        console.log("Pinterest callback handler started. User authenticated:", !!user);
         
-        // Check if we have a user
+        // Check if we have a user FIRST before doing anything else
         if (!user) {
           const errorMessage = "You must be logged in to connect your Pinterest account";
+          console.error("Authentication error:", errorMessage);
           setError(errorMessage);
           
           // If in popup, try to message parent window
@@ -39,6 +36,12 @@ const PinterestCallback = () => {
           return;
         }
 
+        // Get the code and state from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get("code");
+        const state = urlParams.get("state");
+        const storedState = localStorage.getItem("pinterest_auth_state");
+        
         // Verify the state to prevent CSRF attacks
         if (!state || state !== storedState) {
           const errorMessage = "Invalid state parameter. This could be a security issue.";

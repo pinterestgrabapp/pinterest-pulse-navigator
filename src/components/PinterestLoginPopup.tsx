@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/utils/languageUtils";
 import { openPinterestAuthPopup } from "@/utils/pinterestApiUtils";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 interface PinterestLoginPopupProps {
@@ -14,6 +15,7 @@ interface PinterestLoginPopupProps {
 
 const PinterestLoginPopup = ({ open, onOpenChange, onSuccess }: PinterestLoginPopupProps) => {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -53,6 +55,16 @@ const PinterestLoginPopup = ({ open, onOpenChange, onSuccess }: PinterestLoginPo
   const handleConnectPinterest = () => {
     setIsLoading(true);
     setError(null);
+    
+    // Check if user is logged in
+    if (!user) {
+      setError("You must be logged in to connect your Pinterest account");
+      setIsLoading(false);
+      toast.error("Authentication required", {
+        description: "Please log in to connect your Pinterest account"
+      });
+      return;
+    }
     
     try {
       // Open the Pinterest OAuth popup
@@ -98,7 +110,9 @@ const PinterestLoginPopup = ({ open, onOpenChange, onSuccess }: PinterestLoginPo
           )}
           
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Clicking the button below will open a Pinterest authentication window where you can authorize access to your account.
+            {user 
+              ? "Clicking the button below will open a Pinterest authentication window where you can authorize access to your account."
+              : "You need to be logged in to connect your Pinterest account."}
           </p>
           
           <div className="flex justify-end gap-2 pt-4">
@@ -114,7 +128,7 @@ const PinterestLoginPopup = ({ open, onOpenChange, onSuccess }: PinterestLoginPo
               type="button" 
               className="bg-pinterest-red" 
               onClick={handleConnectPinterest}
-              disabled={isLoading}
+              disabled={isLoading || !user}
             >
               {isLoading ? "Connecting..." : "Connect with Pinterest"}
             </Button>
