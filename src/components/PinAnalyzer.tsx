@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, Download, Loader2 } from 'lucide-react';
+import { Search, Download, Loader2, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
@@ -8,7 +8,7 @@ import { useLanguage } from '@/utils/languageUtils';
 import { useAuth } from '@/contexts/AuthContext';
 import { MOCK_PIN_STATS } from '@/lib/constants';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getPinterestCredentials } from '@/utils/pinterestApiUtils';
+import { getPinterestCredentials, analyzeKeywords, analyzePinUrl } from '@/utils/pinterestApiUtils';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PinData {
@@ -16,16 +16,18 @@ interface PinData {
   url: string;
   title: string;
   description: string;
-  keywords: string[];
-  stats: typeof MOCK_PIN_STATS;
-  status: 'completed' | 'pending';
+  keywords: any[];
+  stats: any;
+  status: 'completed' | 'pending' | 'error';
   pinScore?: number;
+  insights?: string[];
 }
 
 export const PinAnalyzer = () => {
   const [pinUrl, setPinUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [pinResults, setPinResults] = useState<PinData[]>([]);
+  const [analysisType, setAnalysisType] = useState<'pin' | 'keyword'>('pin');
   const { toast } = useToast();
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -70,58 +72,6 @@ export const PinAnalyzer = () => {
     return null;
   };
 
-  const fetchPinData = async (pinId: string, accessToken: string): Promise<any> => {
-    try {
-      // In a production app, this should be a server request to protect your Pinterest token
-      const response = await fetch(`https://api.pinterest.com/v5/pins/${pinId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Pinterest API error:', errorData);
-        throw new Error(`Pinterest API error: ${errorData.message || response.statusText}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching pin data:', error);
-      throw error;
-    }
-  };
-
-  const extractKeywords = (pinData: any): string[] => {
-    const keywords: Set<string> = new Set();
-    const stopWords = ['and', 'the', 'to', 'a', 'an', 'in', 'on', 'with', 'for', 'of', 'by', 'at'];
-    
-    // Extract from title
-    if (pinData.title) {
-      const titleWords = pinData.title.toLowerCase().split(/\s+/);
-      titleWords.forEach((word: string) => {
-        const cleaned = word.replace(/[^\w]/g, '');
-        if (cleaned.length > 3 && !stopWords.includes(cleaned)) {
-          keywords.add(cleaned);
-        }
-      });
-    }
-    
-    // Extract from description
-    if (pinData.description) {
-      const descWords = pinData.description.toLowerCase().split(/\s+/);
-      descWords.forEach((word: string) => {
-        const cleaned = word.replace(/[^\w]/g, '');
-        if (cleaned.length > 3 && !stopWords.includes(cleaned)) {
-          keywords.add(cleaned);
-        }
-      });
-    }
-    
-    return Array.from(keywords);
-  };
-
   const savePinAnalysisToDb = async (pinData: PinData) => {
     if (!user) return;
     
@@ -150,7 +100,7 @@ export const PinAnalyzer = () => {
     }
   };
 
-  const handleAnalyzePin = async (e: React.FormEvent) => {
+  const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pinUrl) return;
     
@@ -180,19 +130,6 @@ export const PinAnalyzer = () => {
         return;
       }
       
-      // Extract Pin ID from URL
-      const pinId = extractPinIdFromUrl(pinUrl);
-      
-      if (!pinId) {
-        toast({
-          title: 'Invalid Pinterest URL',
-          description: 'Please enter a valid Pinterest pin URL.',
-          variant: 'destructive'
-        });
-        setIsLoading(false);
-        return;
-      }
-      
       // Generate a unique ID for this result
       const id = Date.now().toString();
       
@@ -200,8 +137,8 @@ export const PinAnalyzer = () => {
       const pendingPinData: PinData = {
         id,
         url: pinUrl,
-        title: "Analyzing pin...",
-        description: "Fetching Pinterest pin data...",
+        title: analysisType === 'pin' ? "Analyzing pin..." : `Analyzing keyword: ${pinUrl}`,
+        description: analysisType === 'pin' ? "Fetching Pinterest pin data..." : "Searching for pins with this keyword...",
         keywords: [],
         stats: MOCK_PIN_STATS,
         status: 'pending'
@@ -209,60 +146,93 @@ export const PinAnalyzer = () => {
       
       setPinResults(prev => [pendingPinData, ...prev]);
       
-      // Try to get real data from Pinterest API
+      // Try to get real data from our Pinterest Analytics function
       try {
-        const pinData = await fetchPinData(pinId, credentials.access_token);
+        let analyticsData;
         
-        // For demo purposes, since the Pinterest API doesn't provide all the stats we want,
-        // we'll merge real data with some random stats
-        const rawStats = {
-          saves: Math.floor(Math.random() * 500) + 100,
-          clicks: Math.floor(Math.random() * 300) + 50,
-          impressions: Math.floor(Math.random() * 3000) + 1000,
-          engagement: Math.floor(Math.random() * 8) + 2,
-        };
+        if (analysisType === 'pin') {
+          analyticsData = await analyzePinUrl(credentials.access_token, pinUrl);
+        } else {
+          analyticsData = await analyzeKeywords(credentials.access_token, pinUrl);
+        }
         
-        // Calculate pin score
-        const pinScore = calculatePinScore(rawStats);
+        if (!analyticsData || !analyticsData.data) {
+          throw new Error("No data returned from analytics");
+        }
         
-        // Create the complete stats object with all required properties
-        const stats = {
-          ...rawStats,
-          pinScore,
-          createdAt: new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })
-        };
+        const data = analyticsData.data;
         
-        // Extract keywords
-        const keywords = extractKeywords(pinData);
-        
-        // Update with real data
-        const updatedPinData: PinData = {
-          id,
-          url: pinUrl,
-          title: pinData.title || "No title available",
-          description: pinData.description || "No description available", 
-          keywords: keywords,
-          stats: stats,
-          status: 'completed',
-          pinScore: pinScore
-        };
-        
-        // Save to database
-        await savePinAnalysisToDb(updatedPinData);
-        
-        // Update the results
-        setPinResults(prev => prev.map(pin => pin.id === id ? updatedPinData : pin));
+        // Process analytics data based on type
+        if (analysisType === 'pin') {
+          // Format pin analysis result
+          const stats = {
+            saves: data.metrics.saves,
+            clicks: Math.floor(data.metrics.saves * 0.7), // Estimate clicks
+            impressions: data.metrics.impressions,
+            engagement: parseFloat(data.metrics.engagement_rate) || 5,
+            createdAt: new Date().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })
+          };
+          
+          const pinScore = calculatePinScore(stats);
+          
+          const updatedPinData: PinData = {
+            id,
+            url: pinUrl,
+            title: data.title || "No title available",
+            description: data.description || "No description available", 
+            keywords: data.keywords || [],
+            stats: stats,
+            status: 'completed',
+            pinScore: pinScore,
+            insights: data.insights || []
+          };
+          
+          // Update the results
+          setPinResults(prev => prev.map(pin => pin.id === id ? updatedPinData : pin));
+          
+          // Save to database
+          await savePinAnalysisToDb(updatedPinData);
+        } else {
+          // Format keyword analysis result
+          const keywordData: PinData = {
+            id,
+            url: pinUrl, // The keyword is stored in the URL field
+            title: `Keyword: ${pinUrl}`,
+            description: `Found ${data.pins_found} pins with this keyword`,
+            keywords: data.keywords || [],
+            stats: {
+              saves: data.avg_engagement || 0,
+              clicks: Math.floor((data.avg_engagement || 0) * 0.7), // Estimate clicks
+              impressions: (data.avg_engagement || 0) * 10, // Estimate impressions
+              engagement: data.avg_engagement ? ((data.avg_engagement / 100) * 10) : 0,
+              createdAt: new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })
+            },
+            status: 'completed',
+            pinScore: data.keywords && data.keywords[0] ? data.keywords[0].trend_score : 50,
+            insights: data.insights || []
+          };
+          
+          // Update the results
+          setPinResults(prev => prev.map(pin => pin.id === id ? keywordData : pin));
+          
+          // Save to database
+          await savePinAnalysisToDb(keywordData);
+        }
         
         toast({
-          title: 'Pin Analysis Complete',
-          description: 'Successfully extracted keywords and pin statistics.'
+          title: analysisType === 'pin' ? 'Pin Analysis Complete' : 'Keyword Analysis Complete',
+          description: 'Successfully extracted analytics data.'
         });
       } catch (error) {
-        console.error('Error analyzing pin:', error);
+        console.error('Error analyzing:', error);
         
         // Update the entry to show error
         setPinResults(prev => prev.map(pin => {
@@ -270,9 +240,9 @@ export const PinAnalyzer = () => {
             return {
               ...pin,
               title: "Analysis Failed",
-              description: "Could not retrieve pin data from Pinterest.",
+              description: `Could not retrieve ${analysisType === 'pin' ? 'pin' : 'keyword'} data from Pinterest.`,
               keywords: ['error', 'failed'],
-              status: 'completed'
+              status: 'error'
             };
           }
           return pin;
@@ -280,12 +250,12 @@ export const PinAnalyzer = () => {
         
         toast({
           title: 'Error',
-          description: 'Failed to analyze the Pinterest pin. Please try again later.',
+          description: `Failed to analyze the Pinterest ${analysisType === 'pin' ? 'pin' : 'keyword'}. Please try again later.`,
           variant: 'destructive'
         });
       }
     } catch (error) {
-      console.error('Error in pin analysis flow:', error);
+      console.error('Error in analysis flow:', error);
       toast({
         title: 'Error',
         description: 'An unexpected error occurred. Please try again.',
@@ -305,7 +275,7 @@ export const PinAnalyzer = () => {
         pinData.url, 
         pinData.title, 
         pinData.description, 
-        pinData.keywords.join(', '), 
+        pinData.keywords.map(k => k.keyword || k).join(', '), 
         pinData.pinScore || 'N/A', 
         pinData.stats.saves, 
         pinData.stats.clicks, 
@@ -320,43 +290,76 @@ export const PinAnalyzer = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.setAttribute('href', url);
-    a.setAttribute('download', `pin-analysis-${pinData.id}.csv`);
+    a.setAttribute('download', `${analysisType}-analysis-${pinData.id}.csv`);
     a.click();
     toast({
       title: t('copied'),
-      description: 'Pin data has been downloaded as CSV.'
+      description: `${analysisType === 'pin' ? 'Pin' : 'Keyword'} data has been downloaded as CSV.`
     });
   };
 
   return (
     <div className="w-full space-y-6">
-      <form onSubmit={handleAnalyzePin} className="w-full mb-8">
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative flex-1">
-            <Input 
-              type="url" 
-              placeholder={t('enterPinUrl')} 
-              value={pinUrl} 
-              onChange={e => setPinUrl(e.target.value)} 
-              className="pr-10" 
-              required 
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
+      <form onSubmit={handleAnalyze} className="w-full mb-8">
+        <div className="flex flex-col space-y-4">
+          <div className="flex gap-2">
+            <Button 
+              type="button" 
+              variant={analysisType === 'pin' ? "default" : "outline"}
+              onClick={() => setAnalysisType('pin')}
+              className={analysisType === 'pin' ? "bg-pinterest-red text-white" : ""}
+            >
+              Analyze Pin
+            </Button>
+            <Button 
+              type="button" 
+              variant={analysisType === 'keyword' ? "default" : "outline"}
+              onClick={() => setAnalysisType('keyword')}
+              className={analysisType === 'keyword' ? "bg-pinterest-red text-white" : ""}
+            >
+              Analyze Keyword
+            </Button>
           </div>
-          <Button 
-            type="submit" 
-            disabled={isLoading || !pinUrl} 
-            className="gap-2 text-white bg-pinterest-red"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t('loading')}
-              </>
-            ) : t('analyze')}
-          </Button>
+          
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Input 
+                type="text" 
+                placeholder={analysisType === 'pin' 
+                  ? t('enterPinUrl') 
+                  : "Enter a keyword to analyze"
+                } 
+                value={pinUrl} 
+                onChange={e => setPinUrl(e.target.value)} 
+                className="pr-10" 
+                required 
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                {analysisType === 'pin' ? (
+                  <Search className="h-4 w-4 text-gray-400" />
+                ) : (
+                  <Sparkles className="h-4 w-4 text-gray-400" />
+                )}
+              </div>
+            </div>
+            <Button 
+              type="submit" 
+              disabled={isLoading || !pinUrl} 
+              className="gap-2 text-white bg-pinterest-red"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t('loading')}
+                </>
+              ) : (
+                <>
+                  {analysisType === 'pin' ? t('analyze') : 'Analyze Keyword'}
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </form>
 
@@ -366,11 +369,11 @@ export const PinAnalyzer = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>URL</TableHead>
+                <TableHead>{analysisType === 'pin' ? 'URL' : 'Keyword'}</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Keywords</TableHead>
-                <TableHead>Pin Score</TableHead>
+                <TableHead>{analysisType === 'pin' ? 'Pin Score' : 'Trend Score'}</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -385,7 +388,7 @@ export const PinAnalyzer = () => {
                     <div className="flex flex-wrap gap-1">
                       {pin.keywords.map((keyword, i) => (
                         <span key={i} className="inline-flex items-center rounded-full bg-gray-800 px-2 py-0.5 text-xs text-gray-200">
-                          {keyword}
+                          {keyword.keyword || keyword}
                         </span>
                       ))}
                     </div>
@@ -393,6 +396,10 @@ export const PinAnalyzer = () => {
                   <TableCell>
                     {pin.status === 'pending' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : pin.status === 'error' ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-red-900 text-red-200 text-xs">
+                        Error
+                      </span>
                     ) : (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-pinterest-red text-white text-xs font-bold">
                         {pin.pinScore || 'N/A'}
@@ -403,6 +410,8 @@ export const PinAnalyzer = () => {
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
                       pin.status === 'completed' 
                         ? 'bg-green-900 text-green-200' 
+                        : pin.status === 'error'
+                        ? 'bg-red-900 text-red-200'
                         : 'bg-yellow-900 text-yellow-200'
                     }`}>
                       {pin.status}
@@ -428,8 +437,23 @@ export const PinAnalyzer = () => {
       ) : (
         <div className="text-center py-10 bg-black text-white rounded-lg border border-gray-800">
           <p className="text-gray-400">
-            Enter a Pinterest pin URL to analyze keywords and stats
+            {analysisType === 'pin' ? 
+              'Enter a Pinterest pin URL to analyze keywords and stats' : 
+              'Enter a keyword to analyze Pinterest trends and engagement'
+            }
           </p>
+        </div>
+      )}
+
+      {/* Insights section */}
+      {pinResults.length > 0 && pinResults[0].insights && pinResults[0].status === 'completed' && (
+        <div className="mt-6 p-4 bg-black border border-gray-800 rounded-md">
+          <h3 className="text-lg font-semibold text-white mb-2">Analytics Insights</h3>
+          <ul className="list-disc list-inside space-y-1 text-gray-300">
+            {pinResults[0].insights.map((insight, i) => (
+              <li key={i}>{insight}</li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

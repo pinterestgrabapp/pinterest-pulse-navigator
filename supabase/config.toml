@@ -1,5 +1,11 @@
 
+# This is your Supabase configuration file
 project_id = "nfmstsrqfyhpooikhfns"
 
-[functions.pinterest-auth]
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[functions.pinterest-analytics]
 verify_jwt = true

@@ -14,11 +14,13 @@ export const PINTEREST_SCOPES = [
   "pins:read",
   "user_accounts:read",
   "pins:write",
-  "boards:write"
+  "boards:write",
+  "ad_accounts:read" // Added for analytics
 ].join(",");
 
 // Get Pinterest API credentials
 export const PINTEREST_APP_ID = import.meta.env.VITE_PINTEREST_APP_ID || "1510337";
+export const PINTEREST_APP_SECRET = "2395c3a967f542bc95dc867a07c6a40e40ee9fe1";
 
 // Helper function to generate Pinterest OAuth URL
 export const getPinterestAuthUrl = () => {
@@ -159,6 +161,54 @@ export const fetchUserBoards = async (accessToken: string) => {
   }
 };
 
+// Fetch detailed pin analytics
+export const fetchPinAnalytics = async (accessToken: string, pinId: string) => {
+  try {
+    const response = await fetch(`${PINTEREST_API_URL}/pins/${pinId}/analytics`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      }
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error fetching pin analytics:", errorText);
+      return null;
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching pin analytics:", error);
+    return null;
+  }
+};
+
+// Search Pinterest by keyword
+export const searchPins = async (accessToken: string, query: string, limit = 50) => {
+  try {
+    const response = await fetch(`${PINTEREST_API_URL}/pins/search?query=${encodeURIComponent(query)}&limit=${limit}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      }
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error searching pins:", errorText);
+      return null;
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error searching pins:", error);
+    return null;
+  }
+};
+
 // Create a new Pinterest pin
 export const createPin = async (accessToken: string, pinData: any) => {
   try {
@@ -234,30 +284,6 @@ export const extractPinKeywords = async (pinUrl: string, accessToken: string) =>
   }
 };
 
-// Fetch trending topics from Pinterest
-export const fetchTrendingTopics = async (accessToken: string) => {
-  try {
-    const response = await fetch(`${PINTEREST_API_URL}/trends`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
-      }
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Error fetching trending topics:", errorText);
-      return null;
-    }
-    
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching trending topics:", error);
-    return null;
-  }
-};
-
 // Get pin analytics for a specific pin
 export const getPinAnalytics = async (accessToken: string, pinId: string) => {
   try {
@@ -278,6 +304,102 @@ export const getPinAnalytics = async (accessToken: string, pinId: string) => {
     return data;
   } catch (error) {
     console.error("Error fetching pin analytics:", error);
+    return null;
+  }
+};
+
+// Get Pinterest profile analytics 
+export const getProfileAnalytics = async (accessToken: string, username: string) => {
+  try {
+    // We'll use the analytics edge function to get profile data
+    const { data, error } = await supabase.functions.invoke('pinterest-analytics', {
+      body: { 
+        accessToken,
+        type: 'profile',
+        query: username
+      },
+    });
+
+    if (error) {
+      console.error("Error fetching profile analytics:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching profile analytics:", error);
+    return null;
+  }
+};
+
+// Perform keyword analysis
+export const analyzeKeywords = async (accessToken: string, keywords: string) => {
+  try {
+    // Call the analytics edge function
+    const { data, error } = await supabase.functions.invoke('pinterest-analytics', {
+      body: { 
+        accessToken,
+        type: 'keywords',
+        query: keywords
+      },
+    });
+
+    if (error) {
+      console.error("Error analyzing keywords:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error analyzing keywords:", error);
+    return null;
+  }
+};
+
+// Analyze a pin for detailed analytics
+export const analyzePinUrl = async (accessToken: string, pinUrl: string) => {
+  try {
+    // Call the analytics edge function
+    const { data, error } = await supabase.functions.invoke('pinterest-analytics', {
+      body: { 
+        accessToken,
+        type: 'pin',
+        query: pinUrl
+      },
+    });
+
+    if (error) {
+      console.error("Error analyzing pin:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error analyzing pin:", error);
+    return null;
+  }
+};
+
+// Get trending topics from Pinterest
+export const fetchTrendingTopics = async (accessToken: string) => {
+  try {
+    // Call our edge function that handles scraping trending topics
+    const { data, error } = await supabase.functions.invoke('pinterest-analytics', {
+      body: { 
+        accessToken,
+        type: 'trends',
+        query: null
+      },
+    });
+    
+    if (error) {
+      console.error("Error fetching trending topics:", error);
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error fetching trending topics:", error);
     return null;
   }
 };
