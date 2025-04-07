@@ -67,8 +67,8 @@ const PinterestLoginPopup = ({ open, onOpenChange, onSuccess }: PinterestLoginPo
     }
     
     try {
-      // Open the Pinterest OAuth popup
-      const popup = openPinterestAuthPopup();
+      // Open the Pinterest OAuth popup and pass user ID
+      const popup = openPinterestAuthPopup(user.id);
       
       if (!popup) {
         setError("Pinterest popup was blocked. Please allow popups for this site.");

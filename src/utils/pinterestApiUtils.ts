@@ -23,9 +23,12 @@ export const PINTEREST_APP_ID = import.meta.env.VITE_PINTEREST_APP_ID || "151033
 export const PINTEREST_APP_SECRET = "2395c3a967f542bc95dc867a07c6a40e40ee9fe1";
 
 // Helper function to generate Pinterest OAuth URL
-export const getPinterestAuthUrl = () => {
+export const getPinterestAuthUrl = (userId: string) => {
   const state = generateRandomString(32);
   localStorage.setItem("pinterest_auth_state", state);
+  
+  // Include userId as a query parameter in the redirect URI
+  const redirectUriWithParams = `${PINTEREST_REDIRECT_URI}?userId=${encodeURIComponent(userId)}`;
   
   const authUrl = `${PINTEREST_AUTH_URL}?client_id=${PINTEREST_APP_ID}&redirect_uri=${encodeURIComponent(PINTEREST_REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(PINTEREST_SCOPES)}&state=${state}`;
   console.log("Generated Pinterest auth URL:", authUrl);
@@ -33,8 +36,8 @@ export const getPinterestAuthUrl = () => {
 };
 
 // Improved function to open Pinterest auth in a popup window with better error handling
-export const openPinterestAuthPopup = () => {
-  const authUrl = getPinterestAuthUrl();
+export const openPinterestAuthPopup = (userId: string) => {
+  const authUrl = getPinterestAuthUrl(userId);
   const width = 600;
   const height = 700;
   const left = window.innerWidth / 2 - width / 2;

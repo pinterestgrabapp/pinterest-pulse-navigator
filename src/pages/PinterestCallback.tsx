@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,31 +17,13 @@ const PinterestCallback = () => {
       try {
         console.log("Pinterest callback handler started. User authenticated:", !!user);
         
-        // Check if we have a user FIRST before doing anything else
-        if (!user) {
-          const errorMessage = "You must be logged in to connect your Pinterest account";
-          console.error("Authentication error:", errorMessage);
-          setError(errorMessage);
-          
-          // If in popup, try to message parent window
-          if (window.opener && !window.opener.closed) {
-            window.opener.postMessage({
-              type: "PINTEREST_AUTH_ERROR",
-              error: errorMessage
-            }, window.location.origin);
-          }
-          
-          setLoading(false);
-          return;
-        }
-
-        // Get the code and state from the URL
+        // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
         const state = urlParams.get("state");
         const storedState = localStorage.getItem("pinterest_auth_state");
         
-        // Verify the state to prevent CSRF attacks
+        // Verify the state first to prevent CSRF attacks, regardless of auth status
         if (!state || state !== storedState) {
           const errorMessage = "Invalid state parameter. This could be a security issue.";
           setError(errorMessage);
@@ -78,12 +59,29 @@ const PinterestCallback = () => {
           return;
         }
 
+        // Check if we have a user
+        if (!user) {
+          const errorMessage = "You must be logged in to connect your Pinterest account";
+          console.error("Authentication error:", errorMessage);
+          setError(errorMessage);
+          
+          // If in popup, try to message parent window
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+              type: "PINTEREST_AUTH_ERROR",
+              error: errorMessage
+            }, window.location.origin);
+          }
+          
+          setLoading(false);
+          return;
+        }
+
         // Use the current window's origin for the redirect URI to match what was used in the auth request
         const redirectUri = `${window.location.origin}/pinterest-callback`;
         console.log("Using redirect URI for token exchange:", redirectUri);
-
         console.log("Exchanging code for token with userId:", user.id);
-        
+
         // Call our secure Supabase Edge Function to exchange the code for tokens
         const { data, error: exchangeError } = await supabase.functions.invoke('pinterest-auth', {
           body: { 
