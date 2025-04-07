@@ -75,13 +75,18 @@ const PinterestCallback = () => {
           return;
         }
 
+        // Use the current window's origin for the redirect URI to match what was used in the auth request
+        const redirectUri = `${window.location.origin}/pinterest-callback`;
+        console.log("Using redirect URI for token exchange:", redirectUri);
+
         console.log("Exchanging code for token with userId:", user.id);
         
         // Call our secure Supabase Edge Function to exchange the code for tokens
         const { data, error: exchangeError } = await supabase.functions.invoke('pinterest-auth', {
           body: { 
             code, 
-            userId: user.id 
+            userId: user.id,
+            redirectUri // Pass the redirect URI to the edge function
           },
         });
 

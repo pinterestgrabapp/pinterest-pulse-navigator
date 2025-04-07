@@ -1,3 +1,4 @@
+
 // This is a Supabase Edge Function that handles the Pinterest OAuth flow
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
@@ -5,12 +6,11 @@ import { corsHeaders } from "../_shared/cors.ts";
 // Set up the Pinterest API credentials
 const PINTEREST_APP_ID = Deno.env.get("PINTEREST_APP_ID") || "1510337";
 const PINTEREST_APP_SECRET = Deno.env.get("PINTEREST_APP_SECRET") || "2395c3a967f542bc95dc867a07c6a40e40ee9fe1";
-const PINTEREST_REDIRECT_URI = "http://localhost:5173/pinterest-callback";
 
 // Function to exchange the authorization code for an access token
-async function exchangeCodeForToken(code: string) {
+async function exchangeCodeForToken(code: string, redirectUri: string) {
   try {
-    console.log("Exchanging code for token with redirect URI:", PINTEREST_REDIRECT_URI);
+    console.log("Exchanging code for token with redirect URI:", redirectUri);
     
     const tokenResponse = await fetch("https://api.pinterest.com/v5/oauth/token", {
       method: "POST",
@@ -20,7 +20,7 @@ async function exchangeCodeForToken(code: string) {
       body: new URLSearchParams({
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: PINTEREST_REDIRECT_URI,
+        redirect_uri: redirectUri,
         client_id: PINTEREST_APP_ID,
         client_secret: PINTEREST_APP_SECRET,
       }),
@@ -81,9 +81,10 @@ serve(async (req) => {
   }
 
   try {
-    const { code, userId } = await req.json();
+    const { code, userId, redirectUri } = await req.json();
     
     console.log("Processing Pinterest auth with code and userId:", { codePresent: !!code, userId });
+    console.log("Redirect URI received:", redirectUri);
 
     // Validate required parameters
     if (!code) {
@@ -106,8 +107,18 @@ serve(async (req) => {
       );
     }
 
+    if (!redirectUri) {
+      return new Response(
+        JSON.stringify({ error: "Missing redirect URI" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Exchange the authorization code for an access token
-    const tokenData = await exchangeCodeForToken(code);
+    const tokenData = await exchangeCodeForToken(code, redirectUri);
     console.log("Token exchange successful");
 
     // Get Pinterest user info
