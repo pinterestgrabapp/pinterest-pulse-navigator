@@ -1,12 +1,11 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Pinterest API configuration - updated to use v5
 export const PINTEREST_API_URL = "https://api.pinterest.com/v5";
 export const PINTEREST_AUTH_URL = "https://www.pinterest.com/oauth";
 
-// Make sure the redirect URI matches exactly what's configured in Pinterest Developer console
-export const PINTEREST_REDIRECT_URI = `${window.location.origin}/pinterest-callback`;
+// Updated the redirect URI to exactly match what's registered in Pinterest Developer console
+export const PINTEREST_REDIRECT_URI = "http://localhost:5173/pinterest-callback";
 
 // Pinterest API scopes - adding all needed scopes
 export const PINTEREST_SCOPES = [
