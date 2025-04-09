@@ -18,7 +18,6 @@ export const DashboardSidebar = () => {
     { icon: LayoutDashboard, label: 'dashboard', href: '/dashboard-home' },
     { icon: TrendingUp, label: 'pinAnalysis', href: '/dashboard' },
     { icon: Search, label: 'keywordResearch', href: '/keyword-research' },
-    { icon: Database, label: 'Pinterest Scraper', href: '/pinterest-scraper' },
     { icon: BarChart4, label: 'pinStats', href: '/pin-stats' },
     { icon: Bookmark, label: 'savedPins', href: '/saved-pins' },
     { icon: FileDown, label: 'export', href: '/export' },
@@ -72,7 +71,7 @@ export const DashboardSidebar = () => {
                     (item.href === '/dashboard' && location.pathname === '/pin-analysis') ||
                     (item.href === '/dashboard-home' && location.pathname === '/dashboard')
                       ? 'text-pinterest-red' : ''}`} />
-                  <span className="relative z-10">{item.label === 'Pinterest Scraper' ? item.label : t(item.label)}</span>
+                  <span className="relative z-10">{t(item.label)}</span>
                 </Link>
               </li>
             ))}
