@@ -8,7 +8,7 @@ import { useLanguage } from '@/utils/languageUtils';
 import { useAuth } from '@/contexts/AuthContext';
 import { MOCK_PIN_STATS } from '@/lib/constants';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getPinterestCredentials, analyzeKeywords, analyzePinUrl } from '@/utils/pinterestApiUtils';
+import { analyzeKeywords, analyzePinUrl } from '@/utils/pinterestApiUtils';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PinData {
@@ -117,19 +117,6 @@ export const PinAnalyzer = () => {
     setIsLoading(true);
     
     try {
-      // Get Pinterest credentials for the user
-      const credentials = await getPinterestCredentials(user.id);
-      
-      if (!credentials || !credentials.access_token) {
-        toast({
-          title: 'Pinterest Connection Required',
-          description: 'Please connect your Pinterest account in Settings → Integrations.',
-          variant: 'destructive'
-        });
-        setIsLoading(false);
-        return;
-      }
-      
       // Generate a unique ID for this result
       const id = Date.now().toString();
       
@@ -146,14 +133,14 @@ export const PinAnalyzer = () => {
       
       setPinResults(prev => [pendingPinData, ...prev]);
       
-      // Try to get real data from our Pinterest Analytics function
+      // Try to get real data using our Apify-powered functions
       try {
         let analyticsData;
         
         if (analysisType === 'pin') {
-          analyticsData = await analyzePinUrl(credentials.access_token, pinUrl);
+          analyticsData = await analyzePinUrl(pinUrl);
         } else {
-          analyticsData = await analyzeKeywords(credentials.access_token, pinUrl);
+          analyticsData = await analyzeKeywords(pinUrl);
         }
         
         if (!analyticsData || !analyticsData.data) {

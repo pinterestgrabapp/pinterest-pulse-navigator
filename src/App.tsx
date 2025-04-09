@@ -22,7 +22,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Pricing from "./pages/Pricing";
 import PinStats from "./pages/PinStats";
 import SavedPins from "./pages/SavedPins";
-import PinterestCallback from "./pages/PinterestCallback";
+// Removed Pinterest callback - using Apify instead
 
 // New pages for additional features
 import Analytics from "./pages/Analytics";
@@ -58,7 +58,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/pricing" element={<Pricing />} />
-                <Route path="/pinterest-callback" element={<PinterestCallback />} />
+                {/* Removed Pinterest callback route - using Apify instead */}
                 
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><PinAnalysis /></ProtectedRoute>} />
