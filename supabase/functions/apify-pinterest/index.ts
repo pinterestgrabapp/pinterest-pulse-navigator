@@ -26,13 +26,13 @@ serve(async (req) => {
 
   try {
     // Get API key from edge function secrets
-    const APIFY_API_KEY = Deno.env.get("APIFY_API_KEY");
+    const APIFY_API_TOKEN = Deno.env.get("APIFY_API_TOKEN");
     
-    if (!APIFY_API_KEY) {
+    if (!APIFY_API_TOKEN) {
       return new Response(
         JSON.stringify({ 
-          error: "API key not configured", 
-          message: "APIFY_API_KEY is not set in the edge function secrets" 
+          error: "API token not configured", 
+          message: "APIFY_API_TOKEN is not set in the edge function secrets" 
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -74,7 +74,7 @@ serve(async (req) => {
     
     // Call the Apify API
     const response = await fetch(
-      "https://api.apify.com/v2/acts/epctex~pinterest-scraper/run-sync?token=" + APIFY_API_KEY,
+      "https://api.apify.com/v2/acts/epctex~pinterest-scraper/run-sync?token=" + APIFY_API_TOKEN,
       {
         method: "POST",
         headers: {
