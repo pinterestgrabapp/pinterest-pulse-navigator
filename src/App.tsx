@@ -30,6 +30,7 @@ import AdCampaigns from "./pages/AdCampaigns";
 import ContentCalendar from "./pages/ContentCalendar";
 import TeamCollaboration from "./pages/TeamCollaboration";
 import Ecommerce from "./pages/Ecommerce";
+import PinterestScraperPage from "./pages/PinterestScraper";
 
 // Create a new query client instance outside the component
 const queryClient = new QueryClient({
@@ -77,6 +78,7 @@ const App = () => (
                 <Route path="/content-calendar" element={<ProtectedRoute><ContentCalendar /></ProtectedRoute>} />
                 <Route path="/team-collaboration" element={<ProtectedRoute><TeamCollaboration /></ProtectedRoute>} />
                 <Route path="/ecommerce" element={<ProtectedRoute><Ecommerce /></ProtectedRoute>} />
+                <Route path="/pinterest-scraper" element={<ProtectedRoute><PinterestScraperPage /></ProtectedRoute>} />
                 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />

@@ -1,0 +1,3 @@
+
+[functions.apify-pinterest]
+verify_jwt = true
