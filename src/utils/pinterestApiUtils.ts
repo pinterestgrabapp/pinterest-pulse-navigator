@@ -27,9 +27,8 @@ export const getPinterestAuthUrl = (userId: string) => {
   const state = generateRandomString(32);
   localStorage.setItem("pinterest_auth_state", state);
   
-  // Include userId as a query parameter in the redirect URI
-  const redirectUriWithParams = `${PINTEREST_REDIRECT_URI}?userId=${encodeURIComponent(userId)}`;
-  
+  // Important: We must use exactly the same redirect URI for both authorization and token exchange
+  // Do not append any parameters to the redirect URI that's sent to Pinterest
   const authUrl = `${PINTEREST_AUTH_URL}?client_id=${PINTEREST_APP_ID}&redirect_uri=${encodeURIComponent(PINTEREST_REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(PINTEREST_SCOPES)}&state=${state}`;
   console.log("Generated Pinterest auth URL:", authUrl);
   return authUrl;
@@ -44,6 +43,13 @@ export const openPinterestAuthPopup = (userId: string) => {
   const top = window.innerHeight / 2 - height / 2;
   
   try {
+    // Log important information for debugging
+    console.log("Pinterest OAuth Debug Info:");
+    console.log("- App ID:", PINTEREST_APP_ID);
+    console.log("- Redirect URI being used:", PINTEREST_REDIRECT_URI);
+    console.log("- Full auth URL:", authUrl);
+    console.log("- Current origin:", window.location.origin);
+    
     // Open popup window with specified dimensions and position
     const popup = window.open(
       authUrl,

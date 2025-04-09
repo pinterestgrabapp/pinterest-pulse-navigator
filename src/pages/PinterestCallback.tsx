@@ -78,6 +78,7 @@ const PinterestCallback = () => {
         }
 
         // Use the current window's origin for the redirect URI to match what was used in the auth request
+        // Important: This must match EXACTLY what was registered in the Pinterest Developer console
         const redirectUri = `${window.location.origin}/pinterest-callback`;
         console.log("Using redirect URI for token exchange:", redirectUri);
         console.log("Exchanging code for token with userId:", user.id);
@@ -87,7 +88,7 @@ const PinterestCallback = () => {
           body: { 
             code, 
             userId: user.id,
-            redirectUri // Pass the redirect URI to the edge function
+            redirectUri // Pass the exact same redirect URI to the edge function
           },
         });
 

@@ -11,19 +11,25 @@ const PINTEREST_APP_SECRET = Deno.env.get("PINTEREST_APP_SECRET") || "2395c3a967
 async function exchangeCodeForToken(code: string, redirectUri: string) {
   try {
     console.log("Exchanging code for token with redirect URI:", redirectUri);
+    console.log("Using App ID:", PINTEREST_APP_ID);
+    
+    // Build the request body for debugging
+    const params = new URLSearchParams({
+      grant_type: "authorization_code",
+      code: code,
+      redirect_uri: redirectUri,
+      client_id: PINTEREST_APP_ID,
+      client_secret: PINTEREST_APP_SECRET,
+    });
+    
+    console.log("Token exchange request parameters:", params.toString());
     
     const tokenResponse = await fetch("https://api.pinterest.com/v5/oauth/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: redirectUri,
-        client_id: PINTEREST_APP_ID,
-        client_secret: PINTEREST_APP_SECRET,
-      }),
+      body: params,
     });
 
     const responseText = await tokenResponse.text();
@@ -160,6 +166,9 @@ serve(async (req) => {
 
     console.log("Pinterest credentials stored successfully");
 
+    // Add a log entry to confirm completion
+    console.log(`Pinterest authentication completed successfully for user ${userId} (${userInfo.username})`);
+    
     // Return success response
     return new Response(
       JSON.stringify({ 
