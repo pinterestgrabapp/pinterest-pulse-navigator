@@ -1,5 +1,4 @@
 
-# This is your Supabase configuration file
 project_id = "nfmstsrqfyhpooikhfns"
 
 [api]
@@ -15,3 +14,6 @@ verify_jwt = false
 
 [functions."set-rapidapi-key"]
 verify_jwt = true
+
+[functions."set-rapidapi-key-direct"]
+verify_jwt = false

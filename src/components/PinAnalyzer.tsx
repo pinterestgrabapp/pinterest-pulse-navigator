@@ -100,6 +100,17 @@ export const PinAnalyzer = () => {
     }
   };
 
+  const initializeApi = async () => {
+    try {
+      const { initializeRapidApiKey } = await import('@/utils/initRapidApiKey');
+      await initializeRapidApiKey();
+      return true;
+    } catch (err) {
+      console.error("Error importing initialization function:", err);
+      return false;
+    }
+  };
+
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pinUrl) return;
@@ -115,6 +126,9 @@ export const PinAnalyzer = () => {
     }
     
     setIsLoading(true);
+    
+    // Initialize RapidAPI key before making the API call
+    await initializeApi();
     
     try {
       // Generate a unique ID for this result

@@ -192,7 +192,15 @@ export const analyzeKeywords = async (keyword: string) => {
     };
   } catch (error) {
     console.error("Error analyzing keywords:", error);
-    return null;
+    // Provide more detailed error information
+    return {
+      success: false,
+      error: true,
+      data: {
+        error_message: error instanceof Error ? error.message : "Unknown error occurred",
+        error_details: "The RapidAPI key might not be properly configured. Please check your settings."
+      }
+    };
   }
 };
 

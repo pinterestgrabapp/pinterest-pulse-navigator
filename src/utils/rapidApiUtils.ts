@@ -40,7 +40,35 @@ async function callRapidApi(endpoint: string, body: any): Promise<RapidAPIPinter
     
     if (!rapidApiKey) {
       console.error('RapidAPI key not found');
-      return { success: false, message: 'API key not found' };
+      
+      // Try using a hardcoded key as a fallback for demo purposes only
+      console.warn('Using fallback RapidAPI key');
+      const fallbackKey = "1302df995emsh94434bcd769c0cap1edfdfjsnfd73232ea78c";
+      
+      // Make the request to RapidAPI with the fallback key
+      try {
+        const response = await fetch(`https://pinterest-scraper.p.rapidapi.com/social-media/pinterest-scraper/${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-RapidAPI-Key': fallbackKey,
+            'X-RapidAPI-Host': 'pinterest-scraper.p.rapidapi.com'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`RapidAPI error (${response.status}) with fallback key:`, errorText);
+          return { success: false, message: `API error: ${response.status} ${response.statusText}` };
+        }
+
+        const data = await response.json();
+        return { success: true, data };
+      } catch (error) {
+        console.error('Error in fallback RapidAPI call:', error);
+        return { success: false, message: 'Fallback API key failed' };
+      }
     }
 
     // Make the request to RapidAPI

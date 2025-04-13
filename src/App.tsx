@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { initializeRapidApiKey } from "./utils/initRapidApiKey";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import KeywordResearch from "./pages/KeywordResearch";
@@ -43,7 +44,16 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
+const App = () => {
+  // Initialize the RapidAPI key on app startup
+  useEffect(() => {
+    const initApi = async () => {
+      await initializeRapidApiKey();
+    };
+    initApi();
+  }, []);
+  
+  return (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -89,6 +99,7 @@ const App = () => (
       </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>
-);
+  );
+};
 
 export default App;
