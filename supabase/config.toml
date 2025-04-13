@@ -10,3 +10,8 @@ schemas = ["public", "storage", "graphql_public"]
 [functions.pinterest-analytics]
 verify_jwt = true
 
+[functions."get-rapidapi-key"]
+verify_jwt = false
+
+[functions."set-rapidapi-key"]
+verify_jwt = true

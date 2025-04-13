@@ -1,6 +1,5 @@
 
 // Supabase Edge Function for safely getting the RapidAPI key
-import { createClient } from '@supabase/supabase-js';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 // CORS headers for browser requests

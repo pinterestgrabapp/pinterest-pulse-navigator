@@ -29,7 +29,13 @@ export interface PinterestPinResult {
 async function callRapidApi(endpoint: string, body: any): Promise<RapidAPIPinterestResponse> {
   try {
     // Get RapidAPI key from Supabase secrets
-    const { data: secretData } = await supabase.functions.invoke("get-rapidapi-key", {});
+    const { data: secretData, error } = await supabase.functions.invoke("get-rapidapi-key", {});
+    
+    if (error) {
+      console.error('Error getting RapidAPI key:', error);
+      return { success: false, message: `Error getting API key: ${error.message}` };
+    }
+    
     const rapidApiKey = secretData?.key;
     
     if (!rapidApiKey) {
