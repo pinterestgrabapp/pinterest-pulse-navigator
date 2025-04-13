@@ -1,0 +1,5 @@
+
+# Supabase configuration file for get-rapidapi-key function
+
+[functions."get-rapidapi-key"]
+verify_jwt = false

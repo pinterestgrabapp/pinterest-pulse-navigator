@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { getPinterestCredentials } from "@/utils/pinterestApiUtils";
+import { hasRapidApiKey } from "@/utils/pinterestApiUtils";
 import { formatChartData, exportAnalytics } from "@/utils/chartUtils";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { AreaChart, BarChart, DonutChart, LineChart } from "@/components/ui/charts";
@@ -210,19 +210,19 @@ const Analytics = () => {
   };
 
   useEffect(() => {
-    const checkPinterestConnection = async () => {
+    const checkRapidApiConnection = async () => {
       if (!user?.id) return;
 
       try {
-        const credentials = await getPinterestCredentials(user.id);
-        setPinterestConnected(!!credentials?.access_token);
+        const hasApiKey = await hasRapidApiKey();
+        setPinterestConnected(hasApiKey);
       } catch (err) {
-        console.error("Error checking Pinterest connection:", err);
+        console.error("Error checking RapidAPI connection:", err);
         setPinterestConnected(false);
       }
     };
 
-    checkPinterestConnection();
+    checkRapidApiConnection();
   }, [user]);
 
   useEffect(() => {

@@ -1,0 +1,5 @@
+
+# Supabase configuration file for set-rapidapi-key function
+
+[functions."set-rapidapi-key"]
+verify_jwt = true

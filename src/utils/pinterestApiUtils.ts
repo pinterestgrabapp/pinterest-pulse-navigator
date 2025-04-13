@@ -1,11 +1,39 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { searchPinterest, scrapeUrl, scrapeBoard } from "@/utils/apifyUtils";
+import { 
+  searchPins, 
+  getPinDetails, 
+  getProfilePins, 
+  transformPinData 
+} from "@/utils/rapidApiUtils";
 
-// Re-export Apify functions with more descriptive names for better integration
-export const searchPinterestPins = searchPinterest;
-export const scrapePinterestUrl = scrapeUrl;
-export const scrapePinterestBoard = scrapeBoard;
+// Re-export RapidAPI functions with consistent names
+export const searchPinterestPins = async (query: string) => {
+  const response = await searchPins(query);
+  return response.success ? transformPinData(response.data) : null;
+};
+
+export const scrapePinterestUrl = async (url: string) => {
+  const response = await getPinDetails(url);
+  return response.success ? transformPinData(response.data) : null;
+};
+
+export const scrapePinterestBoard = async (url: string) => {
+  const response = await getProfilePins(url);
+  return response.success ? transformPinData(response.data) : null;
+};
+
+// Function to check if a user has RapidAPI key set up
+export const hasRapidApiKey = async () => {
+  try {
+    const { data, error } = await supabase.functions.invoke("get-rapidapi-key", {});
+    if (error) return false;
+    return !!data?.key;
+  } catch (err) {
+    console.error("Error checking RapidAPI key:", err);
+    return false;
+  }
+};
 
 // Check if user has scraping history in their account
 export const hasScrapeHistory = async (userId: string) => {
@@ -49,10 +77,10 @@ export const getScrapeHistory = async (userId: string, limit = 10) => {
   }
 };
 
-// Extract keywords from a Pinterest pin URL using Apify
+// Extract keywords from a Pinterest pin URL using RapidAPI
 export const extractPinKeywords = async (pinUrl: string) => {
   try {
-    const pinData = await scrapeUrl(pinUrl);
+    const pinData = await scrapePinterestUrl(pinUrl);
     
     if (!pinData || pinData.length === 0) {
       return [];
@@ -83,10 +111,10 @@ export const extractPinKeywords = async (pinUrl: string) => {
   }
 };
 
-// Analyze a pin for detailed analytics using Apify
+// Analyze a pin for detailed analytics using RapidAPI
 export const analyzePinUrl = async (pinUrl: string) => {
   try {
-    const pinData = await scrapeUrl(pinUrl);
+    const pinData = await scrapePinterestUrl(pinUrl);
     
     if (!pinData || pinData.length === 0) {
       throw new Error("No pin data found");
@@ -121,10 +149,10 @@ export const analyzePinUrl = async (pinUrl: string) => {
   }
 };
 
-// Analyze keywords using Apify data
+// Analyze keywords using RapidAPI data
 export const analyzeKeywords = async (keyword: string) => {
   try {
-    const pinsData = await searchPinterest(keyword, 50);
+    const pinsData = await searchPinterestPins(keyword);
     
     if (!pinsData || pinsData.length === 0) {
       throw new Error("No pins found for keyword");
